@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ODE Methods — Quick Reference</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300..700;1,300..700&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+
+  <style>
+    /* ─── DESIGN TOKENS ──────────────────────────────── */
+    :root, [data-theme="light"] {
+      --color-bg:               #f7f6f2;
+      --color-surface:          #f9f8f5;
+      --color-surface-2:        #fbfbf9;
+      --color-surface-offset:   #f3f0ec;
+      --color-divider:          #dcd9d5;
+      --color-border:           #d4d1ca;
+      --color-text:             #28251d;
+      --color-text-muted:       #7a7974;
+      --color-text-faint:       #bab9b4;
+      --color-primary:          #01696f;
+      --color-primary-hover:    #0c4e54;
+      --color-primary-highlight:#cedcd8;
+      --color-warning:          #964219;
+      --color-warning-highlight:#ddcfc6;
+      --color-success:          #437a22;
+      --color-success-highlight:#d4dfcc;
+      --color-blue:             #006494;
+      --color-blue-highlight:   #c6d8e4;
+      --color-purple:           #7a39bb;
+      --color-purple-highlight: #dacfde;
+      --color-orange:           #da7101;
+      --color-orange-highlight: #e7d7c4;
+      --color-error:            #a12c7b;
+      --color-error-highlight:  #e0ced7;
+      --radius-sm: 0.375rem; --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;  --radius-xl: 1rem; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px oklch(0.2 0.01 80 / 0.06);
+      --shadow-md: 0 4px 12px oklch(0.2 0.01 80 / 0.08);
+      --space-1:.25rem; --space-2:.5rem;  --space-3:.75rem; --space-4:1rem;
+      --space-5:1.25rem;--space-6:1.5rem; --space-8:2rem;   --space-10:2.5rem;
+      --space-12:3rem;  --space-16:4rem;  --space-20:5rem;
+      --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+      --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+      --text-base: clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+      --text-lg:   clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
+      --text-xl:   clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
+      --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+      --font-display: 'Source Serif 4', Georgia, serif;
+      --font-body:    'DM Sans', 'Helvetica Neue', sans-serif;
+      --transition:   180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    [data-theme="dark"] {
+      --color-bg:               #171614;
+      --color-surface:          #1c1b19;
+      --color-surface-2:        #201f1d;
+      --color-surface-offset:   #222120;
+      --color-divider:          #262523;
+      --color-border:           #393836;
+      --color-text:             #cdccca;
+      --color-text-muted:       #797876;
+      --color-text-faint:       #5a5957;
+      --color-primary:          #4f98a3;
+      --color-primary-hover:    #227f8b;
+      --color-primary-highlight:#313b3b;
+      --color-warning:          #bb653b;
+      --color-warning-highlight:#564942;
+      --color-success:          #6daa45;
+      --color-success-highlight:#3a4435;
+      --color-blue:             #5591c7;
+      --color-blue-highlight:   #3a4550;
+      --color-purple:           #a86fdf;
+      --color-purple-highlight: #4e4652;
+      --color-orange:           #fdab43;
+      --color-orange-highlight: #564b3e;
+      --color-error:            #d163a7;
+      --color-error-highlight:  #4c3d46;
+      --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.25);
+      --shadow-md: 0 4px 12px oklch(0 0 0 / 0.35);
+    }
+
+    /* ─── BASE ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; scroll-padding-top: 72px; }
+    body { font-family: var(--font-body); font-size: var(--text-base); color: var(--color-text); background: var(--color-bg); min-height: 100dvh; line-height: 1.65; }
+    h1,h2,h3,h4 { font-family: var(--font-display); line-height: 1.2; text-wrap: balance; }
+    p, li { text-wrap: pretty; }
+    ::selection { background: oklch(from var(--color-primary) l c h / 0.2); }
+    :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: var(--radius-sm); }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+    /* ─── HEADER ─────────────────────────────────────── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: color-mix(in oklch, var(--color-bg) 88%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-divider);
+      padding: var(--space-4) var(--space-8);
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+    }
+    .logo { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; color: var(--color-text); }
+    .logo-text  { font-family: var(--font-display); font-size: var(--text-base); font-weight: 600; line-height: 1.2; }
+    .logo-sub   { font-size: var(--text-xs); color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400; }
+    .theme-btn  {
+      background: none; border: 1px solid var(--color-border); border-radius: var(--radius-full);
+      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-muted); cursor: pointer;
+      transition: color var(--transition), background var(--transition), border-color var(--transition);
+    }
+    .theme-btn:hover { color: var(--color-text); background: var(--color-surface-offset); }
+
+    /* ─── LAYOUT ─────────────────────────────────────── */
+    .page-layout {
+      display: flex; align-items: flex-start;
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 var(--space-8); gap: var(--space-10);
+    }
+
+    /* ─── SIDEBAR ────────────────────────────────────── */
+    .sidebar {
+      width: 190px; flex-shrink: 0;
+      position: sticky; top: 72px;
+      padding: var(--space-8) 0;
+      max-height: calc(100vh - 72px); overflow-y: auto;
+    }
+    .sidebar-title { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-faint); margin-bottom: var(--space-3); }
+    .sidebar nav { display: flex; flex-direction: column; gap: var(--space-1); }
+    .sidebar a {
+      font-size: var(--text-xs); color: var(--color-text-muted); text-decoration: none;
+      padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm);
+      transition: color var(--transition), background var(--transition);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .sidebar a:hover { color: var(--color-text); background: var(--color-surface-offset); }
+    .sidebar a.active { color: var(--color-primary); background: var(--color-primary-highlight); font-weight: 600; }
+    .sidebar-sep { height: 1px; background: var(--color-divider); margin: var(--space-3) var(--space-2); }
+    .sidebar-group { font-size: var(--text-xs); font-weight: 600; color: var(--color-text-faint); padding: var(--space-2) var(--space-2) var(--space-1); margin-top: var(--space-2); }
+
+    /* ─── MAIN ───────────────────────────────────────── */
+    main { flex: 1; min-width: 0; padding: var(--space-8) 0 var(--space-20); }
+
+    /* ─── HERO ───────────────────────────────────────── */
+    .hero { padding-bottom: var(--space-8); border-bottom: 1px solid var(--color-divider); margin-bottom: var(--space-12); }
+    .hero-eyebrow { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-primary); margin-bottom: var(--space-3); }
+    .hero h1 { font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--space-3); }
+    .hero-desc { font-size: var(--text-base); color: var(--color-text-muted); max-width: 58ch; margin-bottom: var(--space-6); }
+    .hero-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .pill {
+      font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.05em;
+      padding: 4px 12px; border-radius: var(--radius-full);
+      border: 1px solid var(--color-border); color: var(--color-text-muted);
+      background: var(--color-surface);
+    }
+
+    /* ─── SECTION HEADINGS ───────────────────────────── */
+    .section-block { margin-top: var(--space-12); }
+    .section-block + .section-block { margin-top: var(--space-16); }
+    .section-eyebrow {
+      display: inline-block; font-size: var(--text-xs); font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: var(--radius-full); margin-bottom: var(--space-3);
+    }
+    .section-block h2 { font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-2); }
+    .section-block .section-desc { font-size: var(--text-sm); color: var(--color-text-muted); max-width: 62ch; margin-bottom: var(--space-6); }
+
+    /* Part accent colours */
+    .part-1 .section-eyebrow { background: var(--color-primary-highlight); color: var(--color-primary); }
+    .part-2 .section-eyebrow { background: var(--color-blue-highlight);    color: var(--color-blue); }
+    .part-3 .section-eyebrow { background: var(--color-orange-highlight);  color: var(--color-orange); }
+    .part-4 .section-eyebrow { background: var(--color-purple-highlight);  color: var(--color-purple); }
+    .part-5 .section-eyebrow { background: var(--color-success-highlight); color: var(--color-success); }
+
+    /* ─── TABLES ─────────────────────────────────────── */
+    .table-wrap {
+      border: 1px solid var(--color-border); border-radius: var(--radius-xl);
+      overflow: hidden; box-shadow: var(--shadow-sm);
+    }
+    .ref-table { width: 100%; border-collapse: collapse; background: var(--color-surface); }
+    .ref-table thead tr { background: var(--color-text); }
+    .ref-table thead th {
+      color: var(--color-bg); padding: var(--space-4) var(--space-5);
+      font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600;
+      letter-spacing: 0.03em; text-align: left;
+    }
+    .ref-table tbody tr { border-bottom: 1px solid var(--color-divider); transition: background var(--transition); }
+    .ref-table tbody tr:last-child { border-bottom: none; }
+    .ref-table tbody tr:hover { background: var(--color-surface-offset); }
+    .ref-table td { padding: var(--space-4) var(--space-5); font-size: var(--text-sm); vertical-align: top; line-height: 1.6; }
+    .ref-table td:first-child { font-weight: 600; white-space: nowrap; }
+    .ref-table td code { font-family: 'Courier New', monospace; font-size: 0.9em; background: var(--color-surface-offset); padding: 1px 5px; border-radius: var(--radius-sm); }
+
+    /* Row accent stripes */
+    .row-teal   td:first-child { border-left: 3px solid var(--color-primary); }
+    .row-blue   td:first-child { border-left: 3px solid var(--color-blue); }
+    .row-orange td:first-child { border-left: 3px solid var(--color-orange); }
+    .row-purple td:first-child { border-left: 3px solid var(--color-purple); }
+    .row-green  td:first-child { border-left: 3px solid var(--color-success); }
+    .row-pink   td:first-child { border-left: 3px solid var(--color-error); }
+
+    /* Type chips */
+    .chip {
+      display: inline-block; font-size: var(--text-xs); font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: var(--radius-full);
+    }
+    .chip-teal   { background: var(--color-primary-highlight); color: var(--color-primary); }
+    .chip-blue   { background: var(--color-blue-highlight);    color: var(--color-blue); }
+    .chip-orange { background: var(--color-orange-highlight);  color: var(--color-orange); }
+    .chip-purple { background: var(--color-purple-highlight);  color: var(--color-purple); }
+    .chip-green  { background: var(--color-success-highlight); color: var(--color-success); }
+    .chip-pink   { background: var(--color-error-highlight);   color: var(--color-error); }
+
+    /* ─── FORMULA CARD ───────────────────────────────── */
+    .formula-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-6) var(--space-8);
+      margin-bottom: var(--space-6);
+    }
+    .formula-card-label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--color-text-faint); margin-bottom: var(--space-3); }
+    .formula-card-title { font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-4); }
+    .formula-card-desc  { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-4); max-width: 60ch; }
+    .formula-display {
+      background: var(--color-surface-offset);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5) var(--space-6);
+      margin-top: var(--space-3);
+      overflow-x: auto;
+    }
+    .formula-display .katex-display { margin: 0; }
+
+    /* General solution highlight */
+    .gen-sol-card {
+      display: flex; align-items: center; gap: var(--space-4);
+      background: var(--color-primary-highlight);
+      border: 1px solid color-mix(in oklch, var(--color-primary) 25%, var(--color-border));
+      border-radius: var(--radius-lg); padding: var(--space-4) var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    .gen-sol-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .gen-sol-label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-primary); margin-bottom: 2px; }
+    .gen-sol-formula { font-size: var(--text-base); color: var(--color-primary-hover); font-family: var(--font-display); font-weight: 600; }
+
+    /* ─── INFO CARDS ─────────────────────────────────── */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4); margin-top: var(--space-4); }
+    .info-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-5);
+      display: flex; flex-direction: column; gap: var(--space-2);
+    }
+    .info-card-label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+    .info-card-title { font-size: var(--text-sm); font-weight: 700; color: var(--color-text); }
+    .info-card-body  { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; }
+
+    /* ─── CALLOUT ────────────────────────────────────── */
+    .callout {
+      border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5);
+      margin-bottom: var(--space-6); display: flex; gap: var(--space-3); align-items: flex-start;
+      border: 1px solid;
+    }
+    .callout-warning { background: var(--color-warning-highlight); border-color: color-mix(in oklch, var(--color-warning) 30%, var(--color-border)); color: var(--color-warning); }
+    .callout-icon { font-size: 1rem; flex-shrink: 0; padding-top: 2px; }
+    .callout-body { font-size: var(--text-sm); line-height: 1.65; }
+    .callout-body strong { font-weight: 700; display: block; margin-bottom: var(--space-1); }
+
+    /* ─── FOOTER ─────────────────────────────────────── */
+    footer { border-top: 1px solid var(--color-divider); padding: var(--space-8); text-align: center; font-size: var(--text-xs); color: var(--color-text-faint); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .page-layout { padding: 0 var(--space-4); }
+      header { padding: var(--space-4); }
+      .card-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="#" class="logo" aria-label="ODE Reference home">
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <rect width="36" height="36" rx="8" fill="var(--color-primary)"/>
+      <text x="5" y="26" font-family="Georgia,serif" font-size="22" font-weight="700" fill="white">∂</text>
+      <circle cx="27" cy="10" r="4" fill="white" opacity="0.25"/>
+      <circle cx="27" cy="10" r="2" fill="white"/>
+    </svg>
+    <div>
+      <div class="logo-text">ODE Reference</div>
+      <div class="logo-sub">Engineering Mathematics II</div>
+    </div>
+  </a>
+  <button class="theme-btn" data-theme-toggle aria-label="Switch to dark mode">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Sections</div>
+    <nav>
+      <div class="sidebar-group">1st Order</div>
+      <a href="#part1">Methods Overview</a>
+      <div class="sidebar-sep"></div>
+      <div class="sidebar-group">2nd Order</div>
+      <a href="#part2">Homogeneous</a>
+      <div class="sidebar-sep"></div>
+      <div class="sidebar-group">Non-Homogeneous</div>
+      <a href="#part3-gen">General Solution</a>
+      <a href="#part3-uc">Undetermined Coeff.</a>
+      <a href="#part3-vp">Variation of Params</a>
+      <div class="sidebar-sep"></div>
+      <div class="sidebar-group">Higher Order</div>
+      <a href="#part4">nth-Order Methods</a>
+      <div class="sidebar-sep"></div>
+      <div class="sidebar-group">Foundations</div>
+      <a href="#part5">Key Concepts</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-eyebrow">Engineering Mathematics II · Ch. 1–3</div>
+      <h1>ODE Methods — Quick Reference</h1>
+      <p class="hero-desc">A concise reference for all ODE solution methods covered in the course: from 1st-order techniques through nth-order extensions.</p>
+      <div class="hero-pills">
+        <span class="pill">1st Order Methods</span>
+        <span class="pill">2nd Order Homogeneous</span>
+        <span class="pill">Non-Homogeneous</span>
+        <span class="pill">Higher-Order (Ch. 3)</span>
+        <span class="pill">Key Concepts</span>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- PART 1: 1ST ORDER -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="section-block part-1" id="part1">
+      <span class="section-eyebrow">Part 1</span>
+      <h2>1st Order ODE Methods</h2>
+      <p class="section-desc">Six core techniques for solving first-order ODEs. Choose the method based on the form of the equation.</p>
+
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>When to Use</th>
+              <th>Key Idea</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-teal">
+              <td><span class="chip chip-teal">Separable</span></td>
+              <td>ODE can be written as $g(y)\,dy = f(x)\,dx$</td>
+              <td>Separate variables, integrate both sides</td>
+            </tr>
+            <tr class="row-blue">
+              <td><span class="chip chip-blue">Exact</span></td>
+              <td>$M_y = N_x$ for $M\,dx + N\,dy = 0$</td>
+              <td>Find potential function $u(x,y) = c$</td>
+            </tr>
+            <tr class="row-orange">
+              <td><span class="chip chip-orange">Integrating Factor</span></td>
+              <td>Non-exact or linear 1st-order ODEs</td>
+              <td>Multiply by $\mu(x) = e^{\int p(x)\,dx}$ to make exact</td>
+            </tr>
+            <tr class="row-purple">
+              <td><span class="chip chip-purple">1st Order Linear</span></td>
+              <td>$y' + p(x)y = r(x)$</td>
+              <td>$y = e^{-h}\!\int e^h\,r\,dx + C$, where $h = \int p\,dx$</td>
+            </tr>
+            <tr class="row-green">
+              <td><span class="chip chip-green">Homogeneous Sub.</span></td>
+              <td>ODE of the form $y' = f(y/x)$</td>
+              <td>Substitute $y = vx$; reduces to separable ODE</td>
+            </tr>
+            <tr class="row-pink">
+              <td><span class="chip chip-pink">Bernoulli</span></td>
+              <td>$y' + p(x)y = g(x)y^a$</td>
+              <td>Substitute $u = y^{1-a}$; reduces to linear ODE</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- PART 2: 2ND ORDER HOMOGENEOUS -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="section-block part-2" id="part2">
+      <span class="section-eyebrow">Part 2</span>
+      <h2>2nd Order Homogeneous ODEs</h2>
+      <p class="section-desc">Methods for $y'' + ay' + by = 0$ and its variants. The characteristic equation drives all three cases.</p>
+
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>When to Use</th>
+              <th>Key Idea</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-teal">
+              <td><span class="chip chip-teal">Characteristic Eq.</span></td>
+              <td>Constant-coefficient: $y'' + ay' + by = 0$</td>
+              <td>Try $y = e^{\lambda x}$; solve $\lambda^2 + a\lambda + b = 0$. Three cases: distinct real, repeated, complex roots</td>
+            </tr>
+            <tr class="row-blue">
+              <td><span class="chip chip-blue">Reduction of Order</span></td>
+              <td>One solution $y_1$ is already known</td>
+              <td>Let $y_2 = u(x)\cdot y_1$; reduces to 1st-order ODE for $u'$</td>
+            </tr>
+            <tr class="row-orange">
+              <td><span class="chip chip-orange">Euler–Cauchy</span></td>
+              <td>$x^2 y'' + axy' + by = 0$</td>
+              <td>Try $y = x^m$; solve $m^2 + (a-1)m + b = 0$</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Root Cases sub-table -->
+      <h3 style="font-size:var(--text-lg);font-weight:700;margin:var(--space-8) 0 var(--space-4);">Characteristic Root Cases</h3>
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Root Type</th><th>Roots $\lambda$</th><th>Basis of $y_h$</th></tr>
+          </thead>
+          <tbody>
+            <tr class="row-teal">
+              <td><span class="chip chip-teal">Distinct Real</span></td>
+              <td>$\lambda_1 \neq \lambda_2$ (real)</td>
+              <td>$e^{\lambda_1 x},\quad e^{\lambda_2 x}$</td>
+            </tr>
+            <tr class="row-blue">
+              <td><span class="chip chip-blue">Repeated Real</span></td>
+              <td>$\lambda_1 = \lambda_2 = \lambda$</td>
+              <td>$e^{\lambda x},\quad xe^{\lambda x}$</td>
+            </tr>
+            <tr class="row-orange">
+              <td><span class="chip chip-orange">Complex</span></td>
+              <td>$\lambda = \alpha \pm \beta i$</td>
+              <td>$e^{\alpha x}\cos\beta x,\quad e^{\alpha x}\sin\beta x$</td>
+            </tr>
+            <tr class="row-purple">
+              <td><span class="chip chip-purple">Repeated Complex</span></td>
+              <td>$\alpha \pm \beta i$ (double)</td>
+              <td>$e^{\alpha x}\cos\beta x,\; xe^{\alpha x}\cos\beta x,\; e^{\alpha x}\sin\beta x,\; xe^{\alpha x}\sin\beta x$</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- PART 3: NON-HOMOGENEOUS -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="section-block part-3" id="part3-gen">
+      <span class="section-eyebrow">Part 3</span>
+      <h2>Non-Homogeneous ODEs</h2>
+      <p class="section-desc">The general solution always splits into a homogeneous part and a particular part.</p>
+
+      <div class="gen-sol-card">
+        <div class="gen-sol-icon">✦</div>
+        <div>
+          <div class="gen-sol-label">General Solution Structure</div>
+          <div class="gen-sol-formula">$y = y_h + y_p$</div>
+        </div>
+      </div>
+
+      <!-- Undetermined Coefficients -->
+      <h3 id="part3-uc" style="font-size:var(--text-lg);font-weight:700;margin:var(--space-6) 0 var(--space-3);">Undetermined Coefficients — Guess Table</h3>
+      <p class="section-desc" style="margin-bottom:var(--space-4);">Select a trial $y_p$ based on the form of $r(x)$. If any trial term duplicates a term in $y_h$, apply the Modification Rule.</p>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body">
+          <strong>Modification Rule</strong>
+          If a term in the trial $y_p$ already appears in $y_h$, multiply that term by $x$ (or $x^2$ if it corresponds to a double root).
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-bottom:var(--space-8);">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Form of $r(x)$</th><th>Trial $y_p$</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr class="row-teal">
+              <td>$ke^{\alpha x}$</td>
+              <td>$Ce^{\alpha x}$</td>
+              <td>Multiply by $x^s$ if $\alpha$ is a root of multiplicity $s$</td>
+            </tr>
+            <tr class="row-blue">
+              <td>$kx^n$</td>
+              <td>$K_n x^n + K_{n-1}x^{n-1} + \cdots + K_0$</td>
+              <td>Include <em>all</em> lower-degree terms even if absent in $r(x)$</td>
+            </tr>
+            <tr class="row-orange">
+              <td>$k\cos\beta x$ or $k\sin\beta x$</td>
+              <td>$K\cos\beta x + M\sin\beta x$</td>
+              <td>Always guess both, even if only one appears in $r(x)$</td>
+            </tr>
+            <tr class="row-purple">
+              <td>$ke^{\alpha x}\cos\beta x$ or $ke^{\alpha x}\sin\beta x$</td>
+              <td>$e^{\alpha x}(K\cos\beta x + M\sin\beta x)$</td>
+              <td>Multiply by $x$ if $\alpha \pm \beta i$ are characteristic roots</td>
+            </tr>
+            <tr class="row-green">
+              <td>$kx^n e^{\alpha x}$</td>
+              <td>$e^{\alpha x}(K_n x^n + \cdots + K_0)$</td>
+              <td>Combine polynomial and exponential families</td>
+            </tr>
+            <tr class="row-pink">
+              <td>Sum of above families</td>
+              <td>Sum of corresponding trial functions</td>
+              <td>Sum Rule — apply Modification Rule to each family independently</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Variation of Parameters -->
+      <div class="formula-card" id="part3-vp">
+        <div class="formula-card-label">Method</div>
+        <div class="formula-card-title">Variation of Parameters</div>
+        <div class="formula-card-desc">Works for <em>any</em> $r(x)$ (no restriction on form). Given $y_h = C_1 y_1 + C_2 y_2$, the particular solution is:</div>
+        <div class="formula-display">
+          $$y_p = -y_1 \int\frac{y_2\,r}{W}\,dx \;+\; y_2 \int\frac{y_1\,r}{W}\,dx$$
+        </div>
+        <p style="font-size:var(--text-xs);color:var(--color-text-faint);margin-top:var(--space-3);">where $W = W(y_1, y_2) = y_1 y_2' - y_2 y_1'$ is the Wronskian.</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- PART 4: HIGHER ORDER -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="section-block part-4" id="part4">
+      <span class="section-eyebrow">Part 4 — Chapter 3</span>
+      <h2>Higher-Order ODEs (nth Order)</h2>
+      <p class="section-desc">Extensions of 2nd-order techniques to degree-$n$ constant-coefficient ODEs.</p>
+
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Method</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr class="row-teal">
+              <td><span class="chip chip-teal">Char. Equation</span></td>
+              <td>Generalized to a degree-$n$ polynomial in $\lambda$. Handles distinct real, repeated real, simple complex, and repeated complex roots — apply same basis rules, extended to $n$ independent solutions.</td>
+            </tr>
+            <tr class="row-blue">
+              <td><span class="chip chip-blue">Undetermined Coeff.</span></td>
+              <td>Extended to nth-order constant-coefficient non-homogeneous ODEs. The same guess table applies; check each trial term against all $n$ homogeneous basis functions.</td>
+            </tr>
+            <tr class="row-orange">
+              <td><span class="chip chip-orange">Variation of Params.</span></td>
+              <td>Uses $n$ Wronskian sub-determinants $W_1, \ldots, W_n$:
+                $$y_p = \sum_{k=1}^{n} y_k \int \frac{W_k}{W}\,r\,dx$$
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- PART 5: KEY CONCEPTS -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="section-block part-5" id="part5">
+      <span class="section-eyebrow">Foundations</span>
+      <h2>Key Concepts</h2>
+      <p class="section-desc">Theoretical underpinnings required for understanding solution structure and validity.</p>
+
+      <div class="card-grid">
+
+        <div class="info-card">
+          <div class="info-card-label" style="color:var(--color-primary);">Wronskian</div>
+          <div class="info-card-title">$W(y_1, y_2) = y_1 y_2' - y_2 y_1'$</div>
+          <div class="info-card-body">Tests linear independence of solutions. $W \neq 0$ on an interval guarantees $y_1, y_2$ form a fundamental set. Required for Variation of Parameters.</div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-label" style="color:var(--color-blue);">Superposition</div>
+          <div class="info-card-title">Superposition Principle</div>
+          <div class="info-card-body">Any linear combination of solutions to a <em>homogeneous</em> linear ODE is also a solution. This is what allows $y_h = C_1 y_1 + C_2 y_2$.</div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-label" style="color:var(--color-success);">Existence &amp; Uniqueness</div>
+          <div class="info-card-title">Existence &amp; Uniqueness Theorem</div>
+          <div class="info-card-body">Guarantees a unique solution given continuous coefficients and initial conditions. Confirms that a solution exists before you attempt to find it.</div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>Engineering Mathematics II · ODE Methods Quick Reference · NTU Civil Engineering</footer>
+
+<script>
+/* Dark mode toggle */
+(function(){
+  const btn = document.querySelector('[data-theme-toggle]');
+  const root = document.documentElement;
+  let dark = matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', dark ? 'dark' : 'light');
+  const sun  = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  const moon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  btn.innerHTML = dark ? sun : moon;
+  btn.addEventListener('click', () => {
+    dark = !dark;
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    btn.innerHTML = dark ? sun : moon;
+  });
+})();
+
+/* Sidebar active highlighting */
+(function(){
+  const anchors = document.querySelectorAll('section[id], h3[id]');
+  const links   = document.querySelectorAll('.sidebar a');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+  anchors.forEach(s => obs.observe(s));
+})();
+</script>
+</body>
+</html>
