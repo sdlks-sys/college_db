@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ODE Practice Problems & Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300..700;1,300..700&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+
+  <style>
+    /* ── TOKENS ─────────────────────────────────────── */
+    :root, [data-theme="light"] {
+      --color-bg:              #f7f6f2;
+      --color-surface:         #f9f8f5;
+      --color-surface-2:       #fbfbf9;
+      --color-surface-offset:  #f3f0ec;
+      --color-divider:         #dcd9d5;
+      --color-border:          #d4d1ca;
+      --color-text:            #28251d;
+      --color-text-muted:      #7a7974;
+      --color-text-faint:      #bab9b4;
+      --color-primary:         #01696f;
+      --color-primary-hover:   #0c4e54;
+      --color-primary-highlight:#cedcd8;
+      --color-warning:         #964219;
+      --color-warning-highlight:#ddcfc6;
+      --color-success:         #437a22;
+      --color-success-highlight:#d4dfcc;
+      --color-blue:            #006494;
+      --color-blue-highlight:  #c6d8e4;
+      --color-purple:          #7a39bb;
+      --color-purple-highlight:#dacfde;
+      --color-error:           #a12c7b;
+      --color-error-highlight: #e0ced7;
+      --color-orange:          #da7101;
+      --color-orange-highlight:#e7d7c4;
+
+      --radius-sm:   0.375rem; --radius-md: 0.5rem;
+      --radius-lg:   0.75rem;  --radius-xl: 1rem; --radius-full: 9999px;
+      --shadow-sm:   0 1px 2px oklch(0.2 0.01 80 / 0.06);
+      --shadow-md:   0 4px 12px oklch(0.2 0.01 80 / 0.08);
+
+      --space-1:.25rem; --space-2:.5rem;  --space-3:.75rem; --space-4:1rem;
+      --space-5:1.25rem;--space-6:1.5rem; --space-8:2rem;   --space-10:2.5rem;
+      --space-12:3rem;  --space-16:4rem;
+
+      --text-xs:  clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+      --text-sm:  clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+      --text-base:clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+      --text-lg:  clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
+      --text-xl:  clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+
+      --font-display: 'Source Serif 4', Georgia, serif;
+      --font-body:    'DM Sans', 'Helvetica Neue', sans-serif;
+      --transition:   180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    [data-theme="dark"] {
+      --color-bg:              #171614;
+      --color-surface:         #1c1b19;
+      --color-surface-2:       #201f1d;
+      --color-surface-offset:  #222120;
+      --color-divider:         #262523;
+      --color-border:          #393836;
+      --color-text:            #cdccca;
+      --color-text-muted:      #797876;
+      --color-text-faint:      #5a5957;
+      --color-primary:         #4f98a3;
+      --color-primary-hover:   #227f8b;
+      --color-primary-highlight:#313b3b;
+      --color-warning:         #bb653b;
+      --color-warning-highlight:#564942;
+      --color-success:         #6daa45;
+      --color-success-highlight:#3a4435;
+      --color-blue:            #5591c7;
+      --color-blue-highlight:  #3a4550;
+      --color-purple:          #a86fdf;
+      --color-purple-highlight:#4e4652;
+      --color-error:           #d163a7;
+      --color-error-highlight: #4c3d46;
+      --color-orange:          #fdab43;
+      --color-orange-highlight:#564b3e;
+      --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.25);
+      --shadow-md: 0 4px 12px oklch(0 0 0 / 0.35);
+    }
+
+    /* ── BASE ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; scroll-padding-top: 72px; }
+    body { font-family: var(--font-body); font-size: var(--text-base); color: var(--color-text); background: var(--color-bg); min-height: 100dvh; line-height: 1.65; }
+    h1,h2,h3,h4 { font-family: var(--font-display); text-wrap: balance; line-height: 1.2; }
+    p, li { text-wrap: pretty; }
+    ::selection { background: oklch(from var(--color-primary) l c h / 0.2); }
+    :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: var(--radius-sm); }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: color-mix(in oklch, var(--color-bg) 88%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-divider);
+      padding: var(--space-4) var(--space-8);
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+    }
+    .logo { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; color: var(--color-text); }
+    .logo-text { font-family: var(--font-display); font-size: var(--text-base); font-weight: 600; line-height: 1.2; }
+    .logo-sub { font-size: var(--text-xs); color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400; }
+    .header-right { display: flex; align-items: center; gap: var(--space-3); }
+    .progress-text { font-size: var(--text-xs); color: var(--color-text-muted); font-weight: 500; white-space: nowrap; }
+    .theme-btn {
+      background: none; border: 1px solid var(--color-border); border-radius: var(--radius-full);
+      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-muted); cursor: pointer;
+      transition: color var(--transition), background var(--transition), border-color var(--transition);
+    }
+    .theme-btn:hover { color: var(--color-text); background: var(--color-surface-offset); }
+
+    /* ── SIDEBAR NAV ────────────────────────────────── */
+    .page-layout { display: flex; align-items: flex-start; max-width: 1100px; margin: 0 auto; padding: 0 var(--space-8); gap: var(--space-10); }
+    .sidebar {
+      width: 200px; flex-shrink: 0;
+      position: sticky; top: 80px;
+      padding: var(--space-8) 0;
+      max-height: calc(100vh - 80px); overflow-y: auto;
+    }
+    .sidebar-title { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-faint); margin-bottom: var(--space-3); }
+    .sidebar nav { display: flex; flex-direction: column; gap: var(--space-1); }
+    .sidebar a {
+      font-size: var(--text-xs); color: var(--color-text-muted); text-decoration: none;
+      padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm);
+      transition: color var(--transition), background var(--transition);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .sidebar a:hover { color: var(--color-text); background: var(--color-surface-offset); }
+    .sidebar a.active { color: var(--color-primary); background: var(--color-primary-highlight); font-weight: 600; }
+    .sidebar-section { margin-top: var(--space-4); }
+    .sidebar-section-label { font-size: var(--text-xs); font-weight: 600; color: var(--color-text-faint); padding: var(--space-1) var(--space-2); margin-top: var(--space-2); }
+
+    /* ── MAIN ───────────────────────────────────────── */
+    main { flex: 1; min-width: 0; padding: var(--space-8) 0 var(--space-16); }
+
+    /* ── HERO ───────────────────────────────────────── */
+    .hero { padding-bottom: var(--space-8); border-bottom: 1px solid var(--color-divider); margin-bottom: var(--space-10); }
+    .hero-eyebrow { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-primary); margin-bottom: var(--space-3); }
+    .hero h1 { font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--space-3); }
+    .hero p { font-size: var(--text-base); color: var(--color-text-muted); max-width: 60ch; }
+    .hero-stats { display: flex; gap: var(--space-6); margin-top: var(--space-6); flex-wrap: wrap; }
+    .stat { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); box-shadow: var(--shadow-sm); }
+    .stat-num { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; color: var(--color-primary); line-height: 1; }
+    .stat-label { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-1); }
+
+    /* ── SECTION HEADINGS ───────────────────────────── */
+    .part-header { margin-top: var(--space-12); margin-bottom: var(--space-6); }
+    .part-badge { display: inline-block; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: var(--radius-full); margin-bottom: var(--space-3); }
+    .part-header h2 { font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-2); }
+    .part-header p { font-size: var(--text-sm); color: var(--color-text-muted); max-width: 58ch; }
+
+    .sub-header { margin-top: var(--space-8); margin-bottom: var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-divider); }
+    .sub-header h3 { font-size: var(--text-lg); font-weight: 700; }
+    .sub-header .method-chip { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 8px; border-radius: var(--radius-full); margin-left: var(--space-2); vertical-align: middle; }
+
+    /* Part color themes */
+    .part-1 .part-badge { background: var(--color-primary-highlight); color: var(--color-primary); }
+    .part-2 .part-badge { background: var(--color-blue-highlight); color: var(--color-blue); }
+    .part-3 .part-badge { background: var(--color-orange-highlight); color: var(--color-orange); }
+    .part-4 .part-badge { background: var(--color-purple-highlight); color: var(--color-purple); }
+    .part-1 .sub-header { border-color: color-mix(in oklch, var(--color-primary) 20%, var(--color-divider)); }
+    .part-2 .sub-header { border-color: color-mix(in oklch, var(--color-blue) 20%, var(--color-divider)); }
+    .part-3 .sub-header { border-color: color-mix(in oklch, var(--color-orange) 20%, var(--color-divider)); }
+    .part-4 .sub-header { border-color: color-mix(in oklch, var(--color-purple) 20%, var(--color-divider)); }
+
+    /* ── PROBLEM CARDS ──────────────────────────────── */
+    .problem-stack { display: flex; flex-direction: column; gap: var(--space-4); }
+    .problem-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .problem-head {
+      padding: var(--space-4) var(--space-5);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4);
+      cursor: pointer;
+      transition: background var(--transition);
+      user-select: none;
+    }
+    .problem-head:hover { background: var(--color-surface-offset); }
+    .problem-head-left { display: flex; align-items: flex-start; gap: var(--space-4); flex: 1; min-width: 0; }
+    .prob-num {
+      width: 32px; height: 32px; border-radius: var(--radius-full);
+      font-size: var(--text-xs); font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+    }
+    .part-1 .prob-num { background: var(--color-primary-highlight); color: var(--color-primary); }
+    .part-2 .prob-num { background: var(--color-blue-highlight); color: var(--color-blue); }
+    .part-3 .prob-num { background: var(--color-orange-highlight); color: var(--color-orange); }
+    .part-4 .prob-num { background: var(--color-purple-highlight); color: var(--color-purple); }
+    .prob-question { font-size: var(--text-sm); color: var(--color-text); flex: 1; min-width: 0; padding-top: 6px; }
+    .toggle-btn {
+      width: 28px; height: 28px; border-radius: var(--radius-full); flex-shrink: 0;
+      border: 1px solid var(--color-border); background: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--color-text-muted);
+      transition: transform var(--transition), background var(--transition), color var(--transition);
+    }
+    .toggle-btn.open { transform: rotate(180deg); color: var(--color-primary); background: var(--color-primary-highlight); border-color: var(--color-primary); }
+
+    /* Solution panel */
+    .solution-panel {
+      max-height: 0; overflow: hidden;
+      transition: max-height 400ms cubic-bezier(0.16, 1, 0.3, 1);
+      border-top: 1px solid transparent;
+    }
+    .solution-panel.open {
+      max-height: 2000px;
+      border-top-color: var(--color-divider);
+    }
+    .solution-inner { padding: var(--space-5) var(--space-5) var(--space-5) calc(var(--space-5) + 32px + var(--space-4)); }
+    .sol-label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-faint); margin-bottom: var(--space-3); }
+    .sol-step { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-3); line-height: 1.75; }
+    .sol-step:last-child { margin-bottom: 0; }
+    .sol-step p { max-width: none; }
+
+    /* Answer box */
+    .answer-box {
+      margin-top: var(--space-4);
+      background: var(--color-surface-offset);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      display: flex; align-items: center; gap: var(--space-3);
+    }
+    .answer-label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--color-text-faint); white-space: nowrap; }
+    .answer-formula { font-size: var(--text-sm); color: var(--color-text); }
+
+    /* IVP badge */
+    .ivp-tag { display: inline-block; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 1px 7px; border-radius: var(--radius-full); background: var(--color-warning-highlight); color: var(--color-warning); margin-left: var(--space-2); vertical-align: middle; }
+
+    /* ── QUICK REFERENCE TABLES ─────────────────────── */
+    .ref-section { margin-top: var(--space-12); }
+    .ref-section h2 { font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-2); }
+    .ref-section p { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-5); }
+    .table-wrap { border: 1px solid var(--color-border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: var(--space-8); }
+    .ref-table { width: 100%; border-collapse: collapse; background: var(--color-surface); }
+    .ref-table thead tr { background: var(--color-text); }
+    .ref-table thead th { color: var(--color-bg); padding: var(--space-4) var(--space-5); font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.03em; text-align: left; }
+    .ref-table tbody tr { border-bottom: 1px solid var(--color-divider); transition: background var(--transition); }
+    .ref-table tbody tr:last-child { border-bottom: none; }
+    .ref-table tbody tr:hover { background: var(--color-surface-offset); }
+    .ref-table td { padding: var(--space-4) var(--space-5); font-size: var(--text-sm); vertical-align: top; }
+    .row-teal td:first-child   { border-left: 3px solid var(--color-primary); }
+    .row-blue td:first-child    { border-left: 3px solid var(--color-blue); }
+    .row-orange td:first-child  { border-left: 3px solid var(--color-orange); }
+    .row-purple td:first-child  { border-left: 3px solid var(--color-purple); }
+    .type-chip { display: inline-block; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 8px; border-radius: var(--radius-full); }
+    .chip-teal   { background: var(--color-primary-highlight); color: var(--color-primary); }
+    .chip-blue   { background: var(--color-blue-highlight);    color: var(--color-blue); }
+    .chip-orange { background: var(--color-orange-highlight);  color: var(--color-orange); }
+    .chip-purple { background: var(--color-purple-highlight);  color: var(--color-purple); }
+
+    /* ── FOOTER ─────────────────────────────────────── */
+    footer { border-top: 1px solid var(--color-divider); padding: var(--space-8); text-align: center; font-size: var(--text-xs); color: var(--color-text-faint); }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .page-layout { padding: 0 var(--space-4); }
+      header { padding: var(--space-4); }
+      .progress-text { display: none; }
+      .solution-inner { padding-left: var(--space-4); }
+    }
+    @media (max-width: 480px) {
+      .hero-stats { gap: var(--space-3); }
+      .stat { padding: var(--space-3); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────── -->
+<header>
+  <a href="#" class="logo" aria-label="ODE Reference home">
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <rect width="36" height="36" rx="8" fill="var(--color-primary)"/>
+      <text x="5" y="26" font-family="Georgia,serif" font-size="22" font-weight="700" fill="white">∂</text>
+      <circle cx="27" cy="10" r="4" fill="white" opacity="0.25"/>
+      <circle cx="27" cy="10" r="2" fill="white"/>
+    </svg>
+    <div>
+      <div class="logo-text">ODE Practice</div>
+      <div class="logo-sub">Engineering Mathematics II</div>
+    </div>
+  </a>
+  <div class="header-right">
+    <span class="progress-text" id="progress-text">0 / 27 solved</span>
+    <button class="theme-btn" data-theme-toggle aria-label="Switch to dark mode">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ── LAYOUT ─────────────────────────────────────── -->
+<div class="page-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Contents</div>
+    <nav>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Part 1 — 1st Order</div>
+        <a href="#s1-1">1.1 Separable</a>
+        <a href="#s1-2">1.2 Exact</a>
+        <a href="#s1-3">1.3 Integrating Factor</a>
+        <a href="#s1-4">1.4 Homogeneous Sub.</a>
+        <a href="#s1-5">1.5 Bernoulli</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Part 2 — 2nd Order Homo.</div>
+        <a href="#s2-1">2.1 Distinct Real Roots</a>
+        <a href="#s2-2">2.2 Repeated Root</a>
+        <a href="#s2-3">2.3 Complex Roots</a>
+        <a href="#s2-4">2.4 Reduction of Order</a>
+        <a href="#s2-5">2.5 Euler–Cauchy</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Part 3 — 2nd Non-Homo.</div>
+        <a href="#s3-1">3.1 Undetermined Coeff.</a>
+        <a href="#s3-2">3.2 Variation of Params</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Part 4 — Higher Order</div>
+        <a href="#s4-1">4.1 Char. Equation (nth)</a>
+        <a href="#s4-2">4.2 Undetermined (nth)</a>
+        <a href="#s4-3">4.3 Variation (nth)</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Quick Reference</div>
+        <a href="#ref-roots">Root Cases</a>
+        <a href="#ref-guess">Guess Table</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-eyebrow">Engineering Mathematics II · Ch. 1–3</div>
+      <h1>ODE Practice Problems & Solutions</h1>
+      <p>27 problems covering all ODE solution methods from the course. Click any problem to reveal the worked solution.</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">27</div><div class="stat-label">Problems</div></div>
+        <div class="stat"><div class="stat-num">4</div><div class="stat-label">Parts</div></div>
+        <div class="stat"><div class="stat-num">10</div><div class="stat-label">Methods</div></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- PART 1: 1ST ORDER -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="part-1" id="part-1">
+      <div class="part-header">
+        <span class="part-badge">Part 1</span>
+        <h2>1st Order ODEs</h2>
+        <p>Problems 1–9 covering separable, exact, linear, homogeneous substitution, and Bernoulli equations.</p>
+      </div>
+
+      <!-- 1.1 Separable -->
+      <div class="sub-header" id="s1-1">
+        <h3>1.1 Separable ODEs <span class="method-chip chip-teal">Separate &amp; Integrate</span></h3>
+      </div>
+      <div class="problem-stack">
+
+        <div class="problem-card" data-prob="1">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">1</span>
+              <div class="prob-question">Solve $y' = -2xy$, with $y(0) = 3$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Separate variables: $$\frac{1}{y}\,dy = -2x\,dx$$</div>
+              <div class="sol-step">Integrate both sides: $\ln|y| = -x^2 + C_1$, so $y = Ce^{-x^2}$.</div>
+              <div class="sol-step">Apply $y(0) = 3$: $C = 3$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = 3e^{-x^2}$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="2">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">2</span>
+              <div class="prob-question">Solve $\dfrac{dy}{dx} = \dfrac{x^2}{1 + y^2}$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Separate: $(1+y^2)\,dy = x^2\,dx$.</div>
+              <div class="sol-step">Integrate both sides.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y + \dfrac{y^3}{3} = \dfrac{x^3}{3} + C$ &nbsp;(implicit)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="3">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">3</span>
+              <div class="prob-question">Radioactive decay: $y' = ky$, $y(0) = y_0$. Find $y(t)$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Separate: $\dfrac{dy}{y} = k\,dt \implies \ln|y| = kt + C_1$.</div>
+              <div class="sol-step">For decay $k < 0$. Given half-life $H$: $k = -\ln(2)/H$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y(t) = y_0 e^{kt}$</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /problem-stack -->
+
+      <!-- 1.2 Exact -->
+      <div class="sub-header" id="s1-2">
+        <h3>1.2 Exact ODEs <span class="method-chip chip-teal">Potential Function</span></h3>
+      </div>
+      <div class="problem-stack">
+
+        <div class="problem-card" data-prob="4">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">4</span>
+              <div class="prob-question">Check exactness and solve: $(2xy+1)\,dx + (x^2+3y^2)\,dy = 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$M = 2xy+1$, $N = x^2+3y^2$. Check: $M_y = 2x = N_x$ — Exact.</div>
+              <div class="sol-step">Integrate $u_x = M$: $u = x^2y + x + f(y)$.</div>
+              <div class="sol-step">Apply $u_y = N$: $x^2 + f'(y) = x^2 + 3y^2 \implies f(y) = y^3$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$x^2y + x + y^3 = C$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="5">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">5</span>
+              <div class="prob-question">Solve $(3x^2+y)\,dx + (x-2y)\,dy = 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$M_y = 1 = N_x$ — Exact.</div>
+              <div class="sol-step">$u = \int(3x^2+y)\,dx = x^3 + xy + f(y)$.</div>
+              <div class="sol-step">$u_y = x + f'(y) = x - 2y \implies f(y) = -y^2$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$x^3 + xy - y^2 = C$</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 1.3 Integrating Factor -->
+      <div class="sub-header" id="s1-3">
+        <h3>1.3 Integrating Factor &amp; Linear ODEs <span class="method-chip chip-teal">$\mu = e^{\int p\,dx}$</span></h3>
+      </div>
+      <div class="problem-stack">
+
+        <div class="problem-card" data-prob="6">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">6</span>
+              <div class="prob-question">Solve $y' + \tfrac{1}{x}y = x$, $y(1) = 2$. <span class="ivp-tag">IVP</span></div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Integrating factor: $\mu = e^{\int (1/x)\,dx} = x$.</div>
+              <div class="sol-step">Multiply: $(xy)' = x^2 \implies xy = \tfrac{x^3}{3} + C$.</div>
+              <div class="sol-step">Apply $y(1)=2$: $2 = \tfrac{1}{3} + C \implies C = \tfrac{5}{3}$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = \dfrac{x^2}{3} + \dfrac{5}{3x}$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="7">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">7</span>
+              <div class="prob-question">Solve $y' - 2y = e^{3x}$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Integrating factor: $\mu = e^{-2x}$.</div>
+              <div class="sol-step">$(e^{-2x}y)' = e^x \implies e^{-2x}y = e^x + C$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = e^{3x} + Ce^{2x}$</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 1.4 Homogeneous -->
+      <div class="sub-header" id="s1-4">
+        <h3>1.4 Homogeneous Substitution <span class="method-chip chip-teal">$y = vx$</span></h3>
+      </div>
+      <div class="problem-stack">
+        <div class="problem-card" data-prob="8">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">8</span>
+              <div class="prob-question">Solve $y' = \dfrac{y^2 - x^2}{2xy}$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Rewrite as $y' = \dfrac{(y/x)^2 - 1}{2(y/x)}$. Let $v = y/x$, so $y' = v + xv'$.</div>
+              <div class="sol-step">$$xv' = \frac{v^2-1}{2v} - v = \frac{-v^2-1}{2v}$$</div>
+              <div class="sol-step">Separate: $\dfrac{2v}{v^2+1}\,dv = -\dfrac{dx}{x}$ $\implies \ln(v^2+1) = -\ln|x|+C_1$.</div>
+              <div class="sol-step">Re-substitute $v = y/x$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$x^2 + y^2 = Kx$</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.5 Bernoulli -->
+      <div class="sub-header" id="s1-5">
+        <h3>1.5 Bernoulli Equation <span class="method-chip chip-teal">$u = y^{1-a}$</span></h3>
+      </div>
+      <div class="problem-stack">
+        <div class="problem-card" data-prob="9">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">9</span>
+              <div class="prob-question">Solve $y' - y = -y^2$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$a=2$. Let $u = y^{-1}$, divide ODE by $y^2$: $-u' - u = -1 \implies u' + u = 1$.</div>
+              <div class="sol-step">Linear ODE. Integrating factor $e^x$: $(e^x u)' = e^x \implies u = 1 + Ce^{-x}$.</div>
+              <div class="sol-step">Re-substitute $u = 1/y$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = \dfrac{1}{1 + Ce^{-x}}$</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- PART 2: 2ND ORDER HOMOGENEOUS -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="part-2" id="part-2">
+      <div class="part-header">
+        <span class="part-badge">Part 2</span>
+        <h2>2nd Order Homogeneous ODEs</h2>
+        <p>Problems 10–16. Characteristic equation, reduction of order, and Euler–Cauchy equations.</p>
+      </div>
+
+      <!-- 2.1 Distinct -->
+      <div class="sub-header" id="s2-1">
+        <h3>2.1 Distinct Real Roots</h3>
+      </div>
+      <div class="problem-stack">
+
+        <div class="problem-card" data-prob="10">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">10</span>
+              <div class="prob-question">Solve $y'' - 5y' + 6y = 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Char. eq.: $\lambda^2 - 5\lambda + 6 = (\lambda-2)(\lambda-3) = 0 \implies \lambda = 2, 3$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1 e^{2x} + C_2 e^{3x}$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="11">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">11</span>
+              <div class="prob-question">Solve $y'' + y' - 2y = 0$, $y(0)=4$, $y'(0)=-5$. <span class="ivp-tag">IVP</span></div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$\lambda^2+\lambda-2 = (\lambda+2)(\lambda-1) = 0 \implies \lambda = 1, -2$.</div>
+              <div class="sol-step">$y = C_1 e^x + C_2 e^{-2x}$. ICs: $C_1+C_2=4$, $C_1-2C_2=-5$. Solve: $C_1=1$, $C_2=3$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = e^x + 3e^{-2x}$</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2.2 Repeated -->
+      <div class="sub-header" id="s2-2">
+        <h3>2.2 Repeated Real Root</h3>
+      </div>
+      <div class="problem-stack">
+        <div class="problem-card" data-prob="12">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">12</span>
+              <div class="prob-question">Solve $y'' + 6y' + 9y = 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$(\lambda+3)^2 = 0 \implies \lambda = -3$ (double root).</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = (C_1 + C_2 x)e^{-3x}$</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.3 Complex -->
+      <div class="sub-header" id="s2-3">
+        <h3>2.3 Complex Roots</h3>
+      </div>
+      <div class="problem-stack">
+        <div class="problem-card" data-prob="13">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">13</span>
+              <div class="prob-question">Solve $y'' + 4y' + 13y = 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$\lambda = \dfrac{-4 \pm \sqrt{16-52}}{2} = -2 \pm 3i$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = e^{-2x}(C_1\cos 3x + C_2\sin 3x)$</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.4 Reduction of Order -->
+      <div class="sub-header" id="s2-4">
+        <h3>2.4 Reduction of Order <span class="method-chip chip-blue">$y_2 = u(x)\,y_1$</span></h3>
+      </div>
+      <div class="problem-stack">
+        <div class="problem-card" data-prob="14">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">14</span>
+              <div class="prob-question">$y_1 = e^x$ solves $y'' - 2y' + y = 0$. Find the general solution.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Let $y_2 = u(x)e^x$. Substituting: $u'' = 0 \implies u = C_1 x + C_2$.</div>
+              <div class="sol-step">Choose $C_1=1, C_2=0$: $y_2 = xe^x$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = (C_1 + C_2 x)e^x$</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.5 Euler-Cauchy -->
+      <div class="sub-header" id="s2-5">
+        <h3>2.5 Euler–Cauchy Equation <span class="method-chip chip-blue">$y = x^m$</span></h3>
+      </div>
+      <div class="problem-stack">
+
+        <div class="problem-card" data-prob="15">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">15</span>
+              <div class="prob-question">Solve $x^2 y'' - 3xy' + 4y = 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Try $y = x^m$: $m(m-1) - 3m + 4 = m^2 - 4m + 4 = (m-2)^2 = 0 \implies m = 2$ (double).</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = x^2(C_1 + C_2\ln x)$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="16">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">16</span>
+              <div class="prob-question">Solve $x^2 y'' + xy' - 4y = 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">Indicial equation: $m^2 - 4 = 0 \implies m = \pm 2$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1 x^2 + C_2 x^{-2}$</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- PART 3: 2ND ORDER NON-HOMOGENEOUS -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="part-3" id="part-3">
+      <div class="part-header">
+        <span class="part-badge">Part 3</span>
+        <h2>2nd Order Non-Homogeneous ODEs</h2>
+        <p>Problems 17–22. General solution: $y = y_h + y_p$.</p>
+      </div>
+
+      <!-- 3.1 Undetermined Coefficients -->
+      <div class="sub-header" id="s3-1">
+        <h3>3.1 Method of Undetermined Coefficients <span class="method-chip chip-orange">Guess &amp; Match</span></h3>
+      </div>
+      <div class="problem-stack">
+
+        <div class="problem-card" data-prob="17">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">17</span>
+              <div class="prob-question">Solve $y'' + 3y' + 2y = 6e^{3x}$. <span class="method-chip chip-orange" style="font-size:var(--text-xs)">Basic Rule</span></div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$y_h$: $\lambda^2+3\lambda+2=0 \implies \lambda=-1,-2$. So $y_h = C_1 e^{-x}+C_2 e^{-2x}$.</div>
+              <div class="sol-step">Try $y_p = Ae^{3x}$: $9A+9A+2A = 6 \implies 20A=6 \implies A = \tfrac{3}{10}$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1 e^{-x} + C_2 e^{-2x} + \tfrac{3}{10}e^{3x}$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="18">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">18</span>
+              <div class="prob-question">Solve $y'' + 3y' + 2y = e^{-x}$. <span class="method-chip chip-orange" style="font-size:var(--text-xs)">Modification Rule</span></div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$y_h = C_1 e^{-x}+C_2 e^{-2x}$. Since $e^{-x} \in y_h$, try $y_p = Axe^{-x}$ (Modification Rule).</div>
+              <div class="sol-step">$y_p' = A(1-x)e^{-x}$, $y_p'' = A(x-2)e^{-x}$. Substituting: $A(x-2)+3A(1-x)+2Ax = 1 \implies A=1$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1 e^{-x} + C_2 e^{-2x} + xe^{-x}$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="19">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">19</span>
+              <div class="prob-question">Solve $y'' - y = x^2$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$y_h = C_1 e^x + C_2 e^{-x}$. Try $y_p = Ax^2+Bx+C$.</div>
+              <div class="sol-step">$2A-(Ax^2+Bx+C) = x^2 \implies A=-1,\ B=0,\ C=-2$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1 e^x + C_2 e^{-x} - x^2 - 2$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="20">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">20</span>
+              <div class="prob-question">Solve $y'' + y = 2x + \cos x$. <span class="method-chip chip-orange" style="font-size:var(--text-xs)">Sum Rule</span></div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$y_h = C_1\cos x + C_2\sin x$.</div>
+              <div class="sol-step">For $r_1 = 2x$: try $y_{p1} = Ax+B \implies A=2, B=0$.</div>
+              <div class="sol-step">For $r_2 = \cos x$: $\cos x \in y_h$, so try $y_{p2} = x(C\cos x + D\sin x)$. Substituting gives $D=\tfrac{1}{2}$, $C=0$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1\cos x + C_2\sin x + 2x + \tfrac{x}{2}\sin x$</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3.2 Variation of Parameters -->
+      <div class="sub-header" id="s3-2">
+        <h3>3.2 Variation of Parameters <span class="method-chip chip-orange">Wronskian Integrals</span></h3>
+      </div>
+      <div class="problem-stack">
+
+        <div class="problem-card" data-prob="21">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">21</span>
+              <div class="prob-question">Solve $y'' + y = \sec x$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$y_1 = \cos x$, $y_2 = \sin x$. Wronskian: $W = 1$.</div>
+              <div class="sol-step">$u' = -\sin x\sec x = -\tan x \implies u = \ln|\cos x|$.</div>
+              <div class="sol-step">$v' = \cos x\sec x = 1 \implies v = x$.</div>
+              <div class="sol-step">$y_p = \cos x\ln|\cos x| + x\sin x$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1\cos x + C_2\sin x + \cos x\ln|\cos x| + x\sin x$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="22">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">22</span>
+              <div class="prob-question">Solve $y'' - 2y' + y = \dfrac{e^x}{x^2}$, $x > 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$y_1 = e^x$, $y_2 = xe^x$. $W = e^{2x}$.</div>
+              <div class="sol-step">$u' = -\dfrac{xe^x \cdot e^x/x^2}{e^{2x}} = -\dfrac{1}{x} \implies u = -\ln x$.</div>
+              <div class="sol-step">$v' = \dfrac{1}{x^2} \implies v = -\dfrac{1}{x}$.</div>
+              <div class="sol-step">$y_p = -e^x\ln x - e^x$ (the $-e^x$ absorbs into $C_1 e^x$).</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = (C_1 + C_2 x)e^x - e^x\ln x$</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- PART 4: HIGHER ORDER -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="part-4" id="part-4">
+      <div class="part-header">
+        <span class="part-badge">Part 4</span>
+        <h2>Higher-Order ODEs (Ch. 3)</h2>
+        <p>Problems 23–27. nth-order extensions of characteristic equation, undetermined coefficients, and variation of parameters.</p>
+      </div>
+
+      <!-- 4.1 nth-order Char Eq -->
+      <div class="sub-header" id="s4-1">
+        <h3>4.1 Characteristic Equation (nth Order)</h3>
+      </div>
+      <div class="problem-stack">
+
+        <div class="problem-card" data-prob="23">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">23</span>
+              <div class="prob-question">Solve $y''' - 6y'' + 11y' - 6y = 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$\lambda^3-6\lambda^2+11\lambda-6 = (\lambda-1)(\lambda-2)(\lambda-3) = 0$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1 e^x + C_2 e^{2x} + C_3 e^{3x}$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="24">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">24</span>
+              <div class="prob-question">Solve $y^{(4)} - y = 0$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$\lambda^4-1 = (\lambda^2-1)(\lambda^2+1) = 0 \implies \lambda = 1, -1, i, -i$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1 e^x + C_2 e^{-x} + C_3\cos x + C_4\sin x$</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card" data-prob="25">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">25</span>
+              <div class="prob-question">Solve $y^{(4)} + 2y'' + y = 0$ (repeated complex roots).</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$(\lambda^2+1)^2 = 0 \implies \lambda = \pm i$ (each a double root).</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = (C_1 + C_2 x)\cos x + (C_3 + C_4 x)\sin x$</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 4.2 nth-order Undetermined -->
+      <div class="sub-header" id="s4-2">
+        <h3>4.2 Undetermined Coefficients (nth Order)</h3>
+      </div>
+      <div class="problem-stack">
+        <div class="problem-card" data-prob="26">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">26</span>
+              <div class="prob-question">Solve $y''' - y'' = 3e^x - 1$.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$\lambda^2(\lambda-1)=0 \implies \lambda=0,0,1$. So $y_h = C_1+C_2 x+C_3 e^x$.</div>
+              <div class="sol-step">For $r=-1$: $\lambda=0$ is double root → try $y_{p1}=Ax^2$. Get $-2A=-1 \implies A=\tfrac{1}{2}$.</div>
+              <div class="sol-step">For $r=3e^x$: $\lambda=1$ is root → try $y_{p2}=Bxe^x$. Get $B=3$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = C_1 + C_2 x + C_3 e^x + \tfrac{x^2}{2} + 3xe^x$</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.3 nth-order VoP -->
+      <div class="sub-header" id="s4-3">
+        <h3>4.3 Variation of Parameters (nth Order)</h3>
+      </div>
+      <div class="problem-stack">
+        <div class="problem-card" data-prob="27">
+          <div class="problem-head" onclick="toggleSol(this)">
+            <div class="problem-head-left">
+              <span class="prob-num">27</span>
+              <div class="prob-question">Solve $y''' - y'' - y' + y = 6e^{2x}$ using variation of parameters.</div>
+            </div>
+            <button class="toggle-btn" aria-label="Show solution"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
+          <div class="solution-panel">
+            <div class="solution-inner">
+              <div class="sol-label">Solution</div>
+              <div class="sol-step">$(\lambda-1)^2(\lambda+1)=0 \implies \lambda=1,1,-1$. Basis: $y_1=e^x$, $y_2=xe^x$, $y_3=e^{-x}$.</div>
+              <div class="sol-step">$W(y_1,y_2,y_3) = -4e^x$. Compute sub-Wronskians $W_1, W_2, W_3$ and integrate $y_p = \sum y_k \int (W_k/W)\,r\,dx$.</div>
+              <div class="answer-box"><span class="answer-label">Answer</span><span class="answer-formula">$y = (C_1 + C_2 x)e^x + C_3 e^{-x} + e^{2x}$</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- QUICK REFERENCE TABLES -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="ref-section" id="ref-roots">
+      <h2>Quick Reference: Characteristic Root Cases</h2>
+      <p>Use this table to identify the correct basis solutions from characteristic equation roots.</p>
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead><tr><th>Root Type</th><th>Form of Roots</th><th>$y_h$ Basis Solutions</th></tr></thead>
+          <tbody>
+            <tr class="row-teal"><td><span class="type-chip chip-teal">Distinct Real</span></td><td>$\lambda_1 \neq \lambda_2$</td><td>$e^{\lambda_1 x},\quad e^{\lambda_2 x}$</td></tr>
+            <tr class="row-blue"><td><span class="type-chip chip-blue">Repeated Real</span></td><td>$\lambda_1 = \lambda_2 = \lambda$</td><td>$e^{\lambda x},\quad xe^{\lambda x}$</td></tr>
+            <tr class="row-orange"><td><span class="type-chip chip-orange">Complex</span></td><td>$\lambda = \alpha \pm \beta i$</td><td>$e^{\alpha x}\cos\beta x,\quad e^{\alpha x}\sin\beta x$</td></tr>
+            <tr class="row-purple"><td><span class="type-chip chip-purple">Repeated Complex</span></td><td>$\alpha \pm \beta i$ (double)</td><td>$e^{\alpha x}\cos\beta x,\ xe^{\alpha x}\cos\beta x,\ e^{\alpha x}\sin\beta x,\ xe^{\alpha x}\sin\beta x$</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="ref-section" id="ref-guess">
+      <h2>Quick Reference: Undetermined Coefficients Guess Table</h2>
+      <p>Choose your trial $y_p$ based on the form of $r(x)$. Apply the Modification Rule if any term overlaps with $y_h$.</p>
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead><tr><th>Form of $r(x)$</th><th>Trial $y_p$</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr class="row-teal"><td>$ke^{\alpha x}$</td><td>$Ce^{\alpha x}$</td><td>Multiply by $x^s$ if $\alpha$ is a root of order $s$</td></tr>
+            <tr class="row-blue"><td>$kx^n$</td><td>$K_n x^n + \cdots + K_1 x + K_0$</td><td>Always include all lower-degree terms</td></tr>
+            <tr class="row-orange"><td>$k\cos\beta x$ or $k\sin\beta x$</td><td>$K\cos\beta x + M\sin\beta x$</td><td>Always guess both, even if only one appears</td></tr>
+            <tr class="row-purple"><td>$ke^{\alpha x}\cos\beta x$ or $ke^{\alpha x}\sin\beta x$</td><td>$e^{\alpha x}(K\cos\beta x + M\sin\beta x)$</td><td>Multiply by $x$ if $\alpha\pm\beta i$ are roots</td></tr>
+            <tr class="row-teal"><td>Sum of above families</td><td>Sum of corresponding trial functions</td><td>Sum Rule — apply Modification Rule to each independently</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  Engineering Mathematics II · ODE Practice Problems · NTU Civil Engineering
+</footer>
+
+<script>
+// ── Dark mode toggle ─────────────────────────────────
+(function(){
+  const btn = document.querySelector('[data-theme-toggle]');
+  const root = document.documentElement;
+  let dark = matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', dark ? 'dark' : 'light');
+  const sun = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  const moon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  btn.innerHTML = dark ? sun : moon;
+  btn.addEventListener('click', () => {
+    dark = !dark;
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    btn.innerHTML = dark ? sun : moon;
+  });
+})();
+
+// ── Problem accordion toggle ─────────────────────────
+let openCount = 0;
+function toggleSol(head) {
+  const card = head.closest('.problem-card');
+  const panel = card.querySelector('.solution-panel');
+  const btn = head.querySelector('.toggle-btn');
+  const isOpen = panel.classList.contains('open');
+  if (isOpen) {
+    panel.classList.remove('open');
+    btn.classList.remove('open');
+    openCount = Math.max(0, openCount - 1);
+  } else {
+    panel.classList.add('open');
+    btn.classList.add('open');
+    openCount++;
+  }
+  document.getElementById('progress-text').textContent = openCount + ' / 27 solved';
+}
+
+// ── Sidebar active link highlighting ─────────────────
+(function() {
+  const sections = document.querySelectorAll('[id^="s"], [id^="ref"]');
+  const links = document.querySelectorAll('.sidebar a');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => obs.observe(s));
+})();
+</script>
+
+</body>
+</html>
