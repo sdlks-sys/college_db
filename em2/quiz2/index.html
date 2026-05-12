@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ch. 3 — Higher Order ODEs | Quiz Reference</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,400&family=DM+Sans:wght@300..600&display=swap" rel="stylesheet">
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+
+<style>
+/* ===== TOKENS ===== */
+:root {
+  --font-display: 'Source Serif 4', Georgia, serif;
+  --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
+
+  --text-xs:   clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
+  --text-sm:   clamp(0.85rem, 0.78rem + 0.3vw, 0.97rem);
+  --text-base: clamp(0.97rem, 0.9rem + 0.3vw, 1.08rem);
+  --text-lg:   clamp(1.1rem, 1rem + 0.55vw, 1.4rem);
+  --text-xl:   clamp(1.4rem, 1.1rem + 1.1vw, 2rem);
+  --text-2xl:  clamp(1.9rem, 1.3rem + 2vw, 3rem);
+
+  --space-1: 0.25rem; --space-2: 0.5rem;  --space-3: 0.75rem;
+  --space-4: 1rem;    --space-5: 1.25rem; --space-6: 1.5rem;
+  --space-8: 2rem;    --space-10: 2.5rem; --space-12: 3rem;
+  --space-16: 4rem;
+
+  --color-bg:              #f7f5f0;
+  --color-surface:         #faf9f5;
+  --color-surface-offset:  #f0ede8;
+  --color-divider:         #dbd8d2;
+  --color-border:          #d0cdc7;
+  --color-text:            #272319;
+  --color-text-muted:      #79776f;
+  --color-primary:         #016970;
+  --color-primary-dim:     #d0ebec;
+  --color-blue:            #2563a8;
+  --color-blue-dim:        #d0e2f7;
+  --color-orange:          #b85c00;
+  --color-orange-dim:      #fde8cc;
+  --color-purple:          #6636b0;
+  --color-purple-dim:      #ead9fb;
+  --color-green:           #2a7a3e;
+  --color-green-dim:       #d2f0db;
+  --color-red:             #b82525;
+  --color-red-dim:         #fcd9d9;
+
+  --radius-sm: 0.3rem; --radius-md: 0.5rem;
+  --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px oklch(0.2 0.01 80 / 0.07);
+  --shadow-md: 0 4px 14px oklch(0.2 0.01 80 / 0.09);
+  --transition: 160ms cubic-bezier(0.16,1,0.3,1);
+}
+
+[data-theme="dark"] {
+  --color-bg:              #161410;
+  --color-surface:         #1c1a16;
+  --color-surface-offset:  #252219;
+  --color-divider:         #302e28;
+  --color-border:          #3a3730;
+  --color-text:            #cdc9c0;
+  --color-text-muted:      #7d7a70;
+  --color-primary:         #4c9aa3;
+  --color-primary-dim:     #0e2f33;
+  --color-blue:            #6baae8;
+  --color-blue-dim:        #102340;
+  --color-orange:          #e8943a;
+  --color-orange-dim:      #3a2000;
+  --color-purple:          #a07de0;
+  --color-purple-dim:      #250e44;
+  --color-green:           #54b872;
+  --color-green-dim:       #0a2c15;
+  --color-red:             #e07070;
+  --color-red-dim:         #350a0a;
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+h1,h2,h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.2; }
+a { color: var(--color-primary); text-decoration: none; }
+p { line-height: 1.7; }
+
+/* ===== HEADER ===== */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: color-mix(in oklch, var(--color-bg) 85%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-divider);
+  padding: var(--space-3) var(--space-8);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.header-left { display: flex; align-items: center; gap: var(--space-3); }
+.logo-svg { flex-shrink: 0; }
+.header-title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+.header-sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.header-right { display: flex; align-items: center; gap: var(--space-4); }
+.nav-links { display: flex; gap: var(--space-4); list-style: none; }
+.nav-links a {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color var(--transition);
+}
+.nav-links a:hover { color: var(--color-primary); }
+.theme-btn {
+  border: none; cursor: pointer; background: transparent;
+  color: var(--color-text-muted); display: flex; align-items: center;
+  padding: var(--space-1); border-radius: var(--radius-md);
+  transition: color var(--transition);
+}
+.theme-btn:hover { color: var(--color-primary); }
+
+/* ===== HERO ===== */
+.hero {
+  max-width: 860px; margin: 0 auto;
+  padding: var(--space-12) var(--space-8) var(--space-8);
+}
+.hero-eyebrow {
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--color-primary);
+  margin-bottom: var(--space-3);
+}
+.hero h1 {
+  font-size: var(--text-2xl); color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+.hero-desc {
+  font-size: var(--text-base); color: var(--color-text-muted);
+  max-width: 620px; margin-bottom: var(--space-6);
+}
+.highlight-box {
+  background: var(--color-primary-dim);
+  border: 1px solid color-mix(in oklch, var(--color-primary) 30%, transparent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+.highlight-box strong { color: var(--color-primary); }
+
+/* ===== MAIN ===== */
+main { max-width: 860px; margin: 0 auto; padding: 0 var(--space-8) var(--space-16); }
+
+/* ===== SECTION ===== */
+.section { margin-bottom: var(--space-12); }
+.section-header {
+  display: flex; align-items: center; gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-divider);
+}
+.section-num {
+  width: 32px; height: 32px; border-radius: var(--radius-md);
+  background: var(--color-primary); color: var(--color-bg);
+  font-size: var(--text-sm); font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.section-header h2 { font-size: var(--text-lg); }
+
+/* ===== TABLES ===== */
+.table-wrap {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+  overflow-x: auto;
+}
+table { border-collapse: collapse; width: 100%; min-width: 560px; }
+thead tr { background: var(--color-text); }
+thead th {
+  color: var(--color-bg);
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-xs); font-weight: 600;
+  letter-spacing: 0.05em; text-align: left;
+}
+tbody td {
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--color-divider);
+  vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background var(--transition); }
+tbody tr:hover { background: var(--color-surface-offset); }
+
+/* Row accent stripes */
+.row-teal   td:first-child { border-left: 3px solid var(--color-primary); }
+.row-blue   td:first-child { border-left: 3px solid var(--color-blue); }
+.row-orange td:first-child { border-left: 3px solid var(--color-orange); }
+.row-purple td:first-child { border-left: 3px solid var(--color-purple); }
+.row-green  td:first-child { border-left: 3px solid var(--color-green); }
+.row-red    td:first-child { border-left: 3px solid var(--color-red); }
+
+/* Chips */
+.chip {
+  display: inline-block;
+  font-size: var(--text-xs); font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+.chip-teal   { background: var(--color-primary-dim); color: var(--color-primary); }
+.chip-blue   { background: var(--color-blue-dim);    color: var(--color-blue); }
+.chip-orange { background: var(--color-orange-dim);  color: var(--color-orange); }
+.chip-purple { background: var(--color-purple-dim);  color: var(--color-purple); }
+.chip-green  { background: var(--color-green-dim);   color: var(--color-green); }
+.chip-red    { background: var(--color-red-dim);     color: var(--color-red); }
+
+/* ===== RULE CARDS ===== */
+.rule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-6); }
+.rule-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+.rule-card-header { display: flex; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-3); }
+.rule-icon {
+  width: 26px; height: 26px; border-radius: var(--radius-full);
+  background: var(--color-primary); color: var(--color-bg);
+  font-size: var(--text-xs); font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.rule-card h3 { font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; }
+.rule-card p, .rule-card .math-line { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-2); }
+.rule-example {
+  margin-top: var(--space-3);
+  background: var(--color-surface-offset);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-xs);
+}
+.rule-example-label {
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--color-primary); margin-bottom: var(--space-1);
+}
+
+/* ===== FORMULA STEPS ===== */
+.steps { display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-6); }
+.formula-step { display: flex; gap: var(--space-4); align-items: flex-start; }
+.step-num {
+  width: 28px; height: 28px; border-radius: var(--radius-full);
+  background: var(--color-primary); color: var(--color-bg);
+  font-size: var(--text-xs); font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.step-body { font-size: var(--text-sm); flex: 1; }
+.step-body strong { color: var(--color-text); }
+
+/* ===== CALLOUT ===== */
+.callout {
+  border-left: 3px solid var(--color-primary);
+  background: var(--color-primary-dim);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-5);
+}
+.callout-orange {
+  border-left-color: var(--color-orange);
+  background: var(--color-orange-dim);
+}
+.callout-purple {
+  border-left-color: var(--color-purple);
+  background: var(--color-purple-dim);
+}
+.callout-blue {
+  border-left-color: var(--color-blue);
+  background: var(--color-blue-dim);
+}
+
+/* ===== DISPLAY MATH BLOCK ===== */
+.math-block {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-6);
+  margin: var(--space-4) 0;
+  overflow-x: auto;
+  font-size: var(--text-sm);
+}
+
+/* ===== THREE-COL CASES ===== */
+.cases-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-6); }
+.case-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+.case-card .case-label {
+  font-size: var(--text-xs); font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; margin-bottom: var(--space-2);
+}
+.case-card .case-condition { font-size: var(--text-xs); color: var(--color-text-muted); margin-bottom: var(--space-3); }
+.case-card .case-solution { font-size: var(--text-sm); }
+
+/* ===== TWO-COL PROSE ===== */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-bottom: var(--space-6); }
+
+/* ===== FOOTER ===== */
+footer {
+  border-top: 1px solid var(--color-divider);
+  padding: var(--space-8);
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  header { padding: var(--space-3) var(--space-4); }
+  .nav-links { display: none; }
+  .hero, main { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .rule-grid { grid-template-columns: 1fr; }
+  .cases-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  table td, table th { padding: var(--space-3); font-size: var(--text-xs); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" width="36" height="36" aria-hidden="true">
+      <rect width="36" height="36" rx="8" fill="var(--color-primary)"/>
+      <text x="5" y="25" font-family="Georgia, serif" font-size="19" font-weight="700" fill="white">∂</text>
+      <text x="21" y="30" font-family="Georgia, serif" font-size="12" font-weight="400" fill="white" opacity="0.7">ⁿ</text>
+      <circle cx="29" cy="9" r="4" fill="white" opacity="0.25"/>
+      <circle cx="29" cy="9" r="2" fill="white" opacity="0.7"/>
+    </svg>
+    <div>
+      <div class="header-title">Higher Order ODEs</div>
+      <div class="header-sub">Engineering Mathematics — Chapter 3</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <ul class="nav-links">
+      <li><a href="#ode-table">ODE Table</a></li>
+      <li><a href="#sec31">§3.1 yc</a></li>
+      <li><a href="#sec32">§3.2 yp</a></li>
+      <li><a href="#sec33">§3.3 C-E</a></li>
+      <li><a href="#sec34">§3.4 VoP</a></li>
+      <li><a href="#sec35">§3.5 RO</a></li>
+    </ul>
+    <button class="theme-btn" data-theme-toggle aria-label="Toggle dark mode"></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Quiz Preparation · Prof. Fushu Jeng · NTU Civil Eng.</div>
+  <h1>Higher Order ODEs</h1>
+  <p class="hero-desc">A complete reference for Chapter 3: homogeneous & non-homogeneous linear ODEs of order $n \geq 2$, covering four solution methods alongside the master ODE classification table.</p>
+  <div class="highlight-box">
+    <strong>General Form:</strong>
+    $y^{(n)} + a_1 y^{(n-1)} + \cdots + a_{n-1}y' + a_n y = f(x)$
+    &nbsp;&nbsp;with general solution&nbsp;&nbsp;$y = y_c + y_p$
+  </div>
+</section>
+
+<!-- MAIN -->
+<main>
+
+<!-- ===================== ODE CLASSIFICATION TABLE ===================== -->
+<section class="section" id="ode-table">
+  <div class="section-header">
+    <div class="section-num" style="background:var(--color-text);">⊞</div>
+    <h2>Complete ODE Classification Table</h2>
+  </div>
+  <p style="color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--space-5);">Comprehensive map of differential equation types — from 1st-order methods through higher-order, power-series, and PDE approaches. Rows highlighted in teal indicate the Chapter 3 scope.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Name</th>
+          <th>Equation</th>
+          <th>Range</th>
+          <th>Solution Form</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 1st order -->
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">1st Order</span></td>
+          <td>Separable</td>
+          <td>$\dfrac{dy}{dx} = F(x)G(y)$</td>
+          <td>—</td>
+          <td>$\int \frac{dy}{G(y)} = \int F(x)\,dx$</td>
+          <td>Can be nonlinear</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">1st Order</span></td>
+          <td>Homogeneous</td>
+          <td>$\dfrac{dy}{dx} = g(y/x)$</td>
+          <td>—</td>
+          <td>Substitution $v = y/x$</td>
+          <td>Can be nonlinear</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">1st Order</span></td>
+          <td>Nearly Homogeneous</td>
+          <td>$\dfrac{dy}{dx} = \dfrac{ax+by+c}{px+qy+r}$</td>
+          <td>—</td>
+          <td>Shift origin to intersection</td>
+          <td>Can be nonlinear</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">1st Order</span></td>
+          <td>Exact</td>
+          <td>$M\,dx + N\,dy = 0,\ \dfrac{\partial M}{\partial y}=\dfrac{\partial N}{\partial x}$</td>
+          <td>—</td>
+          <td>$F(x,y)=c$</td>
+          <td>Can be nonlinear</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">1st Order</span></td>
+          <td>Linear</td>
+          <td>$y' + P(x)y = Q(x)$</td>
+          <td>—</td>
+          <td>Integrating factor $\mu = e^{\int P\,dx}$</td>
+          <td>—</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">1st Order</span></td>
+          <td>Bernoulli</td>
+          <td>$y' + P(x)y = Q(x)y^n$</td>
+          <td>—</td>
+          <td>$u = y^{1-n}$</td>
+          <td>Nonlinear</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">1st Order</span></td>
+          <td>Riccati</td>
+          <td>$y' + P(x)y + R(x)y^2 = Q(x)$</td>
+          <td>—</td>
+          <td>Linearise with known particular soln.</td>
+          <td>Nonlinear</td>
+        </tr>
+        <!-- Higher order homogeneous -->
+        <tr class="row-teal">
+          <td><span class="chip chip-teal">Higher Order Homo.</span></td>
+          <td>Constant Coef.</td>
+          <td>$y^{(n)}+a_1 y^{(n-1)}+\cdots+a_n y = 0$</td>
+          <td>—</td>
+          <td>$y_c = \sum c_k e^{\lambda_k x}$ (char. eqn.)</td>
+          <td>§3.1</td>
+        </tr>
+        <tr class="row-teal">
+          <td><span class="chip chip-teal">Higher Order Homo.</span></td>
+          <td>Cauchy-Euler</td>
+          <td>$x^2 y'' + a_1 x y' + a_2 y = 0,\ x>0$</td>
+          <td>$x>0$</td>
+          <td>$y_c = Ax^m$ (indicial eqn.)</td>
+          <td>§3.3</td>
+        </tr>
+        <tr class="row-teal">
+          <td><span class="chip chip-teal">Higher Order Homo.</span></td>
+          <td>Reduction of Order</td>
+          <td>$y'' + p(x)y' + q(x)y = 0$</td>
+          <td>—</td>
+          <td>$y_2 = u(x)y_1(x)$</td>
+          <td>§3.5</td>
+        </tr>
+        <tr class="row-teal">
+          <td><span class="chip chip-teal">Higher Order Homo.</span></td>
+          <td>Reduction to Normal Form</td>
+          <td>$y'' + p(x)y' + q(x)y = 0$</td>
+          <td>—</td>
+          <td>$y = u(x)v(x)$ → $u'' + f(x)u = 0$</td>
+          <td>—</td>
+        </tr>
+        <!-- Non-homogeneous -->
+        <tr class="row-orange">
+          <td><span class="chip chip-orange">Higher Order Non-Homo.</span></td>
+          <td>Undetermined Coef.</td>
+          <td>$y'' + ay' + by = f(x)$</td>
+          <td>—</td>
+          <td>Guess $y_p \sim f(x)$ form</td>
+          <td>§3.2</td>
+        </tr>
+        <tr class="row-orange">
+          <td><span class="chip chip-orange">Higher Order Non-Homo.</span></td>
+          <td>Variation of Parameters</td>
+          <td>$y'' + p(x)y' + q(x)y = f(x)$</td>
+          <td>—</td>
+          <td>$y_p = u(x)y_1 + v(x)y_2$</td>
+          <td>§3.4</td>
+        </tr>
+        <tr class="row-orange">
+          <td><span class="chip chip-orange">Higher Order Non-Homo.</span></td>
+          <td>BVP / Green's Function</td>
+          <td>$y'' + p(x)y' + q(x)y = f(x)$</td>
+          <td>$a\le x\le b$</td>
+          <td>$y_p = \int_a^b G(x,t)f(t)\,dt$</td>
+          <td>§3.4</td>
+        </tr>
+        <!-- System / Power series -->
+        <tr class="row-purple">
+          <td><span class="chip chip-purple">System 1st Order</span></td>
+          <td>System of ODEs</td>
+          <td>$\mathbf{y}' = A\mathbf{y}$</td>
+          <td>—</td>
+          <td>Diagonalisation, matrix exponential $e^{At}$</td>
+          <td>Ch. 4</td>
+        </tr>
+        <tr class="row-green">
+          <td><span class="chip chip-green">Power Series 2nd Order</span></td>
+          <td>Ordinary Point</td>
+          <td>$a(x)y'' + b(x)y' + c(x)y = 0$</td>
+          <td>—</td>
+          <td>$y = \sum_{n=0}^\infty a_n x^n$</td>
+          <td>Regular at $x=0$</td>
+        </tr>
+        <tr class="row-green">
+          <td><span class="chip chip-green">Power Series 2nd Order</span></td>
+          <td>Legendre</td>
+          <td>$(1-x^2)y'' - 2xy' + \alpha(\alpha+1)y = 0$</td>
+          <td>$-1<x<1$</td>
+          <td>$P_n(x)$</td>
+          <td>Regular singular at $x=\pm1$</td>
+        </tr>
+        <tr class="row-green">
+          <td><span class="chip chip-green">Power Series 2nd Order</span></td>
+          <td>Chebyshev</td>
+          <td>$(1-x^2)y'' - xy' + \alpha^2 y = 0$</td>
+          <td>$-1<x<1$</td>
+          <td>$T_n(x)$</td>
+          <td>Regular singular at $x=\pm1$</td>
+        </tr>
+        <tr class="row-green">
+          <td><span class="chip chip-green">Power Series 2nd Order</span></td>
+          <td>Bessel (1st kind)</td>
+          <td>$x^2y'' + xy' + (x^2-\nu^2)y = 0$</td>
+          <td>$x\ge0$</td>
+          <td>$J_\nu(x)$</td>
+          <td>Regular singular at $x=0$</td>
+        </tr>
+        <tr class="row-green">
+          <td><span class="chip chip-green">Power Series 2nd Order</span></td>
+          <td>Modified Bessel</td>
+          <td>$x^2y'' + xy' - (x^2+\nu^2)y = 0$</td>
+          <td>$x\ge0$</td>
+          <td>$I_\nu(x),\,K_\nu(x)$</td>
+          <td>Regular singular at $x=0$</td>
+        </tr>
+        <tr class="row-green">
+          <td><span class="chip chip-green">Power Series BVP</span></td>
+          <td>Sturm-Liouville</td>
+          <td>$[p(x)y']' + [q(x)+\lambda r(x)]y = 0$</td>
+          <td>$a\le x\le b$</td>
+          <td>Eigenvalue problem</td>
+          <td>Ch. 7</td>
+        </tr>
+        <!-- PDE -->
+        <tr class="row-red">
+          <td><span class="chip chip-red">PDE 1st Order</span></td>
+          <td>Quasilinear</td>
+          <td>$p\,u_x + q\,u_y = f$</td>
+          <td>—</td>
+          <td>Method of characteristics</td>
+          <td>Ch. 9</td>
+        </tr>
+        <tr class="row-red">
+          <td><span class="chip chip-red">PDE 2nd Order</span></td>
+          <td>Hyperbolic</td>
+          <td>$u_{tt} = c^2 u_{xx}$ (Wave)</td>
+          <td>—</td>
+          <td>d'Alembert; separation of variables</td>
+          <td>Ch. 9</td>
+        </tr>
+        <tr class="row-red">
+          <td><span class="chip chip-red">PDE 2nd Order</span></td>
+          <td>Parabolic</td>
+          <td>$u_t = c^2 u_{xx}$ (Heat)</td>
+          <td>$t>0$</td>
+          <td>Fourier series / transform</td>
+          <td>Ch. 9</td>
+        </tr>
+        <tr class="row-red">
+          <td><span class="chip chip-red">PDE 2nd Order</span></td>
+          <td>Elliptic</td>
+          <td>$u_{xx} + u_{yy} = 0$ (Laplace)</td>
+          <td>—</td>
+          <td>Separation of variables</td>
+          <td>Ch. 9</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== SECTION 3.1 ===================== -->
+<section class="section" id="sec31">
+  <div class="section-header">
+    <div class="section-num">3.1</div>
+    <h2>Homogeneous Linear Constant-Coefficient ODE</h2>
+  </div>
+
+  <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">The homogeneous $n$th-order ODE with real constant coefficients $a_1, \ldots, a_n$:</p>
+
+  <div class="math-block">
+    $$y^{(n)} + a_1 y^{(n-1)} + a_2 y^{(n-2)} + \cdots + a_{n-1} y' + a_n y = 0$$
+  </div>
+
+  <div class="callout">
+    <strong>Linear Independence — Wronskian Test.</strong> Solutions $y_1,\ldots,y_n$ are linearly independent on $[a,b]$ if and only if their Wronskian is nonzero:
+    $$W(y_1,\ldots,y_n) = \det\begin{pmatrix} y_1 & y_2 & \cdots & y_n \\ y_1' & y_2' & \cdots & y_n' \\ \vdots & & & \vdots \\ y_1^{(n-1)} & y_2^{(n-1)} & \cdots & y_n^{(n-1)}\end{pmatrix} \neq 0$$
+    Then the general complementary solution is $y_c = c_1 y_1 + c_2 y_2 + \cdots + c_n y_n$.
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);">Characteristic Equation</h3>
+  <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-3);">Substituting $y = Ce^{\lambda x}$ yields the <em>characteristic (indicial) equation</em>:</p>
+  <div class="math-block">
+    $$\lambda^n + a_1\lambda^{n-1} + a_2\lambda^{n-2} + \cdots + a_{n-1}\lambda + a_n = 0$$
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);margin-top:var(--space-6);">Rules for Constructing $y_c$</h3>
+
+  <div class="rule-grid">
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-icon">1</div>
+        <h3>Single Real Root $\lambda = \alpha$</h3>
+      </div>
+      <p>Contributes one solution term.</p>
+      <div class="rule-example">
+        <div class="rule-example-label">Contribution</div>
+        $A e^{\alpha x}$
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-icon">2</div>
+        <h3>Repeated Real Root $\lambda = \alpha$ ($r$ times)</h3>
+      </div>
+      <p>Contributes $r$ linearly independent solutions.</p>
+      <div class="rule-example">
+        <div class="rule-example-label">Contribution</div>
+        $e^{\alpha x},\; xe^{\alpha x},\; x^2 e^{\alpha x},\;\ldots,\; x^{r-1}e^{\alpha x}$
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-icon">3</div>
+        <h3>Complex Conjugate Pair $\lambda = \alpha \pm i\beta$</h3>
+      </div>
+      <p>Single occurrence: contributes two real solutions.</p>
+      <div class="rule-example">
+        <div class="rule-example-label">Contribution</div>
+        $e^{\alpha x}\cos\beta x,\;\; e^{\alpha x}\sin\beta x$
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-icon">4</div>
+        <h3>Complex Pair $\lambda = \alpha \pm i\beta$ Repeated $s$ Times</h3>
+      </div>
+      <p>Contributes $2s$ linearly independent solutions.</p>
+      <div class="rule-example">
+        <div class="rule-example-label">Contribution (each $k = 0,\ldots,s-1$)</div>
+        $x^k e^{\alpha x}\cos\beta x,\;\; x^k e^{\alpha x}\sin\beta x$
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-orange">
+    <strong>Rule 5 (Assembly).</strong> The general solution $y_c$ is an arbitrary linear combination of <em>all</em> terms produced by Rules 1–4. The number of arbitrary constants always equals the degree $n$ of the characteristic polynomial.
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-3);margin-top:var(--space-5);">Quick Reference: $y_c$ by Root Type</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Root pattern</th><th>$y_c$ contributions</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-teal"><td>$\lambda = 1, -2$</td><td>$c_1 e^x + c_2 e^{-2x}$</td></tr>
+        <tr class="row-teal"><td>$\lambda = 0$ (one real)</td><td>$c_1$</td></tr>
+        <tr class="row-teal"><td>$\lambda = 0, 0, 0$ (triple)</td><td>$c_1 + c_2 x + c_3 x^2$</td></tr>
+        <tr class="row-orange"><td>$\lambda = 1 \pm 2i$</td><td>$c_1 e^x\cos 2x + c_2 e^x\sin 2x$</td></tr>
+        <tr class="row-orange"><td>$\lambda = 1\pm 2i$ (double)</td><td>$e^x\!\bigl[(c_1+c_3 x)\cos 2x + (c_2+c_4 x)\sin 2x\bigr]$</td></tr>
+        <tr class="row-blue"><td>$\lambda = 1, 1$</td><td>$c_1 e^x + c_2 x e^x$</td></tr>
+        <tr class="row-blue"><td>$\lambda = 1, 1, 1$</td><td>$c_1 e^x + c_2 x e^x + c_3 x^2 e^x$</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== SECTION 3.2 ===================== -->
+<section class="section" id="sec32">
+  <div class="section-header">
+    <div class="section-num">3.2</div>
+    <h2>Method of Undetermined Coefficients (Finding $y_p$)</h2>
+  </div>
+
+  <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">For the non-homogeneous ODE $y^{(n)} + a_1 y^{(n-1)} + \cdots + a_n y = f(x)$, guess the form of $y_p$ from $f(x)$, then determine the coefficients by substitution.</p>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);">Rules for Guessing $y_p$ — No Overlap with $y_c$</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>$f(x)$ type</th><th>Guess for $y_p(x)$</th><th>Condition</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-teal">
+          <td>$k$ (constant)</td>
+          <td>$A$</td>
+          <td>$\lambda=0$ not a root</td>
+        </tr>
+        <tr class="row-teal">
+          <td>$a_0 + a_1 x + \cdots + a_m x^m$</td>
+          <td>$A_0 x^m + A_1 x^{m-1} + \cdots + A_m$</td>
+          <td>$y$ term present in DE</td>
+        </tr>
+        <tr class="row-teal">
+          <td>$x^m$ (lowest deriv. is order $s$)</td>
+          <td>$x^s(A_0 x^m + \cdots + A_m)$</td>
+          <td>$\lambda=0$ is root of order $s$</td>
+        </tr>
+        <tr class="row-blue">
+          <td>$Pe^{ax}$</td>
+          <td>$Be^{ax}$</td>
+          <td>$e^{ax} \notin y_c$</td>
+        </tr>
+        <tr class="row-orange">
+          <td>$\cos px$ or $\sin px$</td>
+          <td>$P\cos px + Q\sin px$</td>
+          <td>$\cos px, \sin px \notin y_c$</td>
+        </tr>
+        <tr class="row-purple">
+          <td>$e^{ax}\cos qx$ or $e^{ax}\sin qx$</td>
+          <td>$e^{ax}(R\cos qx + S\sin qx)$</td>
+          <td>not in $y_c$</td>
+        </tr>
+        <tr class="row-green">
+          <td>$x^n e^{ax}$</td>
+          <td>$e^{ax}(A_n x^n + \cdots + A_0)$</td>
+          <td>not in $y_c$</td>
+        </tr>
+        <tr class="row-green">
+          <td>$x^n\cos px$ or $x^n\sin px$</td>
+          <td>$(A_n x^n+\cdots+A_0)\cos px + (B_n x^n+\cdots+B_0)\sin px$</td>
+          <td>not in $y_c$</td>
+        </tr>
+        <tr class="row-red">
+          <td>$x^n e^{ax}\cos bx$ or $x^n e^{ax}\sin bx$</td>
+          <td>$e^{ax}\!\bigl[(A_nx^n+\cdots+A_0)\cos bx + (B_nx^n+\cdots+B_0)\sin bx\bigr]$</td>
+          <td>not in $y_c$</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);margin-top:var(--space-5);">Modification Rule — When $f(x)$ Overlaps with $y_c$</h3>
+
+  <div class="callout callout-orange">
+    <strong>Overlap / Repetition Rule.</strong> If the natural guess for $y_p$ duplicates a term already present in $y_c$, multiply the entire guess by $x^m$ where $m$ is the smallest positive integer that eliminates the duplication.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>$y_c$ contains…</th><th>$f(x)$</th><th>Modified $y_p$ guess</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-blue">
+          <td>$c_1 e^x$</td>
+          <td>$2e^x$</td>
+          <td>$Axe^x$</td>
+        </tr>
+        <tr class="row-blue">
+          <td>$c_1 e^x + c_2 xe^x$</td>
+          <td>$2e^x$</td>
+          <td>$Ax^2 e^x$</td>
+        </tr>
+        <tr class="row-blue">
+          <td>$c_1 e^x + c_2 xe^x + c_3 x^2 e^x$</td>
+          <td>$2e^x$</td>
+          <td>$Ax^3 e^x$</td>
+        </tr>
+        <tr class="row-orange">
+          <td>$c_1\cos 2x + c_2\sin 2x$</td>
+          <td>$4\cos 2x$</td>
+          <td>$x(A\cos 2x + B\sin 2x)$</td>
+        </tr>
+        <tr class="row-orange">
+          <td>$c_1\cos 2x + c_2\sin 2x + c_3 x\cos 2x + c_4 x\sin 2x$</td>
+          <td>$4\cos 2x$</td>
+          <td>$x^2(A\cos 2x + B\sin 2x)$</td>
+        </tr>
+        <tr class="row-teal">
+          <td>$c_1$</td>
+          <td>$2 + x^2$</td>
+          <td>$x(A + Bx + Cx^2)$</td>
+        </tr>
+        <tr class="row-teal">
+          <td>$c_1 + c_2 x + c_3 x^2$</td>
+          <td>$2 + x^2$</td>
+          <td>$x^3(A + Bx + Cx^2)$</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-blue">
+    <strong>Method Limitation.</strong> Undetermined coefficients works only when $f(x)$ is of the above recognisable types (exponentials, polynomials, sines/cosines and their products). For general $f(x)$, use <em>Variation of Parameters</em> (§3.4).
+  </div>
+</section>
+
+<!-- ===================== SECTION 3.3 ===================== -->
+<section class="section" id="sec33">
+  <div class="section-header">
+    <div class="section-num">3.3</div>
+    <h2>Cauchy-Euler Equation</h2>
+  </div>
+
+  <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">Variable-coefficient ODE where coefficients are powers of $x$:</p>
+  <div class="math-block">
+    $$x^2 y'' + Axy' + By = 0, \qquad x > 0$$
+  </div>
+
+  <div class="callout">
+    <strong>Solution Ansatz.</strong> Try $y(x) = x^m$. Substituting gives the <em>indicial equation</em>:
+    $$m(m-1) + Am + B = 0 \quad\Longrightarrow\quad m^2 + (A-1)m + B = 0$$
+    Solve for $m$ using the quadratic formula. Three cases follow:
+  </div>
+
+  <div class="cases-grid">
+    <div class="case-card">
+      <div class="case-label" style="color:var(--color-primary);">Case 1</div>
+      <div class="case-condition">Two distinct real roots $m = \alpha,\,\beta$</div>
+      <div class="case-solution">$$y_c = C_1 x^\alpha + C_2 x^\beta$$</div>
+    </div>
+    <div class="case-card">
+      <div class="case-label" style="color:var(--color-orange);">Case 2</div>
+      <div class="case-condition">Repeated real root $m = \mu$ (double)</div>
+      <div class="case-solution">$$y_c = C_1 x^\mu + C_2 x^\mu\ln x$$</div>
+    </div>
+    <div class="case-card">
+      <div class="case-label" style="color:var(--color-purple);">Case 3</div>
+      <div class="case-condition">Complex conjugate roots $m = \alpha \pm i\beta$</div>
+      <div class="case-solution">$$y_c = C_1 x^\alpha\cos(\beta\ln x) + C_2 x^\alpha\sin(\beta\ln x)$$</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);">Alternative: Transform to Constant-Coefficient ODE</h3>
+
+  <div class="callout callout-purple">
+    <strong>Substitution $t = \ln x$</strong> (i.e., $x = e^t$) converts the Cauchy-Euler equation to a constant-coefficient ODE. This approach is often faster for higher-order Cauchy-Euler equations.
+  </div>
+
+  <div class="steps">
+    <div class="formula-step">
+      <div class="step-num">1</div>
+      <div class="step-body"><strong>Let $t = \ln x$, so $x = e^t$.</strong> Define $Y(t) = y(e^t)$.</div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">2</div>
+      <div class="step-body"><strong>Chain rule gives:</strong> $xy' = Y'(t)$ and $x^2 y'' = Y''(t) - Y'(t)$.</div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">3</div>
+      <div class="step-body"><strong>Substitute to obtain:</strong> $Y'' + (A-1)Y' + BY = 0$ — a constant-coefficient ODE.</div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">4</div>
+      <div class="step-body"><strong>Solve $Y(t)$</strong> using §3.1 methods, then substitute back $t = \ln x$ to get $y(x) = Y(\ln x)$.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-orange">
+    <strong>For $x &lt; 0$:</strong> replace $x$ with $|x|$ and let $t = \ln|x|$.
+  </div>
+</section>
+
+<!-- ===================== SECTION 3.4 ===================== -->
+<section class="section" id="sec34">
+  <div class="section-header">
+    <div class="section-num">3.4</div>
+    <h2>Variation of Parameters &amp; Green's Function</h2>
+  </div>
+
+  <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">Applies to any linear non-homogeneous ODE regardless of whether $f(x)$ is of a recognisable type. Introduced by Euler, completed by Lagrange.</p>
+  <div class="math-block">
+    $$y'' + p(x)y' + q(x)y = f(x), \qquad \text{with } y_c = c_1 y_1 + c_2 y_2$$
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);">Process (2nd Order)</h3>
+
+  <div class="steps">
+    <div class="formula-step">
+      <div class="step-num">1</div>
+      <div class="step-body"><strong>Find $y_c$.</strong> Solve the homogeneous equation to get two linearly independent solutions $y_1$, $y_2$.</div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">2</div>
+      <div class="step-body"><strong>Compute the Wronskian:</strong>
+        $W = \begin{vmatrix} y_1 & y_2 \\ y_1' & y_2' \end{vmatrix} = y_1 y_2' - y_2 y_1'$
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">3</div>
+      <div class="step-body"><strong>Assert $y_p = u(x)y_1 + v(x)y_2$</strong> and impose $u'y_1 + v'y_2 = 0$ to obtain:
+        $$u' = \frac{-y_2 f}{W}, \qquad v' = \frac{y_1 f}{W}$$
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">4</div>
+      <div class="step-body"><strong>Integrate $u'$ and $v'$</strong> to get $u(x)$ and $v(x)$, then assemble $y_p = uy_1 + vy_2$.</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);margin-top:var(--space-5);">Higher-Order Generalisation ($n$th order)</h3>
+
+  <div class="callout callout-blue">
+    For $y^{(n)} + p_{n-1}y^{(n-1)} + \cdots + p_0 y = r(x)$ with basis $\{y_1,\ldots,y_n\}$:
+    $$y_p = \sum_{k=1}^n y_k \int \frac{W_k(x)}{W(x)}\,r(x)\,dx$$
+    where $W_j$ is obtained from the Wronskian $W$ by replacing its $j$th column with $(0,0,\ldots,0,1)^T$.
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);margin-top:var(--space-5);">Green's Function (BVP)</h3>
+
+  <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-4);">For the boundary value problem $y'' + a(x)y' + b(x)y = f(x)$ on $[a,b]$ with homogeneous BCs, the particular solution is expressed as an integral operator:</p>
+
+  <div class="math-block">
+    $$y_p(x) = \int_a^b G(x,t)\,f(t)\,dt$$
+  </div>
+  <p style="font-size:var(--text-sm);margin-bottom:var(--space-3);">where the <strong>Green's function</strong> is defined piecewise:</p>
+  <div class="math-block">
+    $$G(x,t) = \begin{cases} \dfrac{y_1(t)\,y_2(x)}{W(t)}, & a \le t \le x \\[8pt] \dfrac{y_1(x)\,y_2(t)}{W(t)}, & x \le t \le b \end{cases}$$
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);margin-top:var(--space-5);">Properties of the Green's Function</h3>
+
+  <div class="rule-grid">
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-icon" style="background:var(--color-blue)">①</div>
+        <h3>Satisfies homogeneous DE</h3>
+      </div>
+      <p>$G(x,t)$ satisfies the homogeneous equation in $a \le x &lt; t$ and $t &lt; x \le b$ separately.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-icon" style="background:var(--color-blue)">②</div>
+        <h3>Continuity of $G$</h3>
+      </div>
+      <p>$G(x,t)$ is a continuous function of $x$ across the entire interval $[a,b]$.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-icon" style="background:var(--color-blue)">③</div>
+        <h3>Satisfies homogeneous BCs</h3>
+      </div>
+      <p>$G(x,t)$ satisfies the same homogeneous boundary conditions as imposed on $y$.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-header">
+        <div class="rule-icon" style="background:var(--color-blue)">④</div>
+        <h3>Jump discontinuity in $G_x$</h3>
+      </div>
+      <p>The derivative $G_x(x,t)$ is discontinuous across $x = t$ with:</p>
+      <div class="rule-example">
+        <div class="rule-example-label">Jump condition</div>
+        $G_x(x,x^+) - G_x(x,x^-) = -1$
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-purple">
+    <strong>IVP Integral Form (Leibniz).</strong> The solution of $y'' + a(x)y' + b(x)y = f(x)$ with $y(a) = y'(a) = 0$ is:
+    $$y(x) = \int_a^x \frac{y_1(t)y_2(x) - y_1(x)y_2(t)}{W(t)}\,f(t)\,dt$$
+    Differentiation via Leibniz's rule confirms the ICs are satisfied automatically.
+  </div>
+</section>
+
+<!-- ===================== SECTION 3.5 ===================== -->
+<section class="section" id="sec35">
+  <div class="section-header">
+    <div class="section-num">3.5</div>
+    <h2>Reduction of Order (Finding $y_2$ from $y_1$)</h2>
+  </div>
+
+  <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">Given one known solution $y_1(x)$ of the homogeneous equation, a second linearly independent solution $y_2$ can be found by the ansatz $y_2 = u(x)y_1(x)$.</p>
+
+  <div class="math-block">
+    $$y'' + p(x)y' + q(x)y = 0, \qquad y_1 \text{ is known}$$
+  </div>
+
+  <div class="callout">
+    <strong>Key Formula.</strong>
+    $$u(x) = \int \frac{e^{-\int p(x)\,dx}}{y_1^2(x)}\,dx \qquad\Longrightarrow\qquad y_2 = u(x)\,y_1(x)$$
+    The general solution is then $y = c_1 y_1 + c_2 y_2 = c_1 y_1 + c_2\,u(x)y_1$.
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);">Derivation Steps</h3>
+
+  <div class="steps">
+    <div class="formula-step">
+      <div class="step-num">1</div>
+      <div class="step-body"><strong>Set $y_2 = u(x)y_1$.</strong> Differentiate:
+        $y_2' = u'y_1 + uy_1'$, $\quad y_2'' = u''y_1 + 2u'y_1' + uy_1''$
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">2</div>
+      <div class="step-body"><strong>Substitute into the DE.</strong> Since $y_1$ solves the homogeneous equation, the $u$ terms cancel, leaving:
+        $$y_1 u'' + 2(y_1' + py_1)u' = 0 \qquad \text{(no }u\text{ term)}$$
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">3</div>
+      <div class="step-body"><strong>Reduce order.</strong> Let $v = u'$: the equation $y_1 v' + 2(y_1' + py_1)v = 0$ is separable. Solving gives:
+        $$v = u' = \frac{C}{y_1^2}\,e^{-\int p\,dx}$$
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">4</div>
+      <div class="step-body"><strong>Integrate.</strong> $u = \int v\,dx$, then $y_2 = u\,y_1$.</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:var(--text-base);margin-bottom:var(--space-4);margin-top:var(--space-5);">Worked Example</h3>
+
+  <div class="callout callout-orange">
+    <strong>Example.</strong> Solve $y'' + 6y' + 9y = 0$ given $y_1 = e^{-3x}$.<br><br>
+    Here $p(x) = 6$, so $e^{-\int 6\,dx} = e^{-6x}$ and $y_1^2 = e^{-6x}$.<br><br>
+    $u = \displaystyle\int \frac{e^{-6x}}{e^{-6x}}\,dx = \int 1\,dx = x$ (ignoring the constant).<br><br>
+    Therefore $y_2 = x\,e^{-3x}$, and the general solution is:
+    $$y = c_1 e^{-3x} + c_2\,x e^{-3x} = (c_1 + c_2 x)e^{-3x}$$
+    This matches the repeated-root Rule 2 result with characteristic root $\lambda = -3$ (double).
+  </div>
+</section>
+
+<!-- ===================== CHAPTER SUMMARY ===================== -->
+<section class="section" id="summary">
+  <div class="section-header">
+    <div class="section-num" style="background:var(--color-text);">✓</div>
+    <h2>Chapter 3 — Method Selection Guide</h2>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Situation</th><th>Method</th><th>Key Formula / Procedure</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-teal">
+          <td>Homogeneous, constant coef.</td>
+          <td>Characteristic Equation (§3.1)</td>
+          <td>$\lambda^n + a_1\lambda^{n-1}+\cdots = 0$ → Rules 1–4</td>
+        </tr>
+        <tr class="row-orange">
+          <td>Non-homo., $f(x)$ is exp/poly/trig type</td>
+          <td>Undetermined Coef. (§3.2)</td>
+          <td>Guess $y_p$, check overlap, substitute and equate</td>
+        </tr>
+        <tr class="row-blue">
+          <td>Euler-type: coef. are powers of $x$</td>
+          <td>Cauchy-Euler (§3.3)</td>
+          <td>$y = x^m$ or substitute $t=\ln x$</td>
+        </tr>
+        <tr class="row-purple">
+          <td>Non-homo., any $f(x)$; variable coef.</td>
+          <td>Variation of Parameters (§3.4)</td>
+          <td>$u' = -y_2 f/W$, $v' = y_1 f/W$; integrate</td>
+        </tr>
+        <tr class="row-purple">
+          <td>Boundary value problem</td>
+          <td>Green's Function (§3.4)</td>
+          <td>$y_p = \int G(x,t)f(t)\,dt$</td>
+        </tr>
+        <tr class="row-green">
+          <td>One solution $y_1$ known; need $y_2$</td>
+          <td>Reduction of Order (§3.5)</td>
+          <td>$u = \int e^{-\int p\,dx}/y_1^2\,dx$; $y_2 = uy_1$</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <p>Engineering Mathematics II &amp; III &nbsp;·&nbsp; Chapter 3: Higher Order ODEs &nbsp;·&nbsp; Prof. Fushu Jeng, Dept. of Civil Engineering, National Taiwan University</p>
+</footer>
+
+<!-- DARK MODE TOGGLE JS -->
+<script>
+(function(){
+  var btn = document.querySelector('[data-theme-toggle]');
+  var root = document.documentElement;
+  var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', dark ? 'dark' : 'light');
+  var sun = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  var moon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  btn.innerHTML = dark ? sun : moon;
+  btn.addEventListener('click', function(){
+    dark = !dark;
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    btn.innerHTML = dark ? sun : moon;
+  });
+})();
+</script>
+
+</body>
+</html>
