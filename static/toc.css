@@ -1,0 +1,13 @@
+:root{--bg:#fff;--text:#111;--muted:#666;--accent:#1a73e8}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-height:1.4;color:var(--text);background:var(--bg);padding:24px}
+.site-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px}
+.site-header h1{margin:0;font-size:1.25rem}
+.search input{padding:6px 10px;border:1px solid #ddd;border-radius:6px}
+.toc-group{margin:16px 0;border-top:1px solid #eee;padding-top:12px}
+.group-title{font-size:1rem;margin:0 0 8px}
+.group-list{list-style:none;padding:0;margin:0}
+.toc-item{padding:6px 0;display:flex;align-items:center;gap:8px}
+.toc-item a{color:var(--accent);text-decoration:none}
+.subtitle{color:var(--muted);margin-left:8px}
+.meta{color:var(--muted);margin-left:auto;font-size:0.8rem}
+footer.site-footer{margin-top:24px;color:var(--muted);font-size:0.85rem}
