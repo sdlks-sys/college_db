@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAV 箱涵檢測管線驗證框架</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300..700;1,300..700&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── DESIGN TOKENS ─── */
+    :root {
+      --text-xs:   clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
+      --text-sm:   clamp(0.85rem, 0.8rem + 0.25vw, 0.95rem);
+      --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+      --text-lg:   clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+      --text-xl:   clamp(1.35rem, 1.1rem + 1vw, 1.9rem);
+      --text-2xl:  clamp(1.8rem, 1.2rem + 2vw, 2.8rem);
+
+      --space-1: 0.25rem; --space-2: 0.5rem;  --space-3: 0.75rem;
+      --space-4: 1rem;    --space-5: 1.25rem; --space-6: 1.5rem;
+      --space-8: 2rem;    --space-10: 2.5rem; --space-12: 3rem;
+      --space-16: 4rem;
+
+      --color-bg:             #f7f6f2;
+      --color-surface:        #f9f8f5;
+      --color-surface-offset: #f0ede8;
+      --color-divider:        #dcd9d5;
+      --color-border:         #d0cdc6;
+      --color-text:           #28251d;
+      --color-text-muted:     #7a7974;
+      --color-primary:        #01696f;
+      --color-primary-hl:     #e0f0f1;
+      --color-blue:           #1e5fa8;
+      --color-blue-hl:        #deeaf7;
+      --color-orange:         #b45309;
+      --color-orange-hl:      #fdf0dc;
+      --color-red:            #b91c1c;
+      --color-red-hl:         #fde8e8;
+      --color-green:          #15803d;
+      --color-green-hl:       #dcf5e6;
+      --color-yellow:         #a16207;
+      --color-yellow-hl:      #fef3c7;
+      --color-purple:         #6d28d9;
+      --color-purple-hl:      #ede9fe;
+
+      --radius-sm: 0.375rem; --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;  --radius-xl: 1rem; --radius-full: 9999px;
+      --shadow-sm: 0 1px 3px rgba(40,37,29,0.07);
+      --shadow-md: 0 4px 16px rgba(40,37,29,0.09);
+
+      --font-display: 'Source Serif 4', Georgia, serif;
+      --font-body:    'DM Sans', 'Helvetica Neue', sans-serif;
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="dark"] {
+      --color-bg:             #16150f;
+      --color-surface:        #1c1b15;
+      --color-surface-offset: #22211a;
+      --color-divider:        #3a3830;
+      --color-border:         #44423a;
+      --color-text:           #d8d5ce;
+      --color-text-muted:     #8a8880;
+      --color-primary:        #3da8ae;
+      --color-primary-hl:     #0d3033;
+      --color-blue:           #5b96d9;
+      --color-blue-hl:        #0d2340;
+      --color-orange:         #e0903a;
+      --color-orange-hl:      #2d1b08;
+      --color-red:            #e05555;
+      --color-red-hl:         #2d0f0f;
+      --color-green:          #3ec97a;
+      --color-green-hl:       #0a2d1a;
+      --color-yellow:         #d4a830;
+      --color-yellow-hl:      #2a1e08;
+      --color-purple:         #a78bfa;
+      --color-purple-hl:      #1f1040;
+    }
+
+    /* ─── RESET & BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--color-primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── HEADER ─── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--color-divider);
+      padding: var(--space-4) var(--space-8);
+    }
+    .header-inner {
+      max-width: 980px; margin: 0 auto;
+      display: flex; align-items: center; gap: var(--space-4);
+      justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: var(--space-3); }
+    .site-logo { width: 36px; height: 36px; flex-shrink: 0; }
+    .site-title {
+      font-family: var(--font-display);
+      font-size: var(--text-base);
+      font-weight: 600;
+      color: var(--color-text);
+      letter-spacing: -0.01em;
+    }
+    .header-nav { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+    .nav-link {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-text-muted);
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      transition: background var(--transition), color var(--transition);
+    }
+    .nav-link:hover { background: var(--color-surface-offset); color: var(--color-text); text-decoration: none; }
+
+    /* Theme Toggle */
+    [data-theme-toggle] {
+      background: var(--color-surface-offset);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-muted);
+      transition: background var(--transition), color var(--transition);
+      flex-shrink: 0;
+    }
+    [data-theme-toggle]:hover { background: var(--color-divider); color: var(--color-text); }
+
+    /* ─── LAYOUT ─── */
+    .hero, main, .footer-inner {
+      max-width: 980px; margin: 0 auto;
+      padding-left: var(--space-8); padding-right: var(--space-8);
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding-top: var(--space-16);
+      padding-bottom: var(--space-12);
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .hero-eyebrow {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      margin-bottom: var(--space-4);
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--color-text);
+      margin-bottom: var(--space-5);
+    }
+    .hero-subtitle {
+      font-size: var(--text-lg);
+      color: var(--color-text-muted);
+      max-width: 680px;
+      line-height: 1.6;
+      margin-bottom: var(--space-8);
+    }
+    .hero-meta {
+      display: flex; gap: var(--space-6); flex-wrap: wrap;
+      font-size: var(--text-sm); color: var(--color-text-muted);
+    }
+    .hero-meta-item { display: flex; align-items: center; gap: var(--space-2); }
+    .hero-meta-label { font-weight: 600; color: var(--color-text); }
+
+    /* ─── KEY FINDINGS CARDS ─── */
+    .kf-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-8);
+    }
+    .kf-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .kf-label {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-2);
+    }
+    .kf-value {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--color-primary);
+      line-height: 1.1;
+    }
+    .kf-desc {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      margin-top: var(--space-2);
+    }
+
+    /* ─── SECTIONS ─── */
+    section { padding: var(--space-12) 0; border-bottom: 1px solid var(--color-divider); }
+    section:last-of-type { border-bottom: none; }
+    .section-eyebrow {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      margin-bottom: var(--space-3);
+    }
+    section h2 {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin-bottom: var(--space-3);
+      color: var(--color-text);
+    }
+    .section-desc {
+      color: var(--color-text-muted);
+      font-size: var(--text-base);
+      max-width: 720px;
+      margin-bottom: var(--space-8);
+      line-height: 1.7;
+    }
+    section h3 {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-top: var(--space-8);
+      margin-bottom: var(--space-4);
+      color: var(--color-text);
+    }
+
+    /* ─── TABLES ─── */
+    .table-wrap {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-8);
+      overflow-x: auto;
+    }
+    table { border-collapse: collapse; width: 100%; min-width: 560px; }
+    thead tr { background: var(--color-text); }
+    thead th {
+      color: var(--color-bg);
+      padding: var(--space-4) var(--space-4);
+      font-family: var(--font-body);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: left;
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: var(--space-4) var(--space-4);
+      font-size: var(--text-sm);
+      border-bottom: 1px solid var(--color-divider);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background var(--transition); }
+    tbody tr:hover { background: var(--color-surface-offset); }
+
+    /* Row accent colors */
+    .row-teal   td:first-child { border-left: 3px solid var(--color-primary); }
+    .row-blue   td:first-child { border-left: 3px solid var(--color-blue); }
+    .row-orange td:first-child { border-left: 3px solid var(--color-orange); }
+    .row-red    td:first-child { border-left: 3px solid var(--color-red); }
+    .row-green  td:first-child { border-left: 3px solid var(--color-green); }
+    .row-yellow td:first-child { border-left: 3px solid var(--color-yellow); }
+    .row-purple td:first-child { border-left: 3px solid var(--color-purple); }
+
+    /* Type chips */
+    .chip {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+    .chip-teal   { background: var(--color-primary-hl); color: var(--color-primary); }
+    .chip-blue   { background: var(--color-blue-hl);   color: var(--color-blue); }
+    .chip-orange { background: var(--color-orange-hl); color: var(--color-orange); }
+    .chip-red    { background: var(--color-red-hl);    color: var(--color-red); }
+    .chip-green  { background: var(--color-green-hl);  color: var(--color-green); }
+    .chip-yellow { background: var(--color-yellow-hl); color: var(--color-yellow); }
+    .chip-purple { background: var(--color-purple-hl); color: var(--color-purple); }
+
+    /* Status indicators */
+    .status-full    { color: var(--color-green);  font-weight: 700; }
+    .status-partial { color: var(--color-yellow); font-weight: 700; }
+    .status-fail    { color: var(--color-red);    font-weight: 700; }
+
+    /* ─── FINDING BOX ─── */
+    .finding-box {
+      background: var(--color-primary-hl);
+      border: 1px solid var(--color-primary);
+      border-left: 4px solid var(--color-primary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5) var(--space-6);
+      margin: var(--space-6) 0;
+    }
+    .finding-box-label {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+    .finding-box p {
+      font-size: var(--text-base);
+      color: var(--color-text);
+      line-height: 1.65;
+    }
+    .finding-box.warn {
+      background: var(--color-red-hl);
+      border-color: var(--color-red);
+    }
+    .finding-box.warn .finding-box-label { color: var(--color-red); }
+
+    /* ─── SUMMARY GRID ─── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .summary-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .summary-card h4 {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+      color: var(--color-text);
+    }
+    .summary-card ul {
+      list-style: none;
+      display: flex; flex-direction: column; gap: var(--space-2);
+    }
+    .summary-card li {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      padding-left: var(--space-4);
+      position: relative;
+    }
+    .summary-card li::before {
+      content: '–';
+      position: absolute; left: 0;
+      color: var(--color-border);
+    }
+
+    /* ─── LAYER BADGE ─── */
+    .layer-badge {
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-4);
+    }
+    .layer-badge-dot {
+      width: 8px; height: 8px;
+      border-radius: var(--radius-full);
+    }
+
+    /* ─── STANDARDS PILLS ─── */
+    .std-pills { display: flex; gap: var(--space-2); flex-wrap: wrap; margin: var(--space-4) 0 var(--space-6); }
+    .std-pill {
+      background: var(--color-surface-offset);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      padding: var(--space-1) var(--space-3);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+
+    /* ─── GAP LEGEND ─── */
+    .gap-legend {
+      display: flex; gap: var(--space-4); flex-wrap: wrap;
+      margin-bottom: var(--space-6);
+      font-size: var(--text-sm);
+    }
+    .gap-legend-item { display: flex; align-items: center; gap: var(--space-2); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--color-divider);
+      padding: var(--space-8) 0;
+      margin-top: var(--space-4);
+    }
+    .footer-inner {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      flex-wrap: wrap; gap: var(--space-4);
+    }
+    .footer-text { font-size: var(--text-sm); color: var(--color-text-muted); }
+    .footer-sources { font-size: var(--text-xs); color: var(--color-text-muted); max-width: 600px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 640px) {
+      header { padding: var(--space-3) var(--space-4); }
+      .header-nav { display: none; }
+      .hero, main, .footer-inner { padding-left: var(--space-4); padding-right: var(--space-4); }
+      .hero { padding-top: var(--space-10); padding-bottom: var(--space-8); }
+      section { padding: var(--space-8) 0; }
+      .kf-grid { grid-template-columns: 1fr 1fr; }
+      table { font-size: var(--text-xs); }
+      tbody td, thead th { padding: var(--space-3); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* ─── DETAIL TABLES: condensed ─── */
+    .compact-table td, .compact-table th { padding: var(--space-3) var(--space-4); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <svg class="site-logo" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="36" height="36" rx="9" fill="var(--color-primary)"/>
+        <rect x="6" y="14" width="24" height="8" rx="2" fill="white" opacity="0.25"/>
+        <rect x="6" y="14" width="24" height="8" rx="2" stroke="white" stroke-width="1.5" fill="none"/>
+        <circle cx="11" cy="11" r="2.5" fill="white" opacity="0.7"/>
+        <path d="M8 22 L8 29" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M28 22 L28 29" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M13 18 L23 18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="site-title">UAV 箱涵檢測驗證框架</span>
+    </div>
+    <nav class="header-nav" aria-label="頁面導覽">
+      <a href="#layer1" class="nav-link">Layer 1 缺陷可觀測性</a>
+      <a href="#layer2" class="nav-link">Layer 2 方法論能力</a>
+      <a href="#layer3" class="nav-link">Layer 3 報告合規性</a>
+      <a href="#summary" class="nav-link">總結</a>
+    </nav>
+    <button data-theme-toggle aria-label="切換深色/淺色模式"></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">結構健康監測研究 · 三層驗證框架</div>
+  <h1>UAV 箱涵自動化檢測<br>現場部署就緒評估</h1>
+  <p class="hero-subtitle">
+    本報告為標準依據、文獻支撐的驗證框架文件，評估 UAV 管線作為人工土木工程師功能性替代方案的就緒程度。框架以箱涵為目標環境，涵蓋缺陷可觀測性需求、方法論能力審查與報告合規性三個層次。
+  </p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">主要框架</span>
+      <span>AASHTO MBEI 2019 · NASSCO PACP · UK CS 450 · 台灣 MOTC</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">研究性質</span>
+      <span>土木工程檢測就緒審查（非 ML 基準測試）</span>
+    </div>
+  </div>
+
+  <!-- Key Numbers -->
+  <div class="kf-grid">
+    <div class="kf-card">
+      <div class="kf-label">RC 裂縫記錄下限</div>
+      <div class="kf-value">0.30 mm</div>
+      <div class="kf-desc">AASHTO MBEI CS1→CS2 分界</div>
+    </div>
+    <div class="kf-card">
+      <div class="kf-label">攝影解析標準</div>
+      <div class="kf-value">0.20 mm</div>
+      <div class="kf-desc">UK CS 450 明確規定</div>
+    </div>
+    <div class="kf-card">
+      <div class="kf-label">UAV 目標 GSD</div>
+      <div class="kf-value">≤ 0.10 mm/px</div>
+      <div class="kf-desc">Nyquist 準則，@2m 工作距離</div>
+    </div>
+    <div class="kf-card">
+      <div class="kf-label">最大飛行速度</div>
+      <div class="kf-value">0.15 m/s</div>
+      <div class="kf-desc">NASSCO PACP 30 ft/min 限制</div>
+    </div>
+    <div class="kf-card">
+      <div class="kf-label">裂縫量測最佳 MAE</div>
+      <div class="kf-value">0.16 mm</div>
+      <div class="kf-desc">Wilson et al. (2024)，深度學習量測</div>
+    </div>
+    <div class="kf-card">
+      <div class="kf-label">3DGS 最小可偵測</div>
+      <div class="kf-value">~3 cm</div>
+      <div class="kf-desc">SplatGauge (2026)，vs. 標準 0.30 mm</div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════
+     LAYER 1
+═══════════════════════════════════════════════ -->
+<section id="layer1">
+  <div class="layer-badge">
+    <div class="layer-badge-dot" style="background:var(--color-primary)"></div>
+    Layer 1
+  </div>
+  <div class="section-eyebrow">Defect Observability Requirements</div>
+  <h2>缺陷可觀測性需求基準</h2>
+  <p class="section-desc">
+    定義 UAV 管線必須具備的最低偵測能力，依據 AASHTO MBEI 2019、NASSCO PACP、UK CS 450、台灣 MOTC 橋梁檢測及補強規範等一手標準文件，建立各缺陷類型的嚴重度分界、量化閾值與最低可觀測細節需求。
+  </p>
+
+  <div class="std-pills">
+    <span class="std-pill">AASHTO MBEI 2019</span>
+    <span class="std-pill">FHWA SNBI 2022</span>
+    <span class="std-pill">NASSCO PACP v7.0</span>
+    <span class="std-pill">UK CS 450 / IMHS</span>
+    <span class="std-pill">台灣 MOTC 2018/2015</span>
+    <span class="std-pill">ACI 201.1R / ACI 224R</span>
+    <span class="std-pill">NCHRP 14-26</span>
+  </div>
+
+  <!-- A1 Cracks -->
+  <h3>A1：裂縫（Cracks）</h3>
+  <div class="finding-box">
+    <div class="finding-box-label">Layer 1 關鍵數值</div>
+    <p>RC 最低記錄門檻 <strong>0.30 mm</strong>（AASHTO CS1→CS2）；PSC 門檻 <strong>0.10 mm</strong>（AASHTO Code 1110；ACI 224R 水密性構造）；攝影解析標準 <strong>0.20 mm</strong>（UK CS 450 明確規定）；台灣 MOTC D=3 觸發門檻（剪力裂縫）<strong>0.20 mm</strong>。</p>
+  </div>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr>
+          <th>缺陷子類型</th>
+          <th>嚴重度等級</th>
+          <th>量化閾值</th>
+          <th>最低可觀測細節</th>
+          <th>標準來源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-green">
+          <td><span class="chip chip-green">RC CS1</span><br>線性裂縫（不顯著）</td>
+          <td>AASHTO CS1</td>
+          <td>寬度 &lt; 0.30 mm；或已密封中等寬度</td>
+          <td>GSD ≤ 0.10 mm/px (@2m)</td>
+          <td>AASHTO Code 1130</td>
+        </tr>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">RC CS2</span><br>線性裂縫（輕微）</td>
+          <td>AASHTO CS2</td>
+          <td>0.30–1.27 mm 未密封；網格間距 0.30–0.91 m</td>
+          <td>GSD ≤ 0.10 mm/px；活躍性判定</td>
+          <td>AASHTO Code 1130、FHWA-S</td>
+        </tr>
+        <tr class="row-orange">
+          <td><span class="chip chip-orange">RC CS3</span><br>線性裂縫（嚴重）</td>
+          <td>AASHTO CS3</td>
+          <td>寬度 &gt; 1.27 mm；或網格間距 &lt; 0.30 m</td>
+          <td>GSD ≤ 0.43 mm/px；識別裂縫範圍%</td>
+          <td>AASHTO Code 1130</td>
+        </tr>
+        <tr class="row-red">
+          <td><span class="chip chip-red">PSC CS1</span><br>PSC 裂縫（不顯著）</td>
+          <td>AASHTO CS1</td>
+          <td>寬度 &lt; 0.10 mm</td>
+          <td>GSD ≤ 0.033 mm/px（極高需求）</td>
+          <td>AASHTO Code 1110、ACI 224R</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">MOTC D3</span><br>明顯裂縫（台灣 RC）</td>
+          <td>MOTC D=3</td>
+          <td>撓曲裂縫 0.3–0.6 mm；剪力裂縫 0.2–0.3 mm</td>
+          <td>GSD ≤ 0.10 mm/px；DERU 評分</td>
+          <td>台灣 MOTC 2015 RC 標準</td>
+        </tr>
+        <tr class="row-teal">
+          <td><span class="chip chip-teal">攝影標準</span><br>UK CS 450 下限</td>
+          <td>—</td>
+          <td>照片需解析 0.20 mm 裂縫寬度</td>
+          <td><strong>GSD ≤ 0.10 mm/px 為最低要求基準</strong></td>
+          <td>UK CS 450</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- A2 Spalling -->
+  <h3>A2：剝落（Spalling）</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>嚴重度等級</th><th>量化閾值</th><th>最低可觀測細節</th><th>標準來源</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">AASHTO CS2</span> 小型剝落</td>
+          <td>深度 ≤ 25 mm 且直徑 ≤ 150 mm；無露筋</td>
+          <td>識別面積 ≥ 直徑 50 mm 的剝落坑</td>
+          <td>AASHTO Code 1080</td>
+        </tr>
+        <tr class="row-orange">
+          <td><span class="chip chip-orange">AASHTO CS3</span> 大型剝落</td>
+          <td>深度 &gt; 25 mm 或直徑 &gt; 150 mm</td>
+          <td>面積量化；<strong>深度量測需 3D 感測</strong></td>
+          <td>AASHTO Code 1080、NCHRP</td>
+        </tr>
+        <tr class="row-red">
+          <td><span class="chip chip-red">AASHTO CS3–4</span> 露筋剝落</td>
+          <td>任何尺寸，只要鋼筋可見</td>
+          <td>識別鋼筋外露（金屬特徵偵測）</td>
+          <td>AASHTO、NCHRP、MOTC</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">MOTC D3–4</span> 台灣標準</td>
+          <td>D=3：面積 0.1–0.3 m²；D=4：&gt;0.3 m²</td>
+          <td>面積量化；鋼筋外露辨識；DERU 評分</td>
+          <td>台灣 MOTC DER&amp;U</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Condensed other defects -->
+  <h3>其他缺陷類型匯整（A3–E2）</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>缺陷類型</th><th>最低記錄閾值</th><th>最低可觀測細節</th><th>關鍵感測需求</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-teal">
+          <td><span class="chip chip-teal">A3</span> 蜂窩</td>
+          <td>零容忍：任何可見蜂窩</td>
+          <td>識別直徑 ≥ 10 mm 表面空洞</td>
+          <td>高解析度 2D 影像</td>
+        </tr>
+        <tr class="row-purple">
+          <td><span class="chip chip-purple">B1+B2</span> 鋼筋外露腐蝕</td>
+          <td>任何外露均需記錄；截面損失判定分級</td>
+          <td>識別外露金屬棒體；銹色對比辨識</td>
+          <td>顏色/紋理分析</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">C1</span> 滲漏</td>
+          <td>任何濕潤跡象；PACP IS→IW→ID→IR→IG</td>
+          <td>辨識潮濕/白華/銹紅色；活躍性判定</td>
+          <td>顏色分析；動態判斷</td>
+        </tr>
+        <tr class="row-teal">
+          <td><span class="chip chip-teal">C2</span> 白華</td>
+          <td>任何表面白化；AASHTO CS2 起記錄</td>
+          <td>白色析出物辨識；銹紅色染色</td>
+          <td>顏色分析</td>
+        </tr>
+        <tr class="row-orange">
+          <td><span class="chip chip-orange">C3</span> 淤積堵塞</td>
+          <td>PACP Grade 2：截面積 ≤ 10%；Grade 5：&gt;30%</td>
+          <td>截面積堵塞% 估算；淤積深度量測</td>
+          <td><strong>3D 幾何感知（關鍵需求）</strong></td>
+        </tr>
+        <tr class="row-red">
+          <td><span class="chip chip-red">C4</span> 沖刷磨耗</td>
+          <td>砂漿損失分界：6 mm / 25 mm</td>
+          <td>底板紋理變化；深度量測</td>
+          <td>深度感測；3D 能力</td>
+        </tr>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">E1+E2</span> 截面變形</td>
+          <td>可感知形狀改變為 Poor 觸發條件</td>
+          <td>縱向裂縫分布（早期指標）；截面幾何比對</td>
+          <td><strong>3DGS/NeRF 幾何重建（關鍵）</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- UAV Min Capability -->
+  <h3>UAV 管線最低偵測能力總覽</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>感測需求類別</th><th>具體需求</th><th>對應缺陷</th><th>依據標準</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-teal">
+          <td><span class="chip chip-teal">光學解析度</span></td>
+          <td>GSD ≤ 0.10 mm/px @2m；PSC：GSD ≤ 0.033 mm/px @1m</td>
+          <td>A1 裂縫</td>
+          <td>AASHTO（0.30 mm RC）；UK CS 450（0.20 mm）</td>
+        </tr>
+        <tr class="row-blue">
+          <td><span class="chip chip-blue">主動照明</span></td>
+          <td>距牆面 0.5–1.5 m 提供 ≥ 500 lux 均勻照明</td>
+          <td>所有缺陷</td>
+          <td>UK CS 450（隱含）；箱涵無自然採光</td>
+        </tr>
+        <tr class="row-orange">
+          <td><span class="chip chip-orange">深度/3D 感測</span></td>
+          <td>量化剝落深度（25 mm 分界）；截面變形；淤積深度（10 cm）</td>
+          <td>A2、C3、C4、E1</td>
+          <td>AASHTO；NTPC 清潔驗收標準</td>
+        </tr>
+        <tr class="row-purple">
+          <td><span class="chip chip-purple">3D 幾何重建</span></td>
+          <td>截面幾何比對（原設計 vs. 現況）；截面積堵塞%</td>
+          <td>E1 截面變形、C3 淤積</td>
+          <td>FHWA-L1、NASSCO PACP</td>
+        </tr>
+        <tr class="row-teal">
+          <td><span class="chip chip-teal">顏色/紋理</span></td>
+          <td>白華、銹紅色染色、骨材暴露辨識</td>
+          <td>A2、B2、C1、C2</td>
+          <td>AASHTO Code 1120；MOTC</td>
+        </tr>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">活躍性判斷</span></td>
+          <td>區分活躍水流 vs. 乾燥染色</td>
+          <td>C1 滲漏</td>
+          <td>ACI 201.1R；NASSCO PACP</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     LAYER 2
+═══════════════════════════════════════════════ -->
+<section id="layer2">
+  <div class="layer-badge">
+    <div class="layer-badge-dot" style="background:var(--color-blue)"></div>
+    Layer 2
+  </div>
+  <div class="section-eyebrow">Methodological Capability Review</div>
+  <h2>方法論能力差距分析</h2>
+  <p class="section-desc">
+    評估 UAV 管線 CV 方法論（偵測、分割、里程計）是否能在箱涵特有環境下達到 Layer 1 所訂定的最低偵測能力需求。特有環境約束包含：GPS 拒絕、低光源（&lt;10 lux 自然採光）、密閉幾何（截面 1–5 m）及 3DGS 場景輸入。
+  </p>
+
+  <div class="gap-legend">
+    <div class="gap-legend-item"><span class="status-full">✅</span><span>完全符合</span></div>
+    <div class="gap-legend-item"><span class="status-partial">🟡</span><span>部分符合（技術基礎存在但未於箱涵環境驗證）</span></div>
+    <div class="gap-legend-item"><span class="status-fail">🔴</span><span>未符合（根本缺口）</span></div>
+  </div>
+
+  <div class="finding-box">
+    <div class="finding-box-label">Layer 2 關鍵數值</div>
+    <p>最佳裂縫偵測：YOLOv7 mAP@0.5 = <strong>96.1%</strong>（Ataei 2025）；E-FPN 涵洞分割 +13.8% IoU vs. SOTA（Alshawi 2024）。裂縫寬度量測 MAE = <strong>0.16 mm</strong>（Wilson 2024）。3DGS SplatGauge 最小可偵測裂縫 <strong>~3 cm</strong>（Endalamaw 2026），較 AASHTO 0.30 mm 標準差距達 100×。</p>
+  </div>
+
+  <!-- Main gap table -->
+  <h3>差距分析匯整（10 個評估類別）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>缺陷/能力類別</th>
+          <th>Layer 1 所需能力</th>
+          <th>最佳可用 CV 方法</th>
+          <th>環境約束已處理</th>
+          <th>符合狀態</th>
+          <th>關鍵缺口</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">裂縫偵測</span></td>
+          <td>0.30 mm（AASHTO）；0.20 mm（UK CS 450）</td>
+          <td>YOLOv7, E-FPN, Mini-UNet</td>
+          <td>室外高照度；涵洞/管線類別</td>
+          <td><span class="status-partial">🟡 部分</span></td>
+          <td>低光源效能未驗證；域適應（Ansell 2023）</td>
+        </tr>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">裂縫寬度量測</span></td>
+          <td>分辨 &lt;0.30 / 0.30–1.27 / &gt;1.27 mm</td>
+          <td>Wilson DL+雷射；SR 影像處理</td>
+          <td>已知尺度；橋梁近距</td>
+          <td><span class="status-partial">🟡 部分</span></td>
+          <td>需靜態拍攝；運動模糊；箱涵驗證缺失</td>
+        </tr>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">剝落面積識別</span></td>
+          <td>識別面積 ≥ 直徑 50 mm 剝落坑</td>
+          <td>Mask R-CNN, YOLOv7</td>
+          <td>室外混凝土（Ataei）</td>
+          <td><span class="status-partial">🟡 部分</span></td>
+          <td>低光照明；箱涵訓練資料不足</td>
+        </tr>
+        <tr class="row-red">
+          <td><span class="chip chip-red">剝落深度量測</span></td>
+          <td>25 mm（CS2→CS3 分界）</td>
+          <td>—（無適用 2D 方法）</td>
+          <td>無</td>
+          <td><span class="status-fail">🔴 未符合</span></td>
+          <td><strong>需深度感測（ToF/結構光/立體視覺）；無箱涵驗證</strong></td>
+        </tr>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">蜂窩偵測</span></td>
+          <td>識別直徑 ≥ 10 mm 空洞</td>
+          <td>YOLOv5+Mask R-CNN（Das 2025，98.1% Recall）</td>
+          <td>實驗室條件</td>
+          <td><span class="status-partial">🟡 部分</span></td>
+          <td>低光源；箱涵場景訓練資料缺失</td>
+        </tr>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">滲漏偵測</span></td>
+          <td>潮濕/白華/銹染；活躍性判斷</td>
+          <td>CNN 分類（Chen 2024）；BlendMask（Geng 2022）</td>
+          <td>地下構造物；隧道</td>
+          <td><span class="status-partial">🟡 部分</span></td>
+          <td>活躍性判斷；非均勻照明下顏色辨識</td>
+        </tr>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">淤積分類</span></td>
+          <td>通/堵分類</td>
+          <td>Barthélemy CNN（2021，94% 準確率）</td>
+          <td>管線 CCTV 影像</td>
+          <td><span class="status-partial">🟡 部分</span></td>
+          <td>截面積% 量化需 3D 幾何</td>
+        </tr>
+        <tr class="row-red">
+          <td><span class="chip chip-red">截面積% 量化</span></td>
+          <td>10%/30% 分界（NASSCO PACP）</td>
+          <td>—（2D 方法不足）</td>
+          <td>無</td>
+          <td><span class="status-fail">🔴 未符合</span></td>
+          <td>需 3D 幾何重建配合已知截面設計尺寸</td>
+        </tr>
+        <tr class="row-yellow">
+          <td><span class="chip chip-yellow">GPS 拒絕導航</span></td>
+          <td>缺陷定位精度 ≤ 15 cm（類比 NASSCO ±2 ft）</td>
+          <td>LiDAR-IMU（Ebadi 2023）；下水道 VIO（Maisto 2026）</td>
+          <td>地下環境；下水道</td>
+          <td><span class="status-partial">🟡 部分</span></td>
+          <td>純視覺 VIO 不足；矩形截面箱涵特定驗證缺失</td>
+        </tr>
+        <tr class="row-red">
+          <td><span class="chip chip-red">3DGS 主要偵測</span></td>
+          <td>截面幾何；截面積%；缺陷 3D 位置</td>
+          <td>SplatGauge（~3 cm 最小偵測）</td>
+          <td>橋梁、洞穴</td>
+          <td><span class="status-fail">🔴 主要偵測</span><br><span class="status-partial">🟡 視覺化</span></td>
+          <td>裂縫解析度差距 100×；無特徵表面問題；無箱涵驗證</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mitigation -->
+  <h3>文獻依據的緩解策略</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>缺口類別</th><th>建議緩解方案</th><th>文獻依據</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-teal">
+          <td>域適應（室外→箱涵）</td>
+          <td>兩階段遷移學習：跨域預訓練 → 箱涵特定微調</td>
+          <td><a href="https://doi.org/10.3390/s23063189" target="_blank">Ansell et al. 2023</a>；<a href="https://doi.org/10.3390/s24175569" target="_blank">Chen et al. 2024</a></td>
+        </tr>
+        <tr class="row-blue">
+          <td>低光源增強</td>
+          <td>CLAHE + CNN 去噪 + 正規化流亮度恢復三階段管線</td>
+          <td><a href="https://doi.org/10.1038/s41598-024-69412-5" target="_blank">Tao et al. 2024</a>；<a href="https://doi.org/10.1109/B-HTC67770.2026.11502137" target="_blank">Sumithra et al. 2026</a></td>
+        </tr>
+        <tr class="row-orange">
+          <td>照明設計</td>
+          <td>30–45° 斜角方向光（非正面漫射）；≥ 1,000 lux UAV 搭載照明</td>
+          <td><a href="https://doi.org/10.58286/29683" target="_blank">Dow et al. 2024</a></td>
+        </tr>
+        <tr class="row-red">
+          <td>深度量測缺口</td>
+          <td>加裝立體相機或 ToF 感測器；3DGS 點雲輔助深度估算（精度有限）</td>
+          <td>待驗證</td>
+        </tr>
+        <tr class="row-purple">
+          <td>GPS 拒絕導航</td>
+          <td>LiDAR-IMU 融合為主；視覺里程計 + 牆距感測輔助</td>
+          <td><a href="https://doi.org/10.1109/SII64115.2026.11404663" target="_blank">Maisto et al. 2026</a>；<a href="https://doi.org/10.1109/TRO.2023.3323938" target="_blank">Ebadi et al. 2023</a></td>
+        </tr>
+        <tr class="row-teal">
+          <td>3DGS 定位調整</td>
+          <td>3DGS = 場景視覺化與幾何參考；主要偵測依賴 2D CNN</td>
+          <td><a href="https://arxiv.org/abs/2602.16713" target="_blank">Wang et al. 2026</a>；<a href="https://doi.org/10.1109/CCWC67433.2026.11393714" target="_blank">Endalamaw et al. 2026</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     LAYER 3
+═══════════════════════════════════════════════ -->
+<section id="layer3">
+  <div class="layer-badge">
+    <div class="layer-badge-dot" style="background:var(--color-orange)"></div>
+    Layer 3
+  </div>
+  <div class="section-eyebrow">Reporting Compliance Requirements</div>
+  <h2>報告合規性清單</h2>
+  <p class="section-desc">
+    評估 UAV 管線的視覺化與報告輸出是否符合現行檢測標準的格式、完整性與可追溯性要求。報告合規性是管線從技術演示邁向現場部署就緒的最後一道閘門。
+  </p>
+
+  <div class="finding-box">
+    <div class="finding-box-label">Layer 3 最重要發現</div>
+    <p>無任何現行審查標準強制要求桶體內部個別缺陷的 GPS 座標。主流追溯方式為：<strong>里程計（NASSCO/WIS）+ 截面時鐘方位 + 構件尋址系統（NBI/AASHTO）</strong>。此發現顯著降低管線的定位合規門檻。</p>
+  </div>
+
+  <!-- 3A Metadata -->
+  <h3>表 3A：結構識別與基本元資料</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>報告要素</th><th>標準要求</th><th>管線現有能力</th><th>狀態</th><th>關鍵缺口</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-green">
+          <td>結構編號（Structure ID）</td>
+          <td>SNBI B.ID.01：唯一英數字編號；MOTC：提交至 TBMS</td>
+          <td>任務參數手動輸入結構編號</td>
+          <td><span class="status-full">✅</span></td>
+          <td>需納入任務設定 SOP</td>
+        </tr>
+        <tr class="row-green">
+          <td>結構層級 GPS 座標</td>
+          <td>SNBI B.L.05–06：NAD83 Lat/Lon；MOTC：里程樁號</td>
+          <td>UAV 地面站於入口記錄 GPS；里程手動輸入</td>
+          <td><span class="status-full">✅</span></td>
+          <td>僅結構層級，符合所有現行規定</td>
+        </tr>
+        <tr class="row-green">
+          <td>檢查日期與時間</td>
+          <td>NASSCO、CS 450、MOTC：全部強制</td>
+          <td>任務日誌自動記錄</td>
+          <td><span class="status-full">✅</span></td>
+          <td>—</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>檢查員資格認證</td>
+          <td>NASSCO：PACP Certificate No.；CS 450：NHSS 31 認證</td>
+          <td>操作員資訊可填入；無法自動驗證認證資格</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>需機構授權鏈補充；預留認證編號欄位</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>結構幾何（截面尺寸）</td>
+          <td>NASSCO：Height/Shape/Material 強制（需與 GIS 一致）</td>
+          <td>設計圖資手動輸入；3DGS 輔助確認（精度有限）</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>NASSCO 需現場量測值匹配 GIS；非全自動</td>
+        </tr>
+        <tr class="row-red">
+          <td>清洗/預清潔狀態</td>
+          <td>NASSCO PACP：Pre-Cleaning Status 強制</td>
+          <td>管線未涵蓋；需人工填寫</td>
+          <td><span class="status-fail">🔴</span></td>
+          <td>未記錄即屬程序性不合規；需任務前確認清單</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3B Defect Records -->
+  <h3>表 3B：缺陷紀錄欄位</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>報告要素</th><th>標準要求</th><th>管線現有能力</th><th>狀態</th><th>關鍵缺口</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-yellow">
+          <td>缺陷類型代碼</td>
+          <td>NASSCO：Family→Code→Descriptor；AASHTO：CS1–4；MOTC：DERU D/E/R/U</td>
+          <td>CNN 輸出類別標籤；需映射至標準代碼</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>需建立 CV 輸出 → 標準代碼映射層</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>嚴重程度量化值</td>
+          <td>AASHTO：裂縫寬度 mm；NCHRP：剝落深淺分界；MOTC：DERU 0.20/0.30 mm 分界</td>
+          <td>裂縫寬度量測可行（MAE 0.16 mm）；剝落深度不可用</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>裂縫寬度可滿足需求；剝落深度（25 mm）為關鍵缺口</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>缺陷範圍（Extent）</td>
+          <td>AASHTO：CS 數量；NASSCO：連續缺陷起終點里程（±2 ft 精度）</td>
+          <td>分割輸出面積；Start/Finish 里程需里程計配合</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>面積量化依賴 GSD 校準；里程精度依賴 LiDAR-IMU</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>NBI 整體涵洞評等（0–9）</td>
+          <td>SNBI B.C.04：NBIS 認證工程師核定</td>
+          <td>CV 提供輔助意見；最終評等須工程師核定</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>CV 屬「資料增強」；評等為工程師法定職責</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>DERU 四軸評分</td>
+          <td>MOTC：D/E/R/U 均為強制欄位</td>
+          <td>D/E 可由 CV 量測推算；R/U 需工程師判斷</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>R（影響度）與 U（急迫性）為工程判斷項，無法自動化</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3C Photos -->
+  <h3>表 3C：照片規格要求</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>報告要素</th><th>標準要求</th><th>管線現有能力</th><th>狀態</th><th>關鍵缺口</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-yellow">
+          <td>比例尺參照物</td>
+          <td>UK CS 450：所有特寫照片<strong>強制</strong>含物理比例尺；FHWA：已知物體作為比例參照</td>
+          <td>GSD 元資料可提供比例資訊，但畫面內無物理標尺</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>UK CS 450 需畫面內物理標尺；GSD 元資料不能替代；需雷射點陣標尺方案</td>
+        </tr>
+        <tr class="row-green">
+          <td>近景＋遠景雙視角</td>
+          <td>台灣 MOTC：每個重大缺陷需近景+遠景各一張；UK CS 450：特寫需附廣角脈絡照</td>
+          <td>UAV 可執行雙距離飛行拍攝</td>
+          <td><span class="status-full">✅</span></td>
+          <td>需在任務規劃層級明確為 SOP</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>照片標注說明</td>
+          <td>FHWA：箭頭/標籤標明缺陷；MOTC：構件名稱、日期、位置、跨/墩/台號、照片編號</td>
+          <td>後處理可疊加 CNN 偵測框；構件號碼需人工輸入</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>MOTC 的構件索引（墩號、跨號）需人工映射</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>唯一照片編號</td>
+          <td>UK CS 450：電子照片依覆蓋排程進行唯一編號；NASSCO：缺陷紀錄與影像需電子連結</td>
+          <td>自動生成時間戳記/序號命名；需交叉索引機制</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>與 NASSCO 資料庫/IAMIS/TBMS 的電子連結需額外整合</td>
+        </tr>
+        <tr class="row-green">
+          <td>照片記錄台帳</td>
+          <td>FHWA：日期、照片編號、構件位置、缺陷描述；MnDOT：標準化照片表單</td>
+          <td>自動彙整拍攝後設資料至台帳</td>
+          <td><span class="status-full">✅</span></td>
+          <td>確保 CV 分類標籤輸出為標準化文字描述</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>影像解析度</td>
+          <td>UK CS 450：解析 0.20 mm 裂縫；NASSCO 實作：1080p（主管線）/640×480（涵洞）</td>
+          <td>GSD ≤ 0.10 mm/px 在 0.5–2m 工作距離技術可達</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>需 ≤0.15 m/s 飛行速度；動態模糊為主要風險</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3D Traceability -->
+  <h3>表 3D：缺陷位置追溯系統</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>報告要素</th><th>標準要求</th><th>管線現有能力</th><th>狀態</th><th>備註</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-green">
+          <td>結構層級 GPS</td>
+          <td>SNBI B.L.05–06：NAD83 Lat/Lon 強制</td>
+          <td>UAV 地面站於入口記錄</td>
+          <td><span class="status-full">✅</span></td>
+          <td>所有標準的最低位置要求；完全可達成</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>桶體內部里程計（Chainage）</td>
+          <td>NASSCO PACP：±2 ft（±60 cm）精度；UK WIS：屏幕連續顯示</td>
+          <td>LiDAR-IMU 里程計（Layer 2 驗證）</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>LiDAR-IMU 在短至中長涵（≤50 m）可達；長涵漂移需驗證</td>
+        </tr>
+        <tr class="row-green">
+          <td>截面方位（Clock Position）</td>
+          <td>NASSCO PACP：1–12 時鐘方位</td>
+          <td>矩形截面：頂板/左壁/右壁/底板四面分類</td>
+          <td><span class="status-full">✅</span></td>
+          <td>四面分類等效於時鐘系統；需建立映射規則</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>構件尋址系統</td>
+          <td>NBI/MBEI：結構→構件→構件位置→相對永久固定點</td>
+          <td>壁面辨識可行；需映射至 NBI 元素編號</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>需圖資整合映射至 Element 241（RC 涵洞）</td>
+        </tr>
+        <tr class="row-green">
+          <td>桶體內部缺陷 GPS 座標</td>
+          <td><strong>無現行標準強制要求</strong>（關鍵發現）</td>
+          <td>不適用</td>
+          <td><span class="status-full">✅</span></td>
+          <td>管線無需提供即符合現行所有標準規定</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3E Video -->
+  <h3>表 3E：影像記錄要求</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>報告要素</th><th>標準要求</th><th>管線現有能力</th><th>狀態</th><th>關鍵缺口</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-yellow">
+          <td>最大飛行速度</td>
+          <td>NASSCO PACP：≤ <strong>30 ft/min（0.15 m/s）</strong>；超速即拒絕</td>
+          <td>低速飛行技術可行；密閉空間穩定性需驗證</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td><strong>最具操作約束的單一視頻要求</strong>；需自動速度限制韌體</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>里程計 OSD 疊字</td>
+          <td>NASSCO：里程連續顯示於畫面（±2 ft）；UK WIS：起算米數連續顯示</td>
+          <td>VIO/LIO 里程可即時疊字；需 OSD 軟體開發</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>技術可行；OSD 整合需專案開發</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>缺陷處強制暫停</td>
+          <td>NASSCO：在接頭、缺陷處停止/旋轉/縮放；UK WIS：在所有觀察到的缺陷處停機</td>
+          <td>UAV 可在缺陷位置懸停；需即時 CNN 觸發邏輯</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>即時 CNN 偵測→自動懸停閉迴路控制尚無箱涵先例</td>
+        </tr>
+        <tr class="row-green">
+          <td>影像格式與規格</td>
+          <td>NASSCO 實作：MP4 H.264/H.265；1080p @ ≥24 fps</td>
+          <td>市售工業 UAV 通常達 1080p–4K @ 30 fps</td>
+          <td><span class="status-full">✅</span></td>
+          <td>商用規格通常超過最低要求</td>
+        </tr>
+        <tr class="row-red">
+          <td>NASSCO 認證資料庫連結</td>
+          <td>NASSCO PACP：影片與缺陷紀錄需電子連結（PACP 認證軟體）</td>
+          <td>目前無 NASSCO 認證資料庫輸出</td>
+          <td><span class="status-fail">🔴</span></td>
+          <td>需整合 WinCan/ICOM 等認證軟體 API</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3F Ratings -->
+  <h3>表 3F–3G：條件評等與圖面要求</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>報告要素</th><th>標準要求</th><th>管線現有能力</th><th>狀態</th><th>缺口</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-yellow">
+          <td>NBI 整體評等（0–9）</td>
+          <td>SNBI B.C.04：NBIS 認證工程師核定</td>
+          <td>CV 輔助意見；最終評等為工程師職責</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>FHWA HRT-21-086 明確定位 UAS 為「資料增強」</td>
+        </tr>
+        <tr class="row-red">
+          <td>NASSCO PACP 快速評分</td>
+          <td>Quick Rating；Structural Rating；O&amp;M Rating（認證軟體計算）</td>
+          <td>需 NASSCO 認證軟體整合</td>
+          <td><span class="status-fail">🔴</span></td>
+          <td>先決條件：解決表 3E NASSCO 認證問題</td>
+        </tr>
+        <tr class="row-red">
+          <td>沖刷狀況評估</td>
+          <td>SNBI B.C.11：觀察/量測沖刷深度</td>
+          <td>積水/泥沙條件下視覺感測失效</td>
+          <td><span class="status-fail">🔴</span></td>
+          <td>可能需要聲納或接觸式感測</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>裂縫示意圖（裂縫示意圖）</td>
+          <td>台灣 MOTC 2015：強制要求各構件裂縫分布圖（垂直/水平/斜向/格狀）</td>
+          <td>3DGS 輔助生成展開示意圖技術上可行；無標準化實作</td>
+          <td><span class="status-partial">🟡</span></td>
+          <td>自動生成裂縫示意圖需軟體開發（Wang et al. 2026 數位孿生原型）</td>
+        </tr>
+        <tr class="row-green">
+          <td>位置圖（含指北針）</td>
+          <td>FHWA/MBEI：必要附件</td>
+          <td>UAV 地面站自動匯出帶 GPS 位置圖</td>
+          <td><span class="status-full">✅</span></td>
+          <td>標準商用地面站均具備此功能</td>
+        </tr>
+        <tr class="row-teal">
+          <td>3DGS/點雲作為輔助資料</td>
+          <td>FHWA HRT-21-086：合法輔助資料產品；NASSCO MACP：3D 模型 QA 先例</td>
+          <td>管線可輸出 3DGS 場景與點雲</td>
+          <td><span class="status-full">✅</span></td>
+          <td>僅限輔助地位；資產管理系統格式整合（.splat/.ply）待解決</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3H Submission -->
+  <h3>表 3H：提交時限與授權鏈</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>報告要素</th><th>標準要求</th><th>管線現有能力</th><th>狀態</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-green">
+          <td>報告上傳期限</td>
+          <td>UK CS 450：6 週內上傳；SNBI：州/聯邦橋梁 90 天</td>
+          <td>自動化報告可縮短至任務後數小時至數天</td>
+          <td><span class="status-full">✅</span></td>
+        </tr>
+        <tr class="row-green">
+          <td>授權期限</td>
+          <td>UK CS 450：上傳後 6 週內授權</td>
+          <td>報告狀態管理涵蓋「待審核/已授權」</td>
+          <td><span class="status-full">✅</span></td>
+        </tr>
+        <tr class="row-yellow">
+          <td>緊急缺陷即時通報</td>
+          <td>UK CS 450：立即風險缺陷需即時通報；MOTC：U≥3 需緊急處置</td>
+          <td>高嚴重度缺陷可觸發自動警告通知</td>
+          <td><span class="status-partial">🟡</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SUMMARY
+═══════════════════════════════════════════════ -->
+<section id="summary">
+  <div class="section-eyebrow">Overall Assessment</div>
+  <h2>部署就緒評估總結</h2>
+  <p class="section-desc">
+    三層驗證框架的關鍵發現與現場部署就緒判斷。
+  </p>
+
+  <!-- Compliance overview -->
+  <h3>各層合規性彙整</h3>
+  <div class="table-wrap">
+    <table class="compact-table">
+      <thead>
+        <tr><th>報告要素類別</th><th>✅ 完全符合</th><th>🟡 部分符合</th><th>🔴 未達標</th><th>最關鍵缺口</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-teal">
+          <td>結構元資料</td>
+          <td>3/6</td><td>2/6</td><td>1/6</td>
+          <td>清洗狀態預記錄（NASSCO 程序要求）</td>
+        </tr>
+        <tr class="row-yellow">
+          <td>缺陷紀錄欄位</td>
+          <td>0/5</td><td>5/5</td><td>0/5</td>
+          <td>剝落深度量測；DERU R/U 工程判斷</td>
+        </tr>
+        <tr class="row-blue">
+          <td>照片規格</td>
+          <td>2/6</td><td>4/6</td><td>0/6</td>
+          <td>UK CS 450 物理比例尺強制要求</td>
+        </tr>
+        <tr class="row-teal">
+          <td>位置追溯</td>
+          <td>3/5</td><td>2/5</td><td>0/5</td>
+          <td>桶體里程計精度（LiDAR-IMU 需驗證）</td>
+        </tr>
+        <tr class="row-orange">
+          <td>影像記錄</td>
+          <td>1/5</td><td>3/5</td><td>1/5</td>
+          <td>NASSCO 認證資料庫；0.15 m/s 速度控制</td>
+        </tr>
+        <tr class="row-red">
+          <td>條件評等</td>
+          <td>0/4</td><td>2/4</td><td>2/4</td>
+          <td>PACP 評分認證軟體；沖刷深度評估</td>
+        </tr>
+        <tr class="row-purple">
+          <td>示意圖與圖面</td>
+          <td>1/4</td><td>3/4</td><td>0/4</td>
+          <td>裂縫示意圖自動生成（軟體開發）</td>
+        </tr>
+        <tr class="row-teal">
+          <td>3DGS 輸出定位</td>
+          <td>1/4</td><td>2/4</td><td>1/4</td>
+          <td>資產管理系統格式整合</td>
+        </tr>
+        <tr class="row-green">
+          <td>提交與授權</td>
+          <td>3/4</td><td>1/4</td><td>0/4</td>
+          <td>緊急通報誤報風險控制</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Three columns -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h4 style="color:var(--color-green)">✅ 已具備或可達成</h4>
+      <ul>
+        <li>結構層級 GPS 座標（入口處）</li>
+        <li>桶體內部個別缺陷無 GPS 強制要求</li>
+        <li>影像格式達 NASSCO 1080p 要求</li>
+        <li>自動化報告達 CS 450 6 週期限</li>
+        <li>雙視角拍攝（近景+遠景，需 SOP）</li>
+        <li>矩形截面時鐘方位映射</li>
+      </ul>
+    </div>
+    <div class="summary-card">
+      <h4 style="color:var(--color-yellow)">🟡 需開發或強化</h4>
+      <ul>
+        <li>CV 輸出 → PACP/MBEI 標準代碼映射</li>
+        <li>UK CS 450 物理比例尺方案（雷射點陣）</li>
+        <li>NASSCO 認證資料庫整合（WinCan 等）</li>
+        <li>0.15 m/s 速度限制自動控制韌體</li>
+        <li>OSD 里程計疊字軟體開發</li>
+        <li>裂縫示意圖自動生成（3DGS 展開圖）</li>
+      </ul>
+    </div>
+    <div class="summary-card">
+      <h4 style="color:var(--color-red)">🔴 根本缺口（現行框架）</h4>
+      <ul>
+        <li>剝落深度量測（需 ToF/結構光/立體視覺）</li>
+        <li>沖刷深度評估（積水條件視覺失效）</li>
+        <li>NASSCO PACP 快速評分（需認證軟體）</li>
+        <li>3DGS 資產管理系統格式（.splat 不相容）</li>
+        <li>3DGS 作為主要偵測模態（解析度差距 100×）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="finding-box warn">
+    <div class="finding-box-label">最終就緒判斷</div>
+    <p>UAV 管線目前具備作為<strong>工程師監督下技術輔助工具</strong>的基礎能力。在現場部署就緒（Field Deployment Ready）的定義下——即能以功能性替代人工工程師獨立完成法定合規檢測——仍存在三個根本缺口（剝落深度、沖刷評估、NASSCO 認證輸出），以及多個需開發完成的整合能力。<br><br>路徑上最短的合規路徑為：（1）加裝深度感測硬體；（2）整合 NASSCO PACP 認證軟體；（3）建立 CV 輸出→標準代碼映射層；（4）在矩形箱涵環境完成 LiDAR-IMU 定位實地驗證。</p>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-text" style="font-weight:600;margin-bottom:var(--space-2)">UAV 箱涵檢測驗證框架研究</div>
+      <div class="footer-text">台灣大學土木工程學系 · 結構健康監測研究</div>
+      <div class="footer-text" style="margin-top:var(--space-2)">研究性質：土木工程檢測就緒審查（非 ML 基準測試）</div>
+    </div>
+    <div class="footer-sources">
+      <div style="font-weight:600;margin-bottom:var(--space-2);font-size:var(--text-xs);color:var(--color-text)">主要標準文件來源</div>
+      <div class="footer-text">
+        FHWA SNBI (2022) <a href="https://www.fhwa.dot.gov/bridge/snbi/snbi_march_2022_publication.pdf" target="_blank">fhwa.dot.gov</a> ·
+        NCHRP 14-26 (2022) <a href="https://onlinepubs.trb.org/onlinepubs/nchrp/docs/NCHRP14-26_FR.pdf" target="_blank">trb.org</a> ·
+        NASSCO PACP v7.0 <a href="https://nassco.org/" target="_blank">nassco.org</a> ·
+        UK CS 450 DMRB <a href="https://www.standardsforhighways.co.uk/" target="_blank">standardsforhighways.co.uk</a> ·
+        台灣 MOTC RC 橋梁標準 (2015/2018) <a href="https://www.motc.gov.tw/" target="_blank">motc.gov.tw</a> ·
+        FHWA HRT-21-086 (2021) <a href="https://www.fhwa.dot.gov/publications/research/infrastructure/structures/bridge/21086/21086.pdf" target="_blank">fhwa.dot.gov</a> ·
+        VTRC 25-R4 (2025) <a href="https://vtrc.virginia.gov/media/vtrc/vtrc-pdf/vtrc-pdf/25-R4.pdf" target="_blank">vtrc.virginia.gov</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const btn = document.querySelector('[data-theme-toggle]');
+  const root = document.documentElement;
+  let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  const SUN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  const MOON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+  function apply(d) {
+    root.setAttribute('data-theme', d ? 'dark' : 'light');
+    btn.innerHTML = d ? SUN : MOON;
+  }
+
+  apply(dark);
+
+  btn.addEventListener('click', function(){
+    dark = !dark;
+    apply(dark);
+  });
+})();
+</script>
+
+</body>
+</html>
