@@ -63,8 +63,9 @@ body{
   position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
   background:var(--color-surface);border-right:1px solid var(--color-divider);
   display:flex;flex-direction:column;z-index:200;transition:transform var(--transition);
-  overflow-y:auto;
+  overflow-y:auto;transform:translateX(-100%);
 }
+body.nav-open .sidebar{transform:none;}
 .sidebar-head{
   padding:var(--space-5) var(--space-5) var(--space-4);
   display:flex;align-items:center;gap:var(--space-3);
@@ -91,7 +92,8 @@ body{
 .nav a.active .pttl{color:var(--color-primary);}
 
 /* ---------- Layout ---------- */
-.shell{margin-left:var(--sidebar-w);transition:margin var(--transition);}
+.shell{margin-left:0;transition:margin var(--transition);}
+@media (min-width:961px){body.nav-open .shell{margin-left:var(--sidebar-w);}}
 .topbar{
   position:sticky;top:0;z-index:120;
   background:color-mix(in oklch,var(--color-bg) 86%,transparent);
@@ -100,7 +102,7 @@ body{
   padding:var(--space-3) var(--space-6);
 }
 .topbar-left{display:flex;align-items:center;gap:var(--space-3);}
-.menu-btn{display:none;}
+.menu-btn{display:inline-flex;}
 .btn{
   display:inline-flex;align-items:center;gap:var(--space-2);
   background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);
@@ -146,7 +148,7 @@ main{max-width:860px;margin:0 auto;padding:0 var(--space-8) var(--space-16);}
 .label{font-weight:700;color:var(--color-text);}
 .given-box{background:var(--color-surface-offset);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin:var(--space-3) 0;font-size:var(--text-sm);}
 .fig{margin:var(--space-4) 0;background:var(--color-surface-offset);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-4);}
-.fig svg{display:block;width:100%;height:auto;max-width:480px;margin:0 auto;}
+.fig svg,.fig img{display:block;width:100%;height:auto;max-width:480px;margin:0 auto;border-radius:var(--radius-sm);}
 .fig-cap{text-align:center;font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-2);}
 .data-table-wrap{border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;margin:var(--space-4) 0;box-shadow:var(--shadow-sm);}
 table{border-collapse:collapse;width:100%;font-size:var(--text-sm);}
@@ -224,10 +226,7 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
 
 /* ---------- Responsive ---------- */
 @media (max-width:960px){
-  .sidebar{transform:translateX(-100%);box-shadow:var(--shadow-lg);}
-  .sidebar.open{transform:none;}
-  .shell{margin-left:0;}
-  .menu-btn{display:inline-flex;}
+  body.nav-open .sidebar{box-shadow:var(--shadow-lg);}
 }
 @media (max-width:640px){
   main{padding-left:var(--space-4);padding-right:var(--space-4);}
@@ -307,26 +306,7 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
         <div class="given-box"><span class="label">Given：</span>寬移動皮帶垂直向上穿過裝有黏性液體的容器，等速 $V_0$。黏滯力使皮帶帶起厚度 $h$ 的流體膜，重力使流體往下流。假設層流、穩態、完全發展。</div>
         <p><span class="label">Find：</span>用 Navier–Stokes 方程式求流體膜的<strong>平均速度</strong>。</p>
         <div class="fig">
-          <svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg">
-            <rect x="40" y="150" width="280" height="70" fill="var(--color-primary-hi)" stroke="var(--color-divider)"/>
-            <line x1="40" y1="150" x2="320" y2="150" stroke="var(--color-primary)" stroke-width="1.5"/>
-            <rect x="120" y="10" width="14" height="210" fill="var(--color-text-muted)" opacity="0.55"/>
-            <rect x="134" y="10" width="20" height="160" fill="var(--color-blue-hi)" stroke="var(--color-blue)" stroke-dasharray="3 3"/>
-            <text x="144" y="8" font-size="11" text-anchor="middle" fill="var(--color-text)">h</text>
-            <line x1="134" y1="6" x2="154" y2="6" stroke="var(--color-text)" stroke-width="1"/>
-            <line x1="127" y1="120" x2="127" y2="55" stroke="var(--color-primary)" stroke-width="2.5" marker-end="url(#ar1)"/>
-            <text x="100" y="95" font-size="12" fill="var(--color-primary)" font-style="italic">V₀</text>
-            <line x1="250" y1="40" x2="250" y2="110" stroke="var(--color-orange)" stroke-width="2.5" marker-end="url(#ar2)"/>
-            <text x="258" y="80" font-size="12" fill="var(--color-orange)" font-style="italic">g</text>
-            <line x1="134" y1="195" x2="180" y2="195" stroke="var(--color-text-muted)" stroke-width="1" marker-end="url(#ar3)"/>
-            <text x="186" y="199" font-size="11" fill="var(--color-text-muted)" font-style="italic">x</text>
-            <text x="118" y="40" font-size="11" fill="var(--color-text-muted)" font-style="italic">y</text>
-            <defs>
-              <marker id="ar1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-primary)" stroke-width="1.5"/></marker>
-              <marker id="ar2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.5"/></marker>
-              <marker id="ar3" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-text-muted)" stroke-width="1.2"/></marker>
-            </defs>
-          </svg>
+          <img src="6-8.png" alt="Fig. 6.8" loading="lazy">
           <div class="fig-cap">Fig. E6.8 — 皮帶以 $V_0$ 上行，帶起厚度 $h$ 的流體膜；重力 $g$ 向下。</div>
         </div>
 
@@ -359,21 +339,7 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
         <div class="problem-head"><span class="problem-num">6.30</span><span class="type-chip chip-teal">Stream Function / Potential</span></div>
         <p>兩片寬而固定的平行板間，黏性流體二維流動為拋物線速度分布：$u=U_c\left[1-\left(\tfrac{y}{h}\right)^2\right]$，$v=0$。若可能，求對應的<strong>流函數</strong>與<strong>速度勢</strong>。</p>
         <div class="fig">
-          <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg">
-            <rect x="40" y="30" width="280" height="10" fill="var(--color-text-muted)" opacity="0.55"/>
-            <rect x="40" y="160" width="280" height="10" fill="var(--color-text-muted)" opacity="0.55"/>
-            <line x1="60" y1="100" x2="300" y2="100" stroke="var(--color-divider)" stroke-dasharray="4 4"/>
-            <path d="M150,40 Q250,100 150,160" fill="none" stroke="var(--color-primary)" stroke-width="2"/>
-            <line x1="150" y1="50" x2="180" y2="50" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
-            <line x1="150" y1="70" x2="210" y2="70" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
-            <line x1="150" y1="100" x2="245" y2="100" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
-            <line x1="150" y1="130" x2="210" y2="130" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
-            <line x1="150" y1="150" x2="180" y2="150" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
-            <text x="252" y="96" font-size="12" fill="var(--color-primary)" font-style="italic">U_c</text>
-            <text x="30" y="70" font-size="11" fill="var(--color-text-muted)">h</text>
-            <text x="30" y="135" font-size="11" fill="var(--color-text-muted)">h</text>
-            <defs><marker id="a6a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-primary)" stroke-width="1.3"/></marker></defs>
-          </svg>
+          <img src="6-30.png" alt="Fig. 6.30" loading="lazy">
           <div class="fig-cap">Fig. P6.30 — 全高 $2h$，中心線速度最大為 $U_c$。</div>
         </div>
         <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
@@ -401,22 +367,7 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
         <div class="problem-head"><span class="problem-num">7.6</span><span class="type-chip chip-blue">Buckingham Pi</span></div>
         <p>水流過水壩，單位長度流量 $q$ 與水頭 $H$、寬度 $b$、重力 $g$、密度 $\rho$、黏度 $\mu$ 有關。以 $b,g,\rho$ 為重複變數，建立無因次參數組。</p>
         <div class="fig">
-          <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg">
-            <rect x="30" y="60" width="160" height="120" fill="var(--color-blue-hi)"/>
-            <rect x="190" y="100" width="50" height="80" fill="var(--color-text-muted)" opacity="0.5"/>
-            <path d="M190,100 Q230,98 250,108 Q290,122 330,118" fill="none" stroke="var(--color-blue)" stroke-width="2"/>
-            <rect x="240" y="150" width="90" height="30" fill="var(--color-blue-hi)"/>
-            <line x1="170" y1="60" x2="170" y2="100" stroke="var(--color-text)" stroke-width="1" marker-start="url(#a7a)" marker-end="url(#a7a)"/>
-            <text x="176" y="84" font-size="12" fill="var(--color-text)" font-style="italic">H</text>
-            <line x1="200" y1="74" x2="240" y2="74" stroke="var(--color-blue)" stroke-width="2" marker-end="url(#a7b)"/>
-            <text x="212" y="68" font-size="12" fill="var(--color-blue)" font-style="italic">q</text>
-            <line x1="190" y1="190" x2="240" y2="190" stroke="var(--color-text)" stroke-width="1" marker-start="url(#a7a)" marker-end="url(#a7a)"/>
-            <text x="210" y="186" font-size="12" fill="var(--color-text)" font-style="italic">b</text>
-            <defs>
-              <marker id="a7a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M6,1 L2,4 L6,7" fill="none" stroke="var(--color-text)" stroke-width="1"/></marker>
-              <marker id="a7b" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-blue)" stroke-width="1.4"/></marker>
-            </defs>
-          </svg>
+          <img src="7-6.png" alt="Fig. 7.6" loading="lazy">
           <div class="fig-cap">Fig. P7.6 — 水越過壩頂，水頭 $H$、壩寬 $b$、單位長度流量 $q$。</div>
         </div>
         <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
@@ -435,28 +386,6 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
       <div class="problem" id="p7-10">
         <div class="problem-head"><span class="problem-num">7.10</span><span class="type-chip chip-blue">Buckingham Pi</span></div>
         <p>泵浦壓升 $\Delta p=f(D,\rho,\omega,Q)$，$D$ 葉輪直徑、$\rho$ 密度、$\omega$ 轉速、$Q$ 流量。求無因次參數組。</p>
-        <div class="fig">
-          <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="180" cy="90" r="55" fill="var(--color-blue-hi)" stroke="var(--color-blue)" stroke-width="1.5"/>
-            <g stroke="var(--color-blue)" stroke-width="2" fill="none">
-              <path d="M180,90 Q200,70 178,55"/><path d="M180,90 Q205,95 200,120"/>
-              <path d="M180,90 Q160,75 140,90"/><path d="M180,90 Q170,112 145,118"/>
-            </g>
-            <circle cx="180" cy="90" r="6" fill="var(--color-blue)"/>
-            <path d="M205,55 A30 30 0 0 1 215 80" fill="none" stroke="var(--color-orange)" stroke-width="2" marker-end="url(#a7c)"/>
-            <text x="222" y="60" font-size="12" fill="var(--color-orange)" font-style="italic">ω</text>
-            <line x1="40" y1="120" x2="125" y2="120" stroke="var(--color-blue)" stroke-width="2" marker-end="url(#a7d)"/>
-            <text x="60" y="114" font-size="11" fill="var(--color-blue)" font-style="italic">Q 入</text>
-            <line x1="235" y1="60" x2="320" y2="60" stroke="var(--color-blue)" stroke-width="2" marker-end="url(#a7d)"/>
-            <text x="275" y="54" font-size="11" fill="var(--color-blue)" font-style="italic">Δp 出</text>
-            <text x="168" y="160" font-size="11" fill="var(--color-text-muted)" font-style="italic">D（葉輪直徑）</text>
-            <defs>
-              <marker id="a7c" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.4"/></marker>
-              <marker id="a7d" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-blue)" stroke-width="1.4"/></marker>
-            </defs>
-          </svg>
-          <div class="fig-cap">離心泵示意：轉速 $\omega$、流量 $Q$、葉輪直徑 $D$、壓升 $\Delta p$。</div>
-        </div>
         <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
         <div class="solution">
           <h4>因次與 π 數</h4>
@@ -477,20 +406,7 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
           <tbody><tr><td>$\Delta p$ (lb/ft²)</td><td>1.2</td><td>1.8</td><td>6.0</td><td>6.6</td></tr></tbody></table>
         </div>
         <div class="fig">
-          <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg">
-            <path d="M120,40 A70 70 0 1 0 120 160" fill="none" stroke="var(--color-blue)" stroke-width="14" opacity="0.45"/>
-            <line x1="40" y1="40" x2="120" y2="40" stroke="var(--color-blue)" stroke-width="14" opacity="0.45"/>
-            <line x1="40" y1="160" x2="120" y2="160" stroke="var(--color-blue)" stroke-width="14" opacity="0.45"/>
-            <line x1="20" y1="40" x2="55" y2="40" stroke="var(--color-blue)" stroke-width="2" marker-end="url(#a7e)"/>
-            <text x="22" y="32" font-size="12" fill="var(--color-blue)" font-style="italic">V</text>
-            <line x1="190" y1="100" x2="190" y2="40" stroke="var(--color-text)" stroke-width="1" marker-end="url(#a7f)"/>
-            <text x="195" y="74" font-size="12" fill="var(--color-text)" font-style="italic">R</text>
-            <text x="196" y="104" font-size="12" fill="var(--color-text)" font-style="italic">D</text>
-            <defs>
-              <marker id="a7e" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-blue)" stroke-width="1.4"/></marker>
-              <marker id="a7f" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-text)" stroke-width="1"/></marker>
-            </defs>
-          </svg>
+          <img src="7-26.png" alt="Fig. 7.26" loading="lazy">
           <div class="fig-cap">Fig. P7.26 — 水平 U 形彎管，速度 $V$、彎曲半徑 $R$、管徑 $D$。</div>
         </div>
         <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
@@ -524,18 +440,6 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
         <div class="problem-head"><span class="problem-num">8.2</span><span class="type-chip chip-orange">Laminar Pipe Flow</span></div>
         <div class="given-box"><span class="label">Given：</span>油 $\mu=0.40\,\text{N·s/m}^2$，$\rho=900\,\text{kg/m}^3$，管徑 $D=0.020\,\text{m}$。</div>
         <p><span class="label">Find：</span>(a) 水平管 $x_1=0,\ x_2=10\,\text{m}$，要 $Q=2.0\times10^{-5}\,\text{m}^3/\text{s}$ 的壓降 $p_1-p_2$？(b) 若 $p_1=p_2$ 仍維持同流率，斜坡角 $\theta$？(c) (b) 條件下若 $p_1=200\,\text{kPa}$，$x_3=5\,\text{m}$ 處壓力？</p>
-        <div class="fig">
-          <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
-            <line x1="30" y1="60" x2="320" y2="130" stroke="var(--color-orange)" stroke-width="12" opacity="0.4" stroke-linecap="round"/>
-            <line x1="30" y1="130" x2="320" y2="130" stroke="var(--color-divider)" stroke-dasharray="4 4"/>
-            <path d="M120,130 A95 95 0 0 0 100 119" fill="none" stroke="var(--color-text)" stroke-width="1"/>
-            <text x="128" y="126" font-size="12" fill="var(--color-text)" font-style="italic">θ</text>
-            <circle cx="36" cy="58" r="3" fill="var(--color-orange)"/><text x="22" y="52" font-size="11" fill="var(--color-text)">1</text>
-            <circle cx="314" cy="129" r="3" fill="var(--color-orange)"/><text x="318" y="124" font-size="11" fill="var(--color-text)">2</text>
-            <circle cx="175" cy="93" r="3" fill="var(--color-orange)"/><text x="168" y="86" font-size="11" fill="var(--color-text)">3</text>
-          </svg>
-          <div class="fig-cap">傾斜管（角 $\theta$），沿管座標 $x$，斷面 1、2、3。</div>
-        </div>
         <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
         <div class="solution">
           <h4>(a) 先判斷流態</h4>
@@ -555,21 +459,6 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
       <div class="problem" id="p8-14">
         <div class="problem-head"><span class="problem-num">8.14</span><span class="type-chip chip-orange">Head Loss</span></div>
         <p>水平管 $D=0.1\,\text{in.}$，$Re=1500$ 時 $20\,\text{ft}$ 管段水頭損失 $h_L=6.4\,\text{ft}$。求流體速度。</p>
-        <div class="fig">
-          <svg viewBox="0 0 360 110" xmlns="http://www.w3.org/2000/svg">
-            <rect x="30" y="45" width="300" height="22" rx="11" fill="var(--color-orange)" opacity="0.35"/>
-            <line x1="60" y1="56" x2="120" y2="56" stroke="var(--color-orange)" stroke-width="2" marker-end="url(#a8a)"/>
-            <text x="72" y="50" font-size="11" fill="var(--color-orange)" font-style="italic">V</text>
-            <line x1="30" y1="85" x2="330" y2="85" stroke="var(--color-text)" stroke-width="1" marker-start="url(#a8b)" marker-end="url(#a8b)"/>
-            <text x="160" y="100" font-size="11" fill="var(--color-text-muted)">l = 20 ft</text>
-            <text x="335" y="60" font-size="11" fill="var(--color-text-muted)">D=0.1 in</text>
-            <defs>
-              <marker id="a8a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.4"/></marker>
-              <marker id="a8b" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M6,1 L2,4 L6,7" fill="none" stroke="var(--color-text)" stroke-width="1"/></marker>
-            </defs>
-          </svg>
-          <div class="fig-cap">水平圓管，長 20 ft。</div>
-        </div>
         <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
         <div class="solution">
           <p>$Re=1500<2100$ → 層流。Darcy–Weisbach：$h_L=f\dfrac{l}{D}\dfrac{V^2}{2g}$，層流 $f=\dfrac{64}{Re}=\dfrac{64}{1500}=0.04267$。</p>
@@ -584,15 +473,7 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
         <p>三個盛水水槽以管路連接（忽略次要損失），求每根管的流量。</p>
         <div class="given-box">高程：A(管1)=60 m、B(管2)=20 m、C(管3)=0。管1：$D=0.10,\ \ell=200,\ f=0.015$；管2：$D=0.08,\ \ell=200,\ f=0.020$；管3：$D=0.08,\ \ell=400,\ f=0.020$（單位 m）。</div>
         <div class="fig">
-          <svg viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg">
-            <rect x="150" y="15" width="70" height="34" fill="var(--color-orange-hi)" stroke="var(--color-orange)"/><text x="225" y="30" font-size="12" fill="var(--color-text)">A · 60m</text>
-            <rect x="25" y="70" width="60" height="30" fill="var(--color-orange-hi)" stroke="var(--color-orange)"/><text x="30" y="64" font-size="12" fill="var(--color-text)">B · 20m</text>
-            <rect x="275" y="100" width="60" height="30" fill="var(--color-orange-hi)" stroke="var(--color-orange)"/><text x="278" y="94" font-size="12" fill="var(--color-text)">C · 0m</text>
-            <circle cx="180" cy="155" r="5" fill="var(--color-text)"/>
-            <line x1="185" y1="49" x2="180" y2="150" stroke="var(--color-orange)" stroke-width="3"/><text x="190" y="105" font-size="10" fill="var(--color-orange)">①</text>
-            <line x1="55" y1="100" x2="176" y2="153" stroke="var(--color-orange)" stroke-width="3"/><text x="100" y="120" font-size="10" fill="var(--color-orange)">②</text>
-            <line x1="305" y1="130" x2="184" y2="154" stroke="var(--color-orange)" stroke-width="3"/><text x="245" y="138" font-size="10" fill="var(--color-orange)">③</text>
-          </svg>
+          <img src="8-92.png" alt="Fig. 8.92" loading="lazy">
           <div class="fig-cap">Fig. P8.92 — A 最高 → 水由 A 分別流向 B 與 C。</div>
         </div>
         <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
@@ -628,16 +509,6 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
       <div class="problem" id="p9-38">
         <div class="problem-head"><span class="problem-num">9.38</span><span class="type-chip chip-green">Drag Force</span></div>
         <p>混合車阻力係數 $C_D=0.21$，截面積 $A=30\,\text{ft}^2$。求其以 $55\,\text{mph}$ 在靜止空氣中行駛的空氣動力阻力。</p>
-        <div class="fig">
-          <svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50,110 L70,110 Q80,80 110,78 L150,76 Q170,55 220,55 L270,58 Q300,62 310,90 L320,110 Z" fill="var(--color-green-hi)" stroke="var(--color-green)" stroke-width="1.5"/>
-            <circle cx="110" cy="112" r="14" fill="var(--color-text)" opacity="0.6"/><circle cx="270" cy="112" r="14" fill="var(--color-text)" opacity="0.6"/>
-            <line x1="340" y1="80" x2="300" y2="80" stroke="var(--color-orange)" stroke-width="2.5" marker-end="url(#a9a)"/>
-            <text x="320" y="72" font-size="11" fill="var(--color-orange)" font-style="italic">U</text>
-            <text x="150" y="135" font-size="11" fill="var(--color-text-muted)">A = 30 ft²,  C_D = 0.21</text>
-            <defs><marker id="a9a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.4"/></marker></defs>
-          </svg>
-        </div>
         <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
         <div class="solution">
           <p>$U=55\,\text{mph}=55\times\dfrac{5280}{3600}=80.67\,\text{ft/s}$；標準空氣（60°F）$\rho=0.002373\,\text{slugs/ft}^3$。</p>
@@ -650,21 +521,6 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
       <div class="problem" id="p9-40">
         <div class="problem-head"><span class="problem-num">9.40</span><span class="type-chip chip-green">Drag Force · Sphere</span></div>
         <p>投手以 $95\,\text{mph}$ 投出棒球（標準空氣），球徑 $D=2.82\,\text{in.}$。估計阻力。</p>
-        <div class="fig">
-          <svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="200" cy="75" r="40" fill="var(--color-green-hi)" stroke="var(--color-green)" stroke-width="1.5"/>
-            <path d="M172,50 Q200,75 172,100" fill="none" stroke="var(--color-green)" stroke-width="1" stroke-dasharray="3 2"/>
-            <path d="M228,50 Q200,75 228,100" fill="none" stroke="var(--color-green)" stroke-width="1" stroke-dasharray="3 2"/>
-            <line x1="60" y1="75" x2="150" y2="75" stroke="var(--color-orange)" stroke-width="2.5" marker-end="url(#a9b)"/>
-            <text x="90" y="68" font-size="11" fill="var(--color-orange)" font-style="italic">U=95 mph</text>
-            <line x1="160" y1="120" x2="240" y2="120" stroke="var(--color-text)" stroke-width="1" marker-start="url(#a9c)" marker-end="url(#a9c)"/>
-            <text x="185" y="135" font-size="11" fill="var(--color-text-muted)">D = 2.82 in</text>
-            <defs>
-              <marker id="a9b" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.4"/></marker>
-              <marker id="a9c" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M6,1 L2,4 L6,7" fill="none" stroke="var(--color-text)" stroke-width="1"/></marker>
-            </defs>
-          </svg>
-        </div>
         <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
         <div class="solution">
           <p>$U=95\,\text{mph}=139.33\,\text{ft/s}$；60°F 空氣 $\nu=1.58\times10^{-4}\,\text{ft}^2/\text{s},\ \rho=2.373\times10^{-3}\,\text{slugs/ft}^3$。</p>
@@ -774,10 +630,11 @@ footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);f
   btn.addEventListener('click',()=>{dark=!dark;root.setAttribute('data-theme',dark?'dark':'light');btn.innerHTML=dark?sun:moon;drawVel();});
 })();
 
-/* ---------- Sidebar (mobile) ---------- */
+/* ---------- Sidebar (collapsible, desktop + mobile) ---------- */
 const sidebar=document.getElementById('sidebar');
-document.getElementById('menuBtn').addEventListener('click',()=>sidebar.classList.toggle('open'));
-document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{if(window.innerWidth<=960)sidebar.classList.remove('open');}));
+if(window.innerWidth>960)document.body.classList.add('nav-open');
+document.getElementById('menuBtn').addEventListener('click',()=>document.body.classList.toggle('nav-open'));
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{if(window.innerWidth<=960)document.body.classList.remove('nav-open');}));
 
 /* ---------- Scrollspy ---------- */
 const navLinks=[...document.querySelectorAll('#nav a')];
