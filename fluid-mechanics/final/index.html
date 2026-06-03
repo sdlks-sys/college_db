@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>流體力學 期末考完整題解 (CH6–9)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300..700&family=DM+Sans:wght@300..700&family=Noto+Sans+TC:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
+<style>
+:root{
+  --text-xs:clamp(0.75rem,0.7rem + 0.25vw,0.85rem);
+  --text-sm:clamp(0.85rem,0.8rem + 0.3vw,0.95rem);
+  --text-base:clamp(0.98rem,0.93rem + 0.25vw,1.08rem);
+  --text-lg:clamp(1.1rem,1rem + 0.6vw,1.4rem);
+  --text-xl:clamp(1.4rem,1.1rem + 1.2vw,2.1rem);
+  --text-2xl:clamp(1.9rem,1.2rem + 2.2vw,3rem);
+  --space-1:0.25rem;--space-2:0.5rem;--space-3:0.75rem;--space-4:1rem;
+  --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+  --color-bg:#f7f6f2;--color-surface:#fbfaf7;--color-surface-offset:#f0ede8;
+  --color-divider:#dcd9d5;--color-border:#d4d1ca;
+  --color-text:#26241d;--color-text-muted:#7a7974;
+  --color-primary:#01696f;--color-primary-hi:#d8eaeb;
+  --color-blue:#2d6ca2;--color-blue-hi:#dce7f1;
+  --color-orange:#b5651d;--color-orange-hi:#f2e3d3;
+  --color-green:#4a7c3a;--color-green-hi:#e0ecd9;
+  --radius-sm:0.375rem;--radius-md:0.5rem;--radius-lg:0.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(40,37,29,0.07);
+  --shadow-md:0 6px 20px rgba(40,37,29,0.1);
+  --shadow-lg:0 12px 40px rgba(40,37,29,0.16);
+  --transition:200ms cubic-bezier(0.16,1,0.3,1);
+  --font-display:'Source Serif 4',Georgia,serif;
+  --font-body:'DM Sans','Noto Sans TC','Helvetica Neue',sans-serif;
+  --sidebar-w:264px;
+}
+[data-theme="dark"]{
+  --color-bg:#161513;--color-surface:#1d1c1a;--color-surface-offset:#262521;
+  --color-divider:#33312d;--color-border:#3b3934;
+  --color-text:#d3d1cd;--color-text-muted:#8f8d87;
+  --color-primary:#52a0ab;--color-primary-hi:#16302f;
+  --color-blue:#7eaed4;--color-blue-hi:#16273a;
+  --color-orange:#d89c5f;--color-orange-hi:#33271a;
+  --color-green:#8db97a;--color-green-hi:#1f2d18;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md:0 6px 20px rgba(0,0,0,0.45);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.55);
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+body{
+  margin:0;background:var(--color-bg);color:var(--color-text);
+  font-family:var(--font-body);font-size:var(--text-base);line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.katex{font-size:1.02em;}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:var(--color-surface);border-right:1px solid var(--color-divider);
+  display:flex;flex-direction:column;z-index:200;transition:transform var(--transition);
+  overflow-y:auto;
+}
+.sidebar-head{
+  padding:var(--space-5) var(--space-5) var(--space-4);
+  display:flex;align-items:center;gap:var(--space-3);
+  border-bottom:1px solid var(--color-divider);position:sticky;top:0;background:var(--color-surface);z-index:2;
+}
+.sidebar-head .ttl{font-family:var(--font-display);font-weight:600;font-size:0.98rem;line-height:1.25;}
+.sidebar-head .sub{font-size:var(--text-xs);color:var(--color-text-muted);}
+.nav{padding:var(--space-4) var(--space-3) var(--space-8);}
+.nav-group-label{
+  font-size:var(--text-xs);letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--color-text-muted);font-weight:700;margin:var(--space-4) var(--space-3) var(--space-2);
+}
+.nav a{
+  display:flex;align-items:center;gap:var(--space-3);
+  padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);
+  color:var(--color-text);text-decoration:none;font-size:var(--text-sm);
+  transition:background var(--transition),color var(--transition);
+  border-left:3px solid transparent;
+}
+.nav a:hover{background:var(--color-surface-offset);}
+.nav a.active{background:var(--color-primary-hi);color:var(--color-primary);font-weight:600;border-left-color:var(--color-primary);}
+.nav a .pnum{font-family:var(--font-display);font-weight:700;min-width:2.6em;}
+.nav a .pttl{color:var(--color-text-muted);font-size:var(--text-xs);}
+.nav a.active .pttl{color:var(--color-primary);}
+
+/* ---------- Layout ---------- */
+.shell{margin-left:var(--sidebar-w);transition:margin var(--transition);}
+.topbar{
+  position:sticky;top:0;z-index:120;
+  background:color-mix(in oklch,var(--color-bg) 86%,transparent);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--color-divider);
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  padding:var(--space-3) var(--space-6);
+}
+.topbar-left{display:flex;align-items:center;gap:var(--space-3);}
+.menu-btn{display:none;}
+.btn{
+  display:inline-flex;align-items:center;gap:var(--space-2);
+  background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);
+  border-radius:var(--radius-full);padding:var(--space-2) var(--space-4);
+  font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;cursor:pointer;
+  transition:all var(--transition);
+}
+.btn:hover{background:var(--color-surface-offset);border-color:var(--color-text-muted);}
+.btn.primary{background:var(--color-primary);color:#fff;border-color:var(--color-primary);}
+.btn.primary:hover{filter:brightness(1.08);}
+.icon-btn{
+  width:38px;height:38px;border-radius:var(--radius-full);padding:0;justify-content:center;
+}
+main{max-width:860px;margin:0 auto;padding:0 var(--space-8) var(--space-16);}
+
+/* ---------- Hero ---------- */
+.hero{padding:var(--space-10) 0 var(--space-6);}
+.hero-eyebrow{font-size:var(--text-xs);letter-spacing:0.12em;text-transform:uppercase;color:var(--color-primary);font-weight:700;}
+.hero h1{font-family:var(--font-display);font-size:var(--text-2xl);line-height:1.1;margin:var(--space-3) 0 var(--space-4);font-weight:600;}
+.hero p{color:var(--color-text-muted);max-width:62ch;margin:0;}
+
+/* ---------- Chapter / Problem ---------- */
+.chapter{scroll-margin-top:80px;}
+.chapter-label{
+  font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;
+  margin:var(--space-12) 0 var(--space-2);padding-bottom:var(--space-2);
+  border-bottom:2px solid var(--color-divider);display:flex;align-items:center;gap:var(--space-3);
+}
+.chapter-label .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.problem{
+  background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);padding:var(--space-5) var(--space-6);
+  margin-top:var(--space-5);box-shadow:var(--shadow-sm);scroll-margin-top:80px;
+}
+.problem-head{display:flex;align-items:baseline;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-2);}
+.problem-num{font-family:var(--font-display);font-weight:700;font-size:var(--text-lg);color:var(--color-primary);}
+.type-chip{display:inline-block;font-size:var(--text-xs);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:2px 9px;border-radius:var(--radius-full);}
+.chip-teal{background:var(--color-primary-hi);color:var(--color-primary);}
+.chip-blue{background:var(--color-blue-hi);color:var(--color-blue);}
+.chip-orange{background:var(--color-orange-hi);color:var(--color-orange);}
+.chip-green{background:var(--color-green-hi);color:var(--color-green);}
+.problem p{margin:var(--space-3) 0;}
+.label{font-weight:700;color:var(--color-text);}
+.given-box{background:var(--color-surface-offset);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin:var(--space-3) 0;font-size:var(--text-sm);}
+.fig{margin:var(--space-4) 0;background:var(--color-surface-offset);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-4);}
+.fig svg{display:block;width:100%;height:auto;max-width:480px;margin:0 auto;}
+.fig-cap{text-align:center;font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-2);}
+.data-table-wrap{border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;margin:var(--space-4) 0;box-shadow:var(--shadow-sm);}
+table{border-collapse:collapse;width:100%;font-size:var(--text-sm);}
+thead tr{background:var(--color-text);}
+thead th{color:var(--color-bg);padding:var(--space-2) var(--space-4);font-weight:600;text-align:left;}
+tbody td{padding:var(--space-2) var(--space-4);border-bottom:1px solid var(--color-divider);}
+tbody tr:last-child td{border-bottom:none;}
+
+/* ---------- Solution collapsible ---------- */
+.sol-toggle{
+  margin-top:var(--space-4);width:100%;text-align:left;
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);
+  background:var(--color-primary-hi);color:var(--color-primary);
+  border:none;border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);
+  font-family:var(--font-body);font-weight:700;font-size:var(--text-sm);cursor:pointer;
+  transition:filter var(--transition);
+}
+.sol-toggle:hover{filter:brightness(0.97);}
+.sol-toggle .chev{transition:transform var(--transition);}
+.sol-toggle[aria-expanded="true"] .chev{transform:rotate(90deg);}
+.solution{display:none;margin-top:var(--space-3);padding:var(--space-4) var(--space-5);
+  background:var(--color-bg);border:1px dashed var(--color-border);border-radius:var(--radius-md);}
+.solution.open{display:block;animation:fade var(--transition);}
+@keyframes fade{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+.solution h4{font-family:var(--font-body);font-size:var(--text-sm);font-weight:700;color:var(--color-text-muted);
+  text-transform:uppercase;letter-spacing:0.05em;margin:var(--space-4) 0 var(--space-2);}
+.solution h4:first-child{margin-top:0;}
+.solution p{margin:var(--space-2) 0;font-size:var(--text-sm);}
+.solution ol{padding-left:1.3em;}
+.solution li{margin:var(--space-2) 0;font-size:var(--text-sm);}
+.ans{display:inline-block;background:var(--color-green-hi);color:var(--color-green);
+  font-weight:700;border-radius:var(--radius-sm);padding:2px 10px;}
+.ans-box{margin-top:var(--space-3);background:var(--color-green-hi);border-left:4px solid var(--color-green);
+  border-radius:var(--radius-sm);padding:var(--space-3) var(--space-4);font-size:var(--text-sm);}
+
+/* ---------- Interactive velocity widget ---------- */
+.widget{margin:var(--space-4) 0;background:var(--color-surface-offset);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-4);}
+.widget-title{font-weight:700;font-size:var(--text-sm);margin-bottom:var(--space-3);}
+.slider-row{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-2);font-size:var(--text-sm);}
+.slider-row input[type=range]{flex:1;accent-color:var(--color-primary);}
+.slider-val{font-family:var(--font-display);font-weight:700;color:var(--color-primary);min-width:3.5em;text-align:right;}
+
+/* ---------- Concept panel (slide-out) ---------- */
+.panel-overlay{position:fixed;inset:0;background:rgba(20,18,14,0.4);opacity:0;visibility:hidden;transition:opacity var(--transition);z-index:300;}
+.panel-overlay.open{opacity:1;visibility:visible;}
+.panel{
+  position:fixed;top:0;right:0;height:100vh;width:min(420px,92vw);
+  background:var(--color-surface);border-left:1px solid var(--color-divider);
+  box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform var(--transition);
+  z-index:310;display:flex;flex-direction:column;
+}
+.panel.open{transform:none;}
+.panel-head{padding:var(--space-5);border-bottom:1px solid var(--color-divider);display:flex;align-items:center;justify-content:space-between;}
+.panel-head h2{font-family:var(--font-display);font-size:var(--text-lg);margin:0;font-weight:600;}
+.panel-body{padding:var(--space-5);overflow-y:auto;flex:1;}
+.panel-tabs{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-5);}
+.panel-tab{font-size:var(--text-xs);font-weight:700;padding:5px 12px;border-radius:var(--radius-full);
+  background:var(--color-surface-offset);border:1px solid var(--color-border);color:var(--color-text-muted);cursor:pointer;transition:all var(--transition);}
+.panel-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary);}
+.concept-card{background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-3);}
+.concept-card h3{font-size:var(--text-sm);margin:0 0 var(--space-2);font-weight:700;}
+.concept-card .formula{background:var(--color-surface-offset);border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);margin:var(--space-2) 0;overflow-x:auto;}
+.concept-card p{font-size:var(--text-sm);margin:var(--space-2) 0;color:var(--color-text-muted);}
+.concept-group{display:none;}
+.concept-group.active{display:block;}
+.calc{background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-3);}
+.calc h3{font-size:var(--text-sm);margin:0 0 var(--space-3);font-weight:700;}
+.calc label{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);font-size:var(--text-sm);margin-bottom:var(--space-2);}
+.calc input{width:120px;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);
+  border-radius:var(--radius-sm);padding:4px 8px;font-family:var(--font-body);font-size:var(--text-sm);}
+.calc-out{margin-top:var(--space-3);background:var(--color-primary-hi);color:var(--color-primary);border-radius:var(--radius-sm);
+  padding:var(--space-3);font-weight:700;font-size:var(--text-sm);text-align:center;}
+
+footer{border-top:1px solid var(--color-divider);color:var(--color-text-muted);font-size:var(--text-sm);padding:var(--space-6) 0;margin-top:var(--space-12);}
+
+/* ---------- Responsive ---------- */
+@media (max-width:960px){
+  .sidebar{transform:translateX(-100%);box-shadow:var(--shadow-lg);}
+  .sidebar.open{transform:none;}
+  .shell{margin-left:0;}
+  .menu-btn{display:inline-flex;}
+}
+@media (max-width:640px){
+  main{padding-left:var(--space-4);padding-right:var(--space-4);}
+  .topbar{padding:var(--space-3) var(--space-4);}
+  .problem{padding:var(--space-4);}
+  .btn .btn-text{display:none;}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+@media print{.sidebar,.topbar,.panel,.panel-overlay,.sol-toggle{display:none!important;}.shell{margin-left:0;}.solution{display:block!important;border-style:solid;}}
+</style>
+</head>
+<body>
+
+<!-- ============ SIDEBAR ============ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <svg width="34" height="34" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="36" height="36" rx="8" fill="var(--color-primary)"/>
+      <path d="M6 23 C11 17,15 29,20 23 C23 20,27 26,30 22" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M6 17 C11 11,15 23,20 17 C23 14,27 20,30 16" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.45"/>
+    </svg>
+    <div>
+      <div class="ttl">流體力學題解</div>
+      <div class="sub">期末考範圍 · CH 6–9</div>
+    </div>
+  </div>
+  <nav class="nav" id="nav">
+    <div class="nav-group-label">第 6 章 · 微分分析</div>
+    <a href="#p6-8"><span class="pnum">6.8</span><span class="pttl">移動皮帶</span></a>
+    <a href="#p6-30"><span class="pnum">6.30</span><span class="pttl">流函數/速度勢</span></a>
+    <div class="nav-group-label">第 7 章 · 因次分析</div>
+    <a href="#p7-6"><span class="pnum">7.6</span><span class="pttl">水壩流量</span></a>
+    <a href="#p7-10"><span class="pnum">7.10</span><span class="pttl">泵浦壓升</span></a>
+    <a href="#p7-26"><span class="pnum">7.26</span><span class="pttl">彎管壓降</span></a>
+    <div class="nav-group-label">第 8 章 · 管流</div>
+    <a href="#p8-2"><span class="pnum">8.2</span><span class="pttl">層流管流</span></a>
+    <a href="#p8-14"><span class="pnum">8.14</span><span class="pttl">水頭損失</span></a>
+    <a href="#p8-92"><span class="pnum">8.92</span><span class="pttl">三水槽</span></a>
+    <div class="nav-group-label">第 9 章 · 外部流與阻力</div>
+    <a href="#p9-38"><span class="pnum">9.38</span><span class="pttl">汽車阻力</span></a>
+    <a href="#p9-40"><span class="pnum">9.40</span><span class="pttl">棒球阻力</span></a>
+  </nav>
+</aside>
+
+<!-- ============ MAIN SHELL ============ -->
+<div class="shell">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="btn icon-btn menu-btn" id="menuBtn" aria-label="開啟選單">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <button class="btn" id="toggleAll"><span class="btn-text">全部展開解答</span><span class="btn-text-mobile" style="display:none">解答</span></button>
+    </div>
+    <div class="topbar-left">
+      <button class="btn primary" id="panelBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span class="btn-text">公式 / 概念</span>
+      </button>
+      <button class="btn icon-btn" data-theme-toggle aria-label="切換深淺色"></button>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="hero-eyebrow">Fluid Mechanics · Final Exam · Full Solutions</div>
+      <h1>期末考完整題解</h1>
+      <p>公告的 10 道考題，附示意圖與逐步解答。左側可快速跳題；右上「公式 / 概念」面板整理各章重點公式，並附互動計算機。每題的解答預設收合，建議先自己算一次再展開對答案。</p>
+    </section>
+
+    <!-- ==================== CH 6 ==================== -->
+    <div class="chapter" id="ch6">
+      <div class="chapter-label"><span class="dot" style="background:var(--color-primary)"></span>第 6 章 · 微分分析</div>
+
+      <!-- 6.8 -->
+      <div class="problem" id="p6-8">
+        <div class="problem-head"><span class="problem-num">6.8</span><span class="type-chip chip-teal">Plane Couette Flow</span></div>
+        <div class="given-box"><span class="label">Given：</span>寬移動皮帶垂直向上穿過裝有黏性液體的容器，等速 $V_0$。黏滯力使皮帶帶起厚度 $h$ 的流體膜，重力使流體往下流。假設層流、穩態、完全發展。</div>
+        <p><span class="label">Find：</span>用 Navier–Stokes 方程式求流體膜的<strong>平均速度</strong>。</p>
+        <div class="fig">
+          <svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg">
+            <rect x="40" y="150" width="280" height="70" fill="var(--color-primary-hi)" stroke="var(--color-divider)"/>
+            <line x1="40" y1="150" x2="320" y2="150" stroke="var(--color-primary)" stroke-width="1.5"/>
+            <rect x="120" y="10" width="14" height="210" fill="var(--color-text-muted)" opacity="0.55"/>
+            <rect x="134" y="10" width="20" height="160" fill="var(--color-blue-hi)" stroke="var(--color-blue)" stroke-dasharray="3 3"/>
+            <text x="144" y="8" font-size="11" text-anchor="middle" fill="var(--color-text)">h</text>
+            <line x1="134" y1="6" x2="154" y2="6" stroke="var(--color-text)" stroke-width="1"/>
+            <line x1="127" y1="120" x2="127" y2="55" stroke="var(--color-primary)" stroke-width="2.5" marker-end="url(#ar1)"/>
+            <text x="100" y="95" font-size="12" fill="var(--color-primary)" font-style="italic">V₀</text>
+            <line x1="250" y1="40" x2="250" y2="110" stroke="var(--color-orange)" stroke-width="2.5" marker-end="url(#ar2)"/>
+            <text x="258" y="80" font-size="12" fill="var(--color-orange)" font-style="italic">g</text>
+            <line x1="134" y1="195" x2="180" y2="195" stroke="var(--color-text-muted)" stroke-width="1" marker-end="url(#ar3)"/>
+            <text x="186" y="199" font-size="11" fill="var(--color-text-muted)" font-style="italic">x</text>
+            <text x="118" y="40" font-size="11" fill="var(--color-text-muted)" font-style="italic">y</text>
+            <defs>
+              <marker id="ar1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-primary)" stroke-width="1.5"/></marker>
+              <marker id="ar2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.5"/></marker>
+              <marker id="ar3" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-text-muted)" stroke-width="1.2"/></marker>
+            </defs>
+          </svg>
+          <div class="fig-cap">Fig. E6.8 — 皮帶以 $V_0$ 上行，帶起厚度 $h$ 的流體膜；重力 $g$ 向下。</div>
+        </div>
+
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <h4>建立方程</h4>
+          <p>只有 $y$ 方向速度分量 $v$（$u=w=0$）。由連續方程 $\partial v/\partial y=0$、穩態 $\partial v/\partial t=0$，故 $v=v(x)$。$x$、$z$ 方向的 N–S 化簡為 $\partial p/\partial x=0,\ \partial p/\partial z=0$，所以壓力在水平方向不變；膜表面 $x=h$ 為大氣壓，因此膜內各處皆為大氣壓（零錶壓）。</p>
+          <p>$y$ 方向運動方程：</p>
+          <p>$$0=-\rho g+\mu\frac{d^2 v}{dx^2}\ \Rightarrow\ \frac{d^2 v}{dx^2}=\frac{\gamma}{\mu}\quad(1)$$</p>
+          <h4>積分與邊界條件</h4>
+          <p>$$\frac{dv}{dx}=\frac{\gamma}{\mu}x+c_1\quad(2)$$</p>
+          <p>自由表面 $x=h$ 處剪應力為零（空氣阻力可忽略）：$\tau_{xy}=\mu(dv/dx)=0 \Rightarrow c_1=-\dfrac{\gamma h}{\mu}$。再積分一次：</p>
+          <p>$$v=\frac{\gamma}{2\mu}x^2-\frac{\gamma h}{\mu}x+c_2$$</p>
+          <p>皮帶處 $x=0$，$v=V_0 \Rightarrow c_2=V_0$，得速度分布：</p>
+          <p>$$v=\frac{\gamma}{2\mu}x^2-\frac{\gamma h}{\mu}x+V_0\quad(3)$$</p>
+          <h4>平均速度</h4>
+          <p>單位寬流量 $q=\displaystyle\int_0^h v\,dx=V_0 h-\frac{\gamma h^3}{3\mu}$。由 $q=Vh$：</p>
+          <div class="ans-box">$$\boxed{\,V=V_0-\frac{\gamma h^2}{3\mu}\,}$$ 無因次形式：$\dfrac{v}{V_0}=c\left(\dfrac{x}{h}\right)^2-2c\left(\dfrac{x}{h}\right)+1$，其中 $c=\dfrac{\gamma h^2}{2\mu V_0}$。淨向上流動（$V>0$）需 $V_0>\gamma h^2/3\mu$。</div>
+          <div class="widget">
+            <div class="widget-title">互動：無因次速度分布 $v/V_0$ vs $x/h$</div>
+            <div class="slider-row"><span>$c=\gamma h^2/2\mu V_0$</span><input type="range" id="cSlider" min="0" max="2" step="0.1" value="1"><span class="slider-val" id="cVal">1.0</span></div>
+            <svg id="velPlot" viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div class="fig-cap">拖動滑桿觀察：$c$ 越大（黏度高 / 皮帶慢），靠近表面的流體越可能往下流（$v/V_0<0$）。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6.30 -->
+      <div class="problem" id="p6-30">
+        <div class="problem-head"><span class="problem-num">6.30</span><span class="type-chip chip-teal">Stream Function / Potential</span></div>
+        <p>兩片寬而固定的平行板間，黏性流體二維流動為拋物線速度分布：$u=U_c\left[1-\left(\tfrac{y}{h}\right)^2\right]$，$v=0$。若可能，求對應的<strong>流函數</strong>與<strong>速度勢</strong>。</p>
+        <div class="fig">
+          <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="40" y="30" width="280" height="10" fill="var(--color-text-muted)" opacity="0.55"/>
+            <rect x="40" y="160" width="280" height="10" fill="var(--color-text-muted)" opacity="0.55"/>
+            <line x1="60" y1="100" x2="300" y2="100" stroke="var(--color-divider)" stroke-dasharray="4 4"/>
+            <path d="M150,40 Q250,100 150,160" fill="none" stroke="var(--color-primary)" stroke-width="2"/>
+            <line x1="150" y1="50" x2="180" y2="50" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
+            <line x1="150" y1="70" x2="210" y2="70" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
+            <line x1="150" y1="100" x2="245" y2="100" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
+            <line x1="150" y1="130" x2="210" y2="130" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
+            <line x1="150" y1="150" x2="180" y2="150" stroke="var(--color-primary)" stroke-width="1.5" marker-end="url(#a6a)"/>
+            <text x="252" y="96" font-size="12" fill="var(--color-primary)" font-style="italic">U_c</text>
+            <text x="30" y="70" font-size="11" fill="var(--color-text-muted)">h</text>
+            <text x="30" y="135" font-size="11" fill="var(--color-text-muted)">h</text>
+            <defs><marker id="a6a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-primary)" stroke-width="1.3"/></marker></defs>
+          </svg>
+          <div class="fig-cap">Fig. P6.30 — 全高 $2h$，中心線速度最大為 $U_c$。</div>
+        </div>
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <h4>流函數 $\psi$</h4>
+          <p>定義 $\dfrac{\partial\psi}{\partial y}=u,\ \dfrac{\partial\psi}{\partial x}=-v$。由 $u$：</p>
+          <p>$$\psi=\int U_c\!\left[1-\left(\tfrac{y}{h}\right)^2\right]dy=U_c\!\left[y-\frac{y^3}{3h^2}\right]+f_1(x)$$</p>
+          <p>由 $-v=0\Rightarrow \partial\psi/\partial x=0$，故 $f_1(x)=$ 常數。</p>
+          <div class="ans-box">$$\boxed{\,\psi=U_c\,y\left[1-\frac{1}{3}\left(\frac{y}{h}\right)^2\right]+C\,}$$</div>
+          <h4>速度勢 $\phi$</h4>
+          <p>定義 $\dfrac{\partial\phi}{\partial x}=u,\ \dfrac{\partial\phi}{\partial y}=v$。由 $u$：$\phi=U_c x\!\left[1-(y/h)^2\right]+f_1(y)$。代入 $\partial\phi/\partial y=v=0$：</p>
+          <p>$$-\frac{2U_c xy}{h^2}+\frac{d f_1}{dy}=0$$</p>
+          <p>此式含 $x$，但 $f_1$ 只能是 $y$ 的函數，無法對所有 $x$ 成立。</p>
+          <div class="ans-box"><strong>結論：速度勢不存在。</strong>因為黏性流動為有旋流（$\nabla\times\mathbf V\neq 0$），不滿足無旋條件，故無速度勢。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CH 7 ==================== -->
+    <div class="chapter" id="ch7">
+      <div class="chapter-label"><span class="dot" style="background:var(--color-blue)"></span>第 7 章 · 因次分析</div>
+
+      <!-- 7.6 -->
+      <div class="problem" id="p7-6">
+        <div class="problem-head"><span class="problem-num">7.6</span><span class="type-chip chip-blue">Buckingham Pi</span></div>
+        <p>水流過水壩，單位長度流量 $q$ 與水頭 $H$、寬度 $b$、重力 $g$、密度 $\rho$、黏度 $\mu$ 有關。以 $b,g,\rho$ 為重複變數，建立無因次參數組。</p>
+        <div class="fig">
+          <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="30" y="60" width="160" height="120" fill="var(--color-blue-hi)"/>
+            <rect x="190" y="100" width="50" height="80" fill="var(--color-text-muted)" opacity="0.5"/>
+            <path d="M190,100 Q230,98 250,108 Q290,122 330,118" fill="none" stroke="var(--color-blue)" stroke-width="2"/>
+            <rect x="240" y="150" width="90" height="30" fill="var(--color-blue-hi)"/>
+            <line x1="170" y1="60" x2="170" y2="100" stroke="var(--color-text)" stroke-width="1" marker-start="url(#a7a)" marker-end="url(#a7a)"/>
+            <text x="176" y="84" font-size="12" fill="var(--color-text)" font-style="italic">H</text>
+            <line x1="200" y1="74" x2="240" y2="74" stroke="var(--color-blue)" stroke-width="2" marker-end="url(#a7b)"/>
+            <text x="212" y="68" font-size="12" fill="var(--color-blue)" font-style="italic">q</text>
+            <line x1="190" y1="190" x2="240" y2="190" stroke="var(--color-text)" stroke-width="1" marker-start="url(#a7a)" marker-end="url(#a7a)"/>
+            <text x="210" y="186" font-size="12" fill="var(--color-text)" font-style="italic">b</text>
+            <defs>
+              <marker id="a7a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M6,1 L2,4 L6,7" fill="none" stroke="var(--color-text)" stroke-width="1"/></marker>
+              <marker id="a7b" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-blue)" stroke-width="1.4"/></marker>
+            </defs>
+          </svg>
+          <div class="fig-cap">Fig. P7.6 — 水越過壩頂，水頭 $H$、壩寬 $b$、單位長度流量 $q$。</div>
+        </div>
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <h4>因次（FLT 系統）</h4>
+          <p>$H\!=\!L,\ b\!=\!L,\ q\!=\!L^2T^{-1},\ g\!=\!LT^{-2},\ \rho\!=\!FL^{-4}T^2,\ \mu\!=\!FL^{-2}T$。變數 $k=6$、參考因次 $r=3 \Rightarrow$ 共 $6-3=3$ 個 $\pi$ 項。</p>
+          <h4>求各 π 項</h4>
+          <p>$\pi_1=q\,b^a g^b\rho^c$：由 $F,L,T$ 比對得 $c=0,\ b=-\tfrac12,\ a=-\tfrac32$。</p>
+          <p>$\pi_2=H\,b^a g^b\rho^c$：得 $c=0,\ b=0,\ a=-1$。</p>
+          <p>$\pi_3=\mu\,b^a g^b\rho^c$：得 $c=-1,\ b=-\tfrac12,\ a=-\tfrac32$。</p>
+          <div class="ans-box">$$\boxed{\ \frac{q}{b^{3/2}\sqrt{g}}=\phi\!\left(\frac{H}{b},\ \frac{\mu}{b^{3/2}\sqrt{g}\,\rho}\right)\ }$$<br>第三項即雷諾數型參數的倒數型式。</div>
+        </div>
+      </div>
+
+      <!-- 7.10 -->
+      <div class="problem" id="p7-10">
+        <div class="problem-head"><span class="problem-num">7.10</span><span class="type-chip chip-blue">Buckingham Pi</span></div>
+        <p>泵浦壓升 $\Delta p=f(D,\rho,\omega,Q)$，$D$ 葉輪直徑、$\rho$ 密度、$\omega$ 轉速、$Q$ 流量。求無因次參數組。</p>
+        <div class="fig">
+          <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="180" cy="90" r="55" fill="var(--color-blue-hi)" stroke="var(--color-blue)" stroke-width="1.5"/>
+            <g stroke="var(--color-blue)" stroke-width="2" fill="none">
+              <path d="M180,90 Q200,70 178,55"/><path d="M180,90 Q205,95 200,120"/>
+              <path d="M180,90 Q160,75 140,90"/><path d="M180,90 Q170,112 145,118"/>
+            </g>
+            <circle cx="180" cy="90" r="6" fill="var(--color-blue)"/>
+            <path d="M205,55 A30 30 0 0 1 215 80" fill="none" stroke="var(--color-orange)" stroke-width="2" marker-end="url(#a7c)"/>
+            <text x="222" y="60" font-size="12" fill="var(--color-orange)" font-style="italic">ω</text>
+            <line x1="40" y1="120" x2="125" y2="120" stroke="var(--color-blue)" stroke-width="2" marker-end="url(#a7d)"/>
+            <text x="60" y="114" font-size="11" fill="var(--color-blue)" font-style="italic">Q 入</text>
+            <line x1="235" y1="60" x2="320" y2="60" stroke="var(--color-blue)" stroke-width="2" marker-end="url(#a7d)"/>
+            <text x="275" y="54" font-size="11" fill="var(--color-blue)" font-style="italic">Δp 出</text>
+            <text x="168" y="160" font-size="11" fill="var(--color-text-muted)" font-style="italic">D（葉輪直徑）</text>
+            <defs>
+              <marker id="a7c" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.4"/></marker>
+              <marker id="a7d" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-blue)" stroke-width="1.4"/></marker>
+            </defs>
+          </svg>
+          <div class="fig-cap">離心泵示意：轉速 $\omega$、流量 $Q$、葉輪直徑 $D$、壓升 $\Delta p$。</div>
+        </div>
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <h4>因次與 π 數</h4>
+          <p>$\Delta p=FL^{-2},\ D=L,\ \rho=FL^{-4}T^2,\ \omega=T^{-1},\ Q=L^3T^{-1}$。$k=5,\ r=3 \Rightarrow 2$ 個 $\pi$ 項。</p>
+          <h4>求 π 項</h4>
+          <p>$\pi_1=\Delta p\,D^a\rho^b\omega^c$：$b=-1,\ a=-2,\ c=-2 \Rightarrow \pi_1=\dfrac{\Delta p}{D^2\rho\,\omega^2}$。</p>
+          <p>$\pi_2=Q\,D^a\rho^b\omega^c$：$b=0,\ a=-3,\ c=-1 \Rightarrow \pi_2=\dfrac{Q}{D^3\omega}$。</p>
+          <div class="ans-box">$$\boxed{\ \frac{\Delta p}{D^2\rho\,\omega^2}=\phi\!\left(\frac{Q}{D^3\omega}\right)\ }$$ 即泵浦的「壓升係數 = f(流量係數)」。</div>
+        </div>
+      </div>
+
+      <!-- 7.26 -->
+      <div class="problem" id="p7-26">
+        <div class="problem-head"><span class="problem-num">7.26</span><span class="type-chip chip-blue">Pi + 數據驗證</span></div>
+        <p>水平彎管，壓降 $\Delta p=f(V,R,D,\rho)$。下表為實驗數據，$\rho=2.0\,\text{slugs/ft}^3,\ R=0.5\,\text{ft},\ D=0.1\,\text{ft}$。做因次分析並判斷所用變數是否正確。</p>
+        <div class="data-table-wrap">
+          <table><thead><tr><th>$V$ (ft/s)</th><th>2.1</th><th>3.0</th><th>3.9</th><th>5.1</th></tr></thead>
+          <tbody><tr><td>$\Delta p$ (lb/ft²)</td><td>1.2</td><td>1.8</td><td>6.0</td><td>6.6</td></tr></tbody></table>
+        </div>
+        <div class="fig">
+          <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg">
+            <path d="M120,40 A70 70 0 1 0 120 160" fill="none" stroke="var(--color-blue)" stroke-width="14" opacity="0.45"/>
+            <line x1="40" y1="40" x2="120" y2="40" stroke="var(--color-blue)" stroke-width="14" opacity="0.45"/>
+            <line x1="40" y1="160" x2="120" y2="160" stroke="var(--color-blue)" stroke-width="14" opacity="0.45"/>
+            <line x1="20" y1="40" x2="55" y2="40" stroke="var(--color-blue)" stroke-width="2" marker-end="url(#a7e)"/>
+            <text x="22" y="32" font-size="12" fill="var(--color-blue)" font-style="italic">V</text>
+            <line x1="190" y1="100" x2="190" y2="40" stroke="var(--color-text)" stroke-width="1" marker-end="url(#a7f)"/>
+            <text x="195" y="74" font-size="12" fill="var(--color-text)" font-style="italic">R</text>
+            <text x="196" y="104" font-size="12" fill="var(--color-text)" font-style="italic">D</text>
+            <defs>
+              <marker id="a7e" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-blue)" stroke-width="1.4"/></marker>
+              <marker id="a7f" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-text)" stroke-width="1"/></marker>
+            </defs>
+          </svg>
+          <div class="fig-cap">Fig. P7.26 — 水平 U 形彎管，速度 $V$、彎曲半徑 $R$、管徑 $D$。</div>
+        </div>
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <h4>因次分析（MLT，重複變數 $D,V,\rho$）</h4>
+          <p>$\Delta p=ML^{-1}T^{-2},\ R=L,\ D=L,\ V=LT^{-1},\ \rho=ML^{-3}$。$n=5,\ r=3 \Rightarrow 2$ 個 $\pi$ 項。</p>
+          <p>$\pi_1=\dfrac{\Delta p}{\rho V^2}$，$\quad\pi_2=\dfrac{R}{D}$，故 $\dfrac{\Delta p}{\rho V^2}=f\!\left(\dfrac{R}{D}\right)$。</p>
+          <h4>數據驗證（$R/D=0.5/0.1=5$ 為定值）</h4>
+          <p>計算 $\dfrac{\Delta p}{\rho V^2}$（$\rho=2.0$）：</p>
+          <div class="data-table-wrap"><table>
+            <thead><tr><th>$\Delta p$</th><th>$V$</th><th>$\Delta p/\rho V^2$</th><th>$R/D$</th></tr></thead>
+            <tbody>
+              <tr><td>1.2</td><td>2.1</td><td>0.136</td><td>5</td></tr>
+              <tr><td>1.8</td><td>3.0</td><td>0.100</td><td>5</td></tr>
+              <tr><td>6.0</td><td>3.9</td><td>0.197</td><td>5</td></tr>
+              <tr><td>6.6</td><td>5.1</td><td>0.127</td><td>5</td></tr>
+            </tbody>
+          </table></div>
+          <div class="ans-box"><strong>結論：變數選擇看起來不正確。</strong>$R/D$ 在所有測試中固定為 5，按 $\Delta p/\rho V^2=f(R/D)$，$\Delta p/\rho V^2$ 理應為定值；但實際算出 0.136、0.100、0.197、0.127 並不一致，表示遺漏了重要變數（例如黏度 $\mu$ → 雷諾數效應），故所列變數不足以正確描述此問題。</div>
+          <p style="font-size:var(--text-xs);color:var(--color-text-muted)">註：原解答檔中最後一筆 $\Delta p$ 在題目表為 6.6、在驗算表寫成 6.5（算得 0.125），兩者結論相同——比值皆不為定值。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CH 8 ==================== -->
+    <div class="chapter" id="ch8">
+      <div class="chapter-label"><span class="dot" style="background:var(--color-orange)"></span>第 8 章 · 管流</div>
+
+      <!-- 8.2 -->
+      <div class="problem" id="p8-2">
+        <div class="problem-head"><span class="problem-num">8.2</span><span class="type-chip chip-orange">Laminar Pipe Flow</span></div>
+        <div class="given-box"><span class="label">Given：</span>油 $\mu=0.40\,\text{N·s/m}^2$，$\rho=900\,\text{kg/m}^3$，管徑 $D=0.020\,\text{m}$。</div>
+        <p><span class="label">Find：</span>(a) 水平管 $x_1=0,\ x_2=10\,\text{m}$，要 $Q=2.0\times10^{-5}\,\text{m}^3/\text{s}$ 的壓降 $p_1-p_2$？(b) 若 $p_1=p_2$ 仍維持同流率，斜坡角 $\theta$？(c) (b) 條件下若 $p_1=200\,\text{kPa}$，$x_3=5\,\text{m}$ 處壓力？</p>
+        <div class="fig">
+          <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
+            <line x1="30" y1="60" x2="320" y2="130" stroke="var(--color-orange)" stroke-width="12" opacity="0.4" stroke-linecap="round"/>
+            <line x1="30" y1="130" x2="320" y2="130" stroke="var(--color-divider)" stroke-dasharray="4 4"/>
+            <path d="M120,130 A95 95 0 0 0 100 119" fill="none" stroke="var(--color-text)" stroke-width="1"/>
+            <text x="128" y="126" font-size="12" fill="var(--color-text)" font-style="italic">θ</text>
+            <circle cx="36" cy="58" r="3" fill="var(--color-orange)"/><text x="22" y="52" font-size="11" fill="var(--color-text)">1</text>
+            <circle cx="314" cy="129" r="3" fill="var(--color-orange)"/><text x="318" y="124" font-size="11" fill="var(--color-text)">2</text>
+            <circle cx="175" cy="93" r="3" fill="var(--color-orange)"/><text x="168" y="86" font-size="11" fill="var(--color-text)">3</text>
+          </svg>
+          <div class="fig-cap">傾斜管（角 $\theta$），沿管座標 $x$，斷面 1、2、3。</div>
+        </div>
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <h4>(a) 先判斷流態</h4>
+          <p>$V=Q/A=\dfrac{2.0\times10^{-5}}{\pi(0.020)^2/4}=0.0637\,\text{m/s}$，$Re=\dfrac{\rho VD}{\mu}=2.87<2100$ → 層流。</p>
+          <p>$$\Delta p=p_1-p_2=\frac{128\,\mu\ell Q}{\pi D^4}=\frac{128(0.40)(10)(2.0\times10^{-5})}{\pi(0.020)^4}$$</p>
+          <div class="ans-box">$$\boxed{\ \Delta p\approx 20{,}400\,\text{N/m}^2=20.4\,\text{kPa}\ }$$</div>
+          <h4>(b) $p_1=p_2$ 時的坡度</h4>
+          <p>$$\sin\theta=-\frac{128\,\mu Q}{\pi\rho g D^4}=-\frac{128(0.40)(2.0\times10^{-5})}{\pi(900)(9.81)(0.020)^4}=-0.2305$$</p>
+          <div class="ans-box">$$\boxed{\ \theta\approx -13.34^\circ\ }$$（負號表向下傾斜，重力驅動流動）</div>
+          <h4>(c) $x_3=5\,\text{m}$ 處壓力</h4>
+          <p>當 $p_1=p_2$ 時，壓力沿等坡管不變（重力剛好平衡黏滯損失），故各斷面壓力相同。</p>
+          <div class="ans-box">$$\boxed{\ p_3=200\,\text{kPa}\ }$$</div>
+        </div>
+      </div>
+
+      <!-- 8.14 -->
+      <div class="problem" id="p8-14">
+        <div class="problem-head"><span class="problem-num">8.14</span><span class="type-chip chip-orange">Head Loss</span></div>
+        <p>水平管 $D=0.1\,\text{in.}$，$Re=1500$ 時 $20\,\text{ft}$ 管段水頭損失 $h_L=6.4\,\text{ft}$。求流體速度。</p>
+        <div class="fig">
+          <svg viewBox="0 0 360 110" xmlns="http://www.w3.org/2000/svg">
+            <rect x="30" y="45" width="300" height="22" rx="11" fill="var(--color-orange)" opacity="0.35"/>
+            <line x1="60" y1="56" x2="120" y2="56" stroke="var(--color-orange)" stroke-width="2" marker-end="url(#a8a)"/>
+            <text x="72" y="50" font-size="11" fill="var(--color-orange)" font-style="italic">V</text>
+            <line x1="30" y1="85" x2="330" y2="85" stroke="var(--color-text)" stroke-width="1" marker-start="url(#a8b)" marker-end="url(#a8b)"/>
+            <text x="160" y="100" font-size="11" fill="var(--color-text-muted)">l = 20 ft</text>
+            <text x="335" y="60" font-size="11" fill="var(--color-text-muted)">D=0.1 in</text>
+            <defs>
+              <marker id="a8a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.4"/></marker>
+              <marker id="a8b" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M6,1 L2,4 L6,7" fill="none" stroke="var(--color-text)" stroke-width="1"/></marker>
+            </defs>
+          </svg>
+          <div class="fig-cap">水平圓管，長 20 ft。</div>
+        </div>
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <p>$Re=1500<2100$ → 層流。Darcy–Weisbach：$h_L=f\dfrac{l}{D}\dfrac{V^2}{2g}$，層流 $f=\dfrac{64}{Re}=\dfrac{64}{1500}=0.04267$。</p>
+          <p>$$6.4=0.04267\cdot\frac{20}{0.1/12}\cdot\frac{V^2}{2(32.2)}\ \Rightarrow\ V^2=4.0246\,\text{ft}^2/\text{s}^2$$</p>
+          <div class="ans-box">$$\boxed{\ V\approx 2.006\,\text{ft/s}\ }$$</div>
+        </div>
+      </div>
+
+      <!-- 8.92 -->
+      <div class="problem" id="p8-92">
+        <div class="problem-head"><span class="problem-num">8.92</span><span class="type-chip chip-orange">Three-Reservoir</span></div>
+        <p>三個盛水水槽以管路連接（忽略次要損失），求每根管的流量。</p>
+        <div class="given-box">高程：A(管1)=60 m、B(管2)=20 m、C(管3)=0。管1：$D=0.10,\ \ell=200,\ f=0.015$；管2：$D=0.08,\ \ell=200,\ f=0.020$；管3：$D=0.08,\ \ell=400,\ f=0.020$（單位 m）。</div>
+        <div class="fig">
+          <svg viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg">
+            <rect x="150" y="15" width="70" height="34" fill="var(--color-orange-hi)" stroke="var(--color-orange)"/><text x="225" y="30" font-size="12" fill="var(--color-text)">A · 60m</text>
+            <rect x="25" y="70" width="60" height="30" fill="var(--color-orange-hi)" stroke="var(--color-orange)"/><text x="30" y="64" font-size="12" fill="var(--color-text)">B · 20m</text>
+            <rect x="275" y="100" width="60" height="30" fill="var(--color-orange-hi)" stroke="var(--color-orange)"/><text x="278" y="94" font-size="12" fill="var(--color-text)">C · 0m</text>
+            <circle cx="180" cy="155" r="5" fill="var(--color-text)"/>
+            <line x1="185" y1="49" x2="180" y2="150" stroke="var(--color-orange)" stroke-width="3"/><text x="190" y="105" font-size="10" fill="var(--color-orange)">①</text>
+            <line x1="55" y1="100" x2="176" y2="153" stroke="var(--color-orange)" stroke-width="3"/><text x="100" y="120" font-size="10" fill="var(--color-orange)">②</text>
+            <line x1="305" y1="130" x2="184" y2="154" stroke="var(--color-orange)" stroke-width="3"/><text x="245" y="138" font-size="10" fill="var(--color-orange)">③</text>
+          </svg>
+          <div class="fig-cap">Fig. P8.92 — A 最高 → 水由 A 分別流向 B 與 C。</div>
+        </div>
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <p>A 水位最高，故流向為 A→B、A→C，連續式 $Q_1=Q_2+Q_3$。</p>
+          <h4>連續方程</h4>
+          <p>$D_1^2V_1=D_2^2V_2+D_3^2V_3 \Rightarrow 0.01V_1=0.0064(V_2+V_3)$</p>
+          <p>$$V_1=0.64V_2+0.64V_3\quad(1)$$</p>
+          <h4>能量方程</h4>
+          <p>A→B：$60=20+0.015\dfrac{200}{0.10}\dfrac{V_1^2}{2g}+0.020\dfrac{200}{0.08}\dfrac{V_2^2}{2g}$</p>
+          <p>$$40=1.529V_1^2+2.548V_2^2\quad(2)$$</p>
+          <p>A→C：$60=0+0.015\dfrac{200}{0.10}\dfrac{V_1^2}{2g}+0.020\dfrac{400}{0.08}\dfrac{V_3^2}{2g}$</p>
+          <p>$$60=1.529V_1^2+5.0968V_3^2\quad(3)$$</p>
+          <h4>求解</h4>
+          <p>(3)−(2)：$V_2^2=2V_3^2-7.849$。將 (1) 代入 (3) 並消元，整理得</p>
+          <p>$$116.077V_3^4-2277.919V_3^2+10745.188=0\ \Rightarrow\ V_3=2.808\,\text{m/s}$$</p>
+          <p>回代：$V_2=\sqrt{2(2.808)^2-7.849}=2.814\,\text{m/s}$，$V_1=0.64(2.814+2.808)=3.59\,\text{m/s}$。</p>
+          <div class="ans-box">
+            $Q_1=\tfrac{\pi}{4}(0.10)^2(3.59)=\mathbf{0.0282\,m^3/s}$<br>
+            $Q_2=\tfrac{\pi}{4}(0.08)^2(2.814)=\mathbf{0.0141\,m^3/s}$<br>
+            $Q_3=\tfrac{\pi}{4}(0.08)^2(2.808)=\mathbf{0.0141\,m^3/s}$<br>
+            驗證：$Q_2+Q_3\approx Q_1$ ✓
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CH 9 ==================== -->
+    <div class="chapter" id="ch9">
+      <div class="chapter-label"><span class="dot" style="background:var(--color-green)"></span>第 9 章 · 外部流與阻力</div>
+
+      <!-- 9.38 -->
+      <div class="problem" id="p9-38">
+        <div class="problem-head"><span class="problem-num">9.38</span><span class="type-chip chip-green">Drag Force</span></div>
+        <p>混合車阻力係數 $C_D=0.21$，截面積 $A=30\,\text{ft}^2$。求其以 $55\,\text{mph}$ 在靜止空氣中行駛的空氣動力阻力。</p>
+        <div class="fig">
+          <svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,110 L70,110 Q80,80 110,78 L150,76 Q170,55 220,55 L270,58 Q300,62 310,90 L320,110 Z" fill="var(--color-green-hi)" stroke="var(--color-green)" stroke-width="1.5"/>
+            <circle cx="110" cy="112" r="14" fill="var(--color-text)" opacity="0.6"/><circle cx="270" cy="112" r="14" fill="var(--color-text)" opacity="0.6"/>
+            <line x1="340" y1="80" x2="300" y2="80" stroke="var(--color-orange)" stroke-width="2.5" marker-end="url(#a9a)"/>
+            <text x="320" y="72" font-size="11" fill="var(--color-orange)" font-style="italic">U</text>
+            <text x="150" y="135" font-size="11" fill="var(--color-text-muted)">A = 30 ft²,  C_D = 0.21</text>
+            <defs><marker id="a9a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.4"/></marker></defs>
+          </svg>
+        </div>
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <p>$U=55\,\text{mph}=55\times\dfrac{5280}{3600}=80.67\,\text{ft/s}$；標準空氣（60°F）$\rho=0.002373\,\text{slugs/ft}^3$。</p>
+          <p>$$\mathcal D=C_D\cdot\tfrac12\rho U^2A=0.21\times\tfrac12\times0.002373\times(80.67)^2\times30$$</p>
+          <div class="ans-box">$$\boxed{\ \mathcal D\approx 48.6\,\text{lb}\ }$$</div>
+        </div>
+      </div>
+
+      <!-- 9.40 -->
+      <div class="problem" id="p9-40">
+        <div class="problem-head"><span class="problem-num">9.40</span><span class="type-chip chip-green">Drag Force · Sphere</span></div>
+        <p>投手以 $95\,\text{mph}$ 投出棒球（標準空氣），球徑 $D=2.82\,\text{in.}$。估計阻力。</p>
+        <div class="fig">
+          <svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="200" cy="75" r="40" fill="var(--color-green-hi)" stroke="var(--color-green)" stroke-width="1.5"/>
+            <path d="M172,50 Q200,75 172,100" fill="none" stroke="var(--color-green)" stroke-width="1" stroke-dasharray="3 2"/>
+            <path d="M228,50 Q200,75 228,100" fill="none" stroke="var(--color-green)" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="60" y1="75" x2="150" y2="75" stroke="var(--color-orange)" stroke-width="2.5" marker-end="url(#a9b)"/>
+            <text x="90" y="68" font-size="11" fill="var(--color-orange)" font-style="italic">U=95 mph</text>
+            <line x1="160" y1="120" x2="240" y2="120" stroke="var(--color-text)" stroke-width="1" marker-start="url(#a9c)" marker-end="url(#a9c)"/>
+            <text x="185" y="135" font-size="11" fill="var(--color-text-muted)">D = 2.82 in</text>
+            <defs>
+              <marker id="a9b" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--color-orange)" stroke-width="1.4"/></marker>
+              <marker id="a9c" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M6,1 L2,4 L6,7" fill="none" stroke="var(--color-text)" stroke-width="1"/></marker>
+            </defs>
+          </svg>
+        </div>
+        <button class="sol-toggle" aria-expanded="false"><span>顯示解答</span><span class="chev">▶</span></button>
+        <div class="solution">
+          <p>$U=95\,\text{mph}=139.33\,\text{ft/s}$；60°F 空氣 $\nu=1.58\times10^{-4}\,\text{ft}^2/\text{s},\ \rho=2.373\times10^{-3}\,\text{slugs/ft}^3$。</p>
+          <p>$$Re=\frac{UD}{\nu}=\frac{139.33\times(2.82/12)}{1.58\times10^{-4}}\approx 2.07\times10^5$$</p>
+          <p>由光滑球的 $C_D$–$Re$ 曲線，此 $Re$ 下取 $C_D\approx 0.5$。</p>
+          <p>$$\mathcal D=C_D\tfrac12\rho U^2A=0.5\times\tfrac12\times2.373\times10^{-3}\times(139.33)^2\times\tfrac{\pi}{4}\!\left(\tfrac{2.82}{12}\right)^2$$</p>
+          <div class="ans-box">$$\boxed{\ \mathcal D\approx 0.50\,\text{lb}\ }$$</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>流體力學期末範圍 Ch 6–9 · 共 10 題 · 含示意圖與完整解答。解答依習題解答檔整理。</footer>
+  </main>
+</div>
+
+<!-- ============ CONCEPT PANEL ============ -->
+<div class="panel-overlay" id="panelOverlay"></div>
+<aside class="panel" id="panel">
+  <div class="panel-head">
+    <h2>公式 / 概念整理</h2>
+    <button class="btn icon-btn" id="panelClose" aria-label="關閉">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="panel-body">
+    <div class="panel-tabs">
+      <button class="panel-tab active" data-tab="c6">Ch6 微分</button>
+      <button class="panel-tab" data-tab="c7">Ch7 因次</button>
+      <button class="panel-tab" data-tab="c8">Ch8 管流</button>
+      <button class="panel-tab" data-tab="c9">Ch9 阻力</button>
+      <button class="panel-tab" data-tab="calc">計算機</button>
+    </div>
+
+    <div class="concept-group active" data-group="c6">
+      <div class="concept-card"><h3>連續方程（不可壓縮）</h3><div class="formula">$\nabla\cdot\mathbf V=\dfrac{\partial u}{\partial x}+\dfrac{\partial v}{\partial y}+\dfrac{\partial w}{\partial z}=0$</div></div>
+      <div class="concept-card"><h3>Navier–Stokes（x 方向）</h3><div class="formula">$\rho\dfrac{Du}{Dt}=-\dfrac{\partial p}{\partial x}+\rho g_x+\mu\nabla^2u$</div></div>
+      <div class="concept-card"><h3>流函數 ψ（2D 不可壓縮）</h3><div class="formula">$u=\dfrac{\partial\psi}{\partial y},\quad v=-\dfrac{\partial\psi}{\partial x}$</div><p>自動滿足連續方程；等 ψ 線即流線。</p></div>
+      <div class="concept-card"><h3>速度勢 φ（無旋流才存在）</h3><div class="formula">$u=\dfrac{\partial\phi}{\partial x},\quad v=\dfrac{\partial\phi}{\partial y}$</div><p>存在條件：$\nabla\times\mathbf V=0$。黏性有旋流 → 不存在。</p></div>
+      <div class="concept-card"><h3>旋轉向量 / 渦度</h3><div class="formula">$\omega_z=\tfrac12\!\left(\dfrac{\partial v}{\partial x}-\dfrac{\partial u}{\partial y}\right)$</div></div>
+    </div>
+
+    <div class="concept-group" data-group="c7">
+      <div class="concept-card"><h3>Buckingham π 定理</h3><div class="formula">$\text{π 項數}=k-r$</div><p>$k$＝變數數，$r$＝參考因次數。</p></div>
+      <div class="concept-card"><h3>解題步驟</h3><p>① 列變數與因次（MLT 或 FLT）② 選 $r$ 個重複變數（須涵蓋所有因次、彼此不能組成無因次）③ 每個非重複變數配重複變數組一個 π ④ 令指數使因次為零。</p></div>
+      <div class="concept-card"><h3>常見無因次群</h3>
+        <div class="formula">$Re=\dfrac{\rho VL}{\mu}$（雷諾數）</div>
+        <div class="formula">$Fr=\dfrac{V}{\sqrt{gL}}$（福勞數）</div>
+        <div class="formula">$Eu=\dfrac{\Delta p}{\rho V^2}$（歐拉數）</div>
+      </div>
+      <div class="concept-card"><h3>泵浦相似</h3><div class="formula">$C_H=\dfrac{\Delta p}{\rho D^2\omega^2},\quad C_Q=\dfrac{Q}{D^3\omega}$</div></div>
+    </div>
+
+    <div class="concept-group" data-group="c8">
+      <div class="concept-card"><h3>雷諾數判別</h3><p>管流 $Re<2100$ 層流；$>4000$ 紊流。</p></div>
+      <div class="concept-card"><h3>Darcy–Weisbach 水頭損失</h3><div class="formula">$h_L=f\dfrac{l}{D}\dfrac{V^2}{2g}$</div></div>
+      <div class="concept-card"><h3>層流摩擦因子</h3><div class="formula">$f=\dfrac{64}{Re}$</div></div>
+      <div class="concept-card"><h3>Hagen–Poiseuille（層流）</h3><div class="formula">$\Delta p=\dfrac{128\,\mu\,l\,Q}{\pi D^4}$</div></div>
+      <div class="concept-card"><h3>含高程的能量方程</h3><div class="formula">$\dfrac{p_1}{\gamma}+\dfrac{V_1^2}{2g}+z_1=\dfrac{p_2}{\gamma}+\dfrac{V_2^2}{2g}+z_2+h_L$</div></div>
+    </div>
+
+    <div class="concept-group" data-group="c9">
+      <div class="concept-card"><h3>阻力</h3><div class="formula">$\mathcal D=C_D\,\tfrac12\rho U^2 A$</div></div>
+      <div class="concept-card"><h3>升力</h3><div class="formula">$\mathcal L=C_L\,\tfrac12\rho U^2 A$</div></div>
+      <div class="concept-card"><h3>球體阻力係數</h3><p>$Re\sim10^3$–$10^5$：$C_D\approx0.4$–$0.5$；達臨界 $Re\approx2\times10^5$ 後驟降（邊界層轉紊）。</p></div>
+      <div class="concept-card"><h3>單位換算</h3><div class="formula">$1\,\text{mph}=\dfrac{5280}{3600}\,\text{ft/s}=1.467\,\text{ft/s}$</div></div>
+    </div>
+
+    <div class="concept-group" data-group="calc">
+      <div class="calc">
+        <h3>雷諾數計算機</h3>
+        <label>ρ（密度）<input type="number" id="re_rho" value="900"></label>
+        <label>V（速度）<input type="number" id="re_v" value="0.0637"></label>
+        <label>L 或 D（特徵長度）<input type="number" id="re_d" value="0.02"></label>
+        <label>μ（黏度）<input type="number" id="re_mu" value="0.40"></label>
+        <div class="calc-out" id="re_out">Re = —</div>
+      </div>
+      <div class="calc">
+        <h3>阻力計算機 (D = C_D · ½ρU²A)</h3>
+        <label>C_D<input type="number" id="d_cd" value="0.21"></label>
+        <label>ρ<input type="number" id="d_rho" value="0.002373"></label>
+        <label>U<input type="number" id="d_u" value="80.67"></label>
+        <label>A<input type="number" id="d_a" value="30"></label>
+        <div class="calc-out" id="d_out">D = —</div>
+      </div>
+      <div class="calc">
+        <h3>層流壓降 (Hagen–Poiseuille)</h3>
+        <label>μ<input type="number" id="hp_mu" value="0.40"></label>
+        <label>l<input type="number" id="hp_l" value="10"></label>
+        <label>Q<input type="number" id="hp_q" value="0.00002"></label>
+        <label>D<input type="number" id="hp_d" value="0.02"></label>
+        <div class="calc-out" id="hp_out">Δp = —</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script>
+/* ---------- Theme toggle ---------- */
+(function(){
+  const btn=document.querySelector('[data-theme-toggle]');
+  const root=document.documentElement;
+  let dark=matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme',dark?'dark':'light');
+  const sun='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  const moon='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  btn.innerHTML=dark?sun:moon;
+  btn.addEventListener('click',()=>{dark=!dark;root.setAttribute('data-theme',dark?'dark':'light');btn.innerHTML=dark?sun:moon;drawVel();});
+})();
+
+/* ---------- Sidebar (mobile) ---------- */
+const sidebar=document.getElementById('sidebar');
+document.getElementById('menuBtn').addEventListener('click',()=>sidebar.classList.toggle('open'));
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{if(window.innerWidth<=960)sidebar.classList.remove('open');}));
+
+/* ---------- Scrollspy ---------- */
+const navLinks=[...document.querySelectorAll('#nav a')];
+const targets=navLinks.map(a=>document.querySelector(a.getAttribute('href')));
+const spy=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const id='#'+e.target.id;
+      navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')===id));
+    }
+  });
+},{rootMargin:'-40% 0px -55% 0px'});
+targets.forEach(t=>t&&spy.observe(t));
+
+/* ---------- Solution collapsibles ---------- */
+const toggles=[...document.querySelectorAll('.sol-toggle')];
+toggles.forEach(btn=>{
+  const sol=btn.nextElementSibling;
+  btn.addEventListener('click',()=>{
+    const open=sol.classList.toggle('open');
+    btn.setAttribute('aria-expanded',open);
+    btn.querySelector('span').textContent=open?'隱藏解答':'顯示解答';
+  });
+});
+/* expand / collapse all */
+const allBtn=document.getElementById('toggleAll');
+let allOpen=false;
+allBtn.addEventListener('click',()=>{
+  allOpen=!allOpen;
+  toggles.forEach(btn=>{
+    const sol=btn.nextElementSibling;
+    sol.classList.toggle('open',allOpen);
+    btn.setAttribute('aria-expanded',allOpen);
+    btn.querySelector('span').textContent=allOpen?'隱藏解答':'顯示解答';
+  });
+  allBtn.querySelector('.btn-text').textContent=allOpen?'全部收合解答':'全部展開解答';
+});
+
+/* ---------- Concept panel ---------- */
+const panel=document.getElementById('panel'),overlay=document.getElementById('panelOverlay');
+function openPanel(){panel.classList.add('open');overlay.classList.add('open');}
+function closePanel(){panel.classList.remove('open');overlay.classList.remove('open');}
+document.getElementById('panelBtn').addEventListener('click',openPanel);
+document.getElementById('panelClose').addEventListener('click',closePanel);
+overlay.addEventListener('click',closePanel);
+document.querySelectorAll('.panel-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const g=tab.dataset.tab;
+    document.querySelectorAll('.concept-group').forEach(grp=>grp.classList.toggle('active',grp.dataset.group===g));
+  });
+});
+
+/* ---------- Calculators ---------- */
+function num(id){return parseFloat(document.getElementById(id).value);}
+function bindCalc(ids,outId,fn,label){
+  ids.forEach(id=>document.getElementById(id).addEventListener('input',run));
+  function run(){const v=fn();document.getElementById(outId).textContent=isFinite(v)?label+' = '+(Math.abs(v)>=1e4||(Math.abs(v)<1e-3&&v!==0)?v.toExponential(3):v.toFixed(4)):label+' = —';}
+  run();
+}
+bindCalc(['re_rho','re_v','re_d','re_mu'],'re_out',()=>num('re_rho')*num('re_v')*num('re_d')/num('re_mu'),'Re');
+bindCalc(['d_cd','d_rho','d_u','d_a'],'d_out',()=>num('d_cd')*0.5*num('d_rho')*num('d_u')**2*num('d_a'),'D');
+bindCalc(['hp_mu','hp_l','hp_q','hp_d'],'hp_out',()=>128*num('hp_mu')*num('hp_l')*num('hp_q')/(Math.PI*num('hp_d')**4),'Δp');
+
+/* ---------- Interactive velocity profile (6.8) ---------- */
+const cSlider=document.getElementById('cSlider'),cVal=document.getElementById('cVal'),plot=document.getElementById('velPlot');
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function drawVel(){
+  if(!plot)return;
+  const c=parseFloat(cSlider.value);cVal.textContent=c.toFixed(1);
+  const W=360,H=200,ml=46,mr=20,mt=16,mb=34;
+  const x0=ml,x1=W-mr,y0=H-mb,y1=mt;
+  const vmin=-1,vmax=1;
+  const sx=t=>x0+t*(x1-x0);                 // t = x/h in [0,1]
+  const sy=val=>y0+(val-vmin)/(vmax-vmin)*(y1-y0); // val = v/V0
+  const axis=css('--color-text-muted'),grid=css('--color-divider'),line=css('--color-primary'),txt=css('--color-text');
+  let pts='';
+  for(let i=0;i<=40;i++){const t=i/40;const val=c*t*t-2*c*t+1;pts+=(i?' L':'M')+sx(t).toFixed(1)+','+sy(val).toFixed(1);}
+  const zeroY=sy(0);
+  let html='';
+  html+=`<line x1="${x0}" y1="${y1}" x2="${x0}" y2="${y0}" stroke="${axis}" stroke-width="1"/>`;
+  html+=`<line x1="${x0}" y1="${zeroY}" x2="${x1}" y2="${zeroY}" stroke="${grid}" stroke-width="1" stroke-dasharray="3 3"/>`;
+  [ -1,0,1].forEach(v=>{html+=`<text x="${x0-6}" y="${sy(v)+3}" font-size="9" text-anchor="end" fill="${axis}">${v}</text>`;});
+  html+=`<text x="${(x0+x1)/2}" y="${H-6}" font-size="10" text-anchor="middle" fill="${txt}">x/h →</text>`;
+  html+=`<text x="${x0-30}" y="${(y0+y1)/2}" font-size="10" text-anchor="middle" fill="${txt}" transform="rotate(-90 ${x0-30} ${(y0+y1)/2})">v/V₀</text>`;
+  html+=`<path d="${pts}" fill="none" stroke="${line}" stroke-width="2.5"/>`;
+  html+=`<circle cx="${sx(0)}" cy="${sy(1)}" r="3" fill="${line}"/><text x="${sx(0)+4}" y="${sy(1)-4}" font-size="9" fill="${line}">皮帶 V₀</text>`;
+  html+=`<text x="${sx(1)-4}" y="${sy(c*1-2*c+1)-6}" font-size="9" text-anchor="end" fill="${line}">表面</text>`;
+  plot.innerHTML=html;
+}
+if(cSlider){cSlider.addEventListener('input',drawVel);drawVel();}
+</script>
+</body>
+</html>
