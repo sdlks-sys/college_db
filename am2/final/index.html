@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>剛體平面運動學與動力學 · Ch 16–17 參考手冊</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
+
+<style>
+:root{
+  /* Fluid type scale */
+  --text-xs: clamp(0.72rem,0.68rem+0.2vw,0.8rem);
+  --text-sm: clamp(0.84rem,0.8rem+0.25vw,0.95rem);
+  --text-base: clamp(1rem,0.96rem+0.2vw,1.1rem);
+  --text-lg: clamp(1.15rem,1rem+0.6vw,1.45rem);
+  --text-xl: clamp(1.5rem,1.2rem+1.1vw,2.1rem);
+  --text-2xl: clamp(2rem,1.3rem+2.4vw,3.2rem);
+
+  /* Spacing */
+  --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem;
+  --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem; --space-10:2.5rem;
+  --space-12:3rem; --space-16:4rem;
+
+  /* Radius / shadow / motion */
+  --radius-sm:.375rem; --radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(40,30,15,.06);
+  --shadow-md:0 6px 22px rgba(40,30,15,.09);
+  --transition:180ms cubic-bezier(.16,1,.3,1);
+
+  --font-display:'Source Serif 4',Georgia,serif;
+  --font-body:'DM Sans','Helvetica Neue',sans-serif;
+
+  /* ---------- LIGHT (default) ---------- */
+  --color-bg:#f7f6f2;
+  --color-surface:#fbfaf7;
+  --color-surface-offset:#efece6;
+  --color-divider:#e3dfd8;
+  --color-border:#d8d3cb;
+  --color-text:#26231c;
+  --color-text-muted:#76736b;
+
+  --color-primary:#0f6e74;        --color-primary-hl:#d6e9ea;
+  --color-blue:#2860a8;           --color-blue-hl:#dde8f6;
+  --color-orange:#bd5e10;         --color-orange-hl:#f6e4d2;
+  --color-purple:#6b3fb0;         --color-purple-hl:#e8def6;
+  --color-green:#2c7d4e;          --color-green-hl:#d8eee0;
+  --color-amber:#946400;          --color-amber-hl:#f5ecc7;
+}
+
+/* ---------- DARK ---------- */
+[data-theme="dark"]{
+  --color-bg:#171613;
+  --color-surface:#201e1a;
+  --color-surface-offset:#2a2823;
+  --color-divider:#34322c;
+  --color-border:#403d35;
+  --color-text:#e9e6de;
+  --color-text-muted:#a4a197;
+
+  --color-primary:#52b6be;        --color-primary-hl:#11343a;
+  --color-blue:#6ea8ea;           --color-blue-hl:#16273d;
+  --color-orange:#e89a5d;         --color-orange-hl:#3a2613;
+  --color-purple:#b48bea;         --color-purple-hl:#271a3c;
+  --color-green:#71c48f;          --color-green-hl:#13311f;
+  --color-amber:#dcb45e;          --color-amber-hl:#322710;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --shadow-md:0 6px 22px rgba(0,0,0,.5);
+}
+
+/* ---------- PINK ---------- */
+[data-theme="pink"]{
+  --color-bg:#fdeef4;
+  --color-surface:#fef5f9;
+  --color-surface-offset:#fbe0ec;
+  --color-divider:#f6cedd;
+  --color-border:#f0bdd2;
+  --color-text:#4a1d33;
+  --color-text-muted:#9d6480;
+
+  --color-primary:#d6336c;        --color-primary-hl:#fbd6e4;
+  --color-blue:#5a63c9;           --color-blue-hl:#e7e4f8;
+  --color-orange:#c75c3a;         --color-orange-hl:#f9ddd0;
+  --color-purple:#9b3fb5;         --color-purple-hl:#f1daf6;
+  --color-green:#2e8a6b;          --color-green-hl:#d4efe7;
+  --color-amber:#b07d1a;          --color-amber-hl:#f7e8c6;
+  --shadow-sm:0 1px 2px rgba(120,30,70,.08);
+  --shadow-md:0 6px 22px rgba(120,30,70,.12);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--color-bg); color:var(--color-text);
+  font-family:var(--font-body); font-size:var(--text-base); line-height:1.65;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  transition:background var(--transition),color var(--transition);
+}
+h1,h2,h3,h4{font-family:var(--font-display); line-height:1.15; font-weight:600; letter-spacing:-.01em}
+a{color:var(--color-primary); text-decoration:none}
+.katex{font-size:1.04em}
+
+/* ---------- Header ---------- */
+header{
+  position:sticky; top:0; z-index:100;
+  background:color-mix(in srgb,var(--color-bg) 86%,transparent);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--color-divider);
+}
+.header-inner{
+  max-width:980px; margin:0 auto; padding:var(--space-3) var(--space-8);
+  display:flex; align-items:center; gap:var(--space-3);
+}
+.brand{display:flex; align-items:center; gap:var(--space-3); min-width:0}
+.brand-svg{flex-shrink:0}
+.brand-title{font-family:var(--font-display); font-weight:600; font-size:var(--text-base); line-height:1.1}
+.brand-sub{font-size:var(--text-xs); color:var(--color-text-muted); letter-spacing:.04em}
+.theme-toggle{
+  margin-left:auto; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  width:38px; height:38px; border-radius:var(--radius-full);
+  background:var(--color-surface); border:1px solid var(--color-border);
+  color:var(--color-text); cursor:pointer; transition:var(--transition);
+}
+.theme-toggle:hover{background:var(--color-surface-offset); transform:translateY(-1px)}
+
+/* ---------- Section nav (scroll-spy) ---------- */
+.section-nav{
+  position:sticky; top:60px; z-index:90;
+  background:color-mix(in srgb,var(--color-bg) 90%,transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--color-divider);
+}
+.section-nav-inner{
+  max-width:980px; margin:0 auto; padding:var(--space-2) var(--space-6);
+  display:flex; gap:var(--space-1); overflow-x:auto; scrollbar-width:thin;
+}
+.section-nav a{
+  white-space:nowrap; font-size:var(--text-xs); font-weight:600; color:var(--color-text-muted);
+  padding:var(--space-1) var(--space-3); border-radius:var(--radius-full); transition:var(--transition);
+}
+.section-nav a:hover{color:var(--color-text); background:var(--color-surface-offset)}
+.section-nav a.active{color:var(--color-bg); background:var(--color-primary)}
+
+/* ---------- Layout ---------- */
+.hero,main{max-width:860px; margin:0 auto; padding:0 var(--space-8)}
+.hero{padding-top:var(--space-12); padding-bottom:var(--space-6)}
+.eyebrow{
+  display:inline-block; font-size:var(--text-xs); font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--color-primary); margin-bottom:var(--space-3);
+}
+.hero h1{font-size:var(--text-2xl); margin:0 0 var(--space-4)}
+.hero-lead{font-size:var(--text-lg); color:var(--color-text-muted); margin:0 0 var(--space-6); max-width:46ch}
+.highlight-box{
+  background:var(--color-primary-hl); border:1px solid color-mix(in srgb,var(--color-primary) 30%,transparent);
+  border-radius:var(--radius-lg); padding:var(--space-5) var(--space-6); color:var(--color-text);
+}
+.highlight-box .hl-label{font-size:var(--text-xs); font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--color-primary); display:block; margin-bottom:var(--space-2)}
+
+section.unit{padding:var(--space-12) 0 var(--space-4); scroll-margin-top:118px; border-top:1px solid var(--color-divider)}
+section.unit:first-of-type{border-top:none}
+.unit > h2{font-size:var(--text-xl); margin:var(--space-2) 0 var(--space-5)}
+.unit p{margin:var(--space-3) 0}
+
+/* ---------- Chips ---------- */
+.chip{
+  display:inline-block; font-size:var(--text-xs); font-weight:700; letter-spacing:.07em;
+  text-transform:uppercase; padding:3px 10px; border-radius:var(--radius-full); margin-bottom:var(--space-3);
+}
+.chip-teal{background:var(--color-primary-hl); color:var(--color-primary)}
+.chip-blue{background:var(--color-blue-hl); color:var(--color-blue)}
+.chip-orange{background:var(--color-orange-hl); color:var(--color-orange)}
+.chip-purple{background:var(--color-purple-hl); color:var(--color-purple)}
+.chip-green{background:var(--color-green-hl); color:var(--color-green)}
+.chip-amber{background:var(--color-amber-hl); color:var(--color-amber)}
+
+/* ---------- Formula card ---------- */
+.fcard{
+  background:var(--color-surface); border:1px solid var(--color-border);
+  border-radius:var(--radius-lg); padding:var(--space-5) var(--space-5) var(--space-4);
+  box-shadow:var(--shadow-sm); margin:var(--space-5) 0; border-left:3px solid var(--color-border);
+}
+.fcard.acc-teal{border-left-color:var(--color-primary)}
+.fcard.acc-blue{border-left-color:var(--color-blue)}
+.fcard.acc-orange{border-left-color:var(--color-orange)}
+.fcard.acc-purple{border-left-color:var(--color-purple)}
+.fcard h3{font-size:var(--text-base); margin:0 0 var(--space-2)}
+.fdisplay{
+  background:var(--color-bg); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4);
+  margin:var(--space-3) 0; overflow-x:auto; text-align:center;
+}
+.fnote{font-size:var(--text-sm); color:var(--color-text-muted); margin:var(--space-2) 0 0}
+.fnote strong{color:var(--color-text)}
+
+/* ---------- Derivation steps ---------- */
+.derivation{list-style:none; margin:var(--space-4) 0; padding:0; display:flex; flex-direction:column; gap:var(--space-3)}
+.fstep{display:flex; gap:var(--space-3); align-items:flex-start}
+.step-num{
+  width:26px; height:26px; flex-shrink:0; border-radius:var(--radius-full);
+  background:var(--color-purple); color:var(--color-bg); font-size:var(--text-xs); font-weight:700;
+  display:flex; align-items:center; justify-content:center; margin-top:2px;
+}
+.step-body{font-size:var(--text-sm)}
+.step-body .katex{font-size:1em}
+
+/* ---------- Callouts ---------- */
+.callout{border-radius:var(--radius-lg); padding:var(--space-4) var(--space-5); margin:var(--space-5) 0; border:1px solid}
+.callout h4{margin:0 0 var(--space-2); font-size:var(--text-sm); font-family:var(--font-body); font-weight:700; letter-spacing:.04em; display:flex; align-items:center; gap:var(--space-2)}
+.callout p,.callout ul{margin:var(--space-2) 0; font-size:var(--text-sm)}
+.callout ul{padding-left:1.1rem}
+.callout li{margin:var(--space-1) 0}
+.cal-green{background:var(--color-green-hl); border-color:color-mix(in srgb,var(--color-green) 35%,transparent)}
+.cal-green h4{color:var(--color-green)}
+.cal-amber{background:var(--color-amber-hl); border-color:color-mix(in srgb,var(--color-amber) 38%,transparent)}
+.cal-amber h4{color:var(--color-amber)}
+
+/* ---------- Example card ---------- */
+.example{
+  background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg);
+  padding:var(--space-5); margin:var(--space-6) 0; box-shadow:var(--shadow-sm);
+}
+.example-head{display:flex; align-items:baseline; gap:var(--space-3); flex-wrap:wrap; margin-bottom:var(--space-2)}
+.example-head .ex-no{font-family:var(--font-display); font-weight:600; font-size:var(--text-base)}
+.example-prompt{font-size:var(--text-sm); color:var(--color-text-muted); margin:0 0 var(--space-3)}
+.ex-steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:var(--space-3)}
+.ex-step{display:flex; gap:var(--space-3)}
+.ex-tag{
+  flex-shrink:0; width:64px; font-size:var(--text-xs); font-weight:700; color:var(--color-primary);
+  padding-top:4px; letter-spacing:.03em;
+}
+.ex-content{flex:1; font-size:var(--text-sm); min-width:0; overflow-x:auto}
+.ex-answer{color:var(--color-text); font-weight:700}
+
+/* ---------- Table ---------- */
+.table-wrap{
+  border:1px solid var(--color-border); border-radius:var(--radius-xl);
+  overflow:hidden; box-shadow:var(--shadow-sm); margin:var(--space-5) 0;
+}
+table{border-collapse:collapse; width:100%}
+thead tr{background:var(--color-text)}
+thead th{color:var(--color-bg); padding:var(--space-3) var(--space-4); font-size:var(--text-sm); font-weight:600; letter-spacing:.03em; text-align:left}
+tbody td{padding:var(--space-3) var(--space-4); border-bottom:1px solid var(--color-divider); font-size:var(--text-sm); vertical-align:middle}
+tbody tr{transition:background var(--transition)}
+tbody tr:hover{background:var(--color-surface-offset)}
+tbody tr:last-child td{border-bottom:none}
+.mini-chip{display:inline-block; font-size:var(--text-xs); font-weight:700; padding:2px 8px; border-radius:var(--radius-full)}
+.row-teal td:first-child{border-left:3px solid var(--color-primary)}
+.row-blue td:first-child{border-left:3px solid var(--color-blue)}
+.row-orange td:first-child{border-left:3px solid var(--color-orange)}
+.row-purple td:first-child{border-left:3px solid var(--color-purple)}
+.row-green td:first-child{border-left:3px solid var(--color-green)}
+
+/* ---------- Footer ---------- */
+footer{max-width:860px; margin:var(--space-12) auto 0; padding:var(--space-8); border-top:1px solid var(--color-divider); color:var(--color-text-muted); font-size:var(--text-sm)}
+
+@media (max-width:640px){
+  .header-inner{padding:var(--space-3) var(--space-4)}
+  .hero,main{padding:0 var(--space-4)}
+  .brand-sub{display:none}
+  .ex-step{flex-direction:column; gap:var(--space-1)}
+  .ex-tag{width:auto}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important; transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <svg class="brand-svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="36" height="36" rx="9" fill="var(--color-primary)"/>
+        <path d="M9 24c1.6-7 4.4-7 6 0c1.6-7 4.4-7 6 0" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.95"/>
+        <circle cx="27.5" cy="11" r="4" fill="white" opacity="0.28"/>
+        <circle cx="27.5" cy="11" r="1.9" fill="white"/>
+      </svg>
+      <div>
+        <div class="brand-title">剛體平面運動學與動力學</div>
+        <div class="brand-sub">Hibbeler Dynamics · Ch 16–17 參考手冊</div>
+      </div>
+    </div>
+    <button class="theme-toggle" data-theme-toggle aria-label="切換主題"></button>
+  </div>
+</header>
+
+<nav class="section-nav" aria-label="章節導覽">
+  <div class="section-nav-inner">
+    <a href="#types">運動型態</a>
+    <a href="#translation">平移</a>
+    <a href="#fixed-axis">定軸轉動</a>
+    <a href="#absolute">絕對運動</a>
+    <a href="#rel-vel">相對速度</a>
+    <a href="#ic">瞬時中心</a>
+    <a href="#rel-acc">相對加速度</a>
+    <a href="#rotating">旋轉座標</a>
+    <a href="#inertia">慣性矩</a>
+    <a href="#eom">運動方程式</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <span class="eyebrow">Planar Rigid-Body Dynamics</span>
+  <h1>從運動學到動力學的一條主軸</h1>
+  <p class="hero-lead">Ch 16 把剛體運動拆成「平移 ＋ 轉動」，所有相對運動方法都共用同一條骨架；Ch 16 求出的 $\vec a_G,\alpha$ 再餵進 Ch 17 的 $\sum F=m\vec a$、$\sum M=I\alpha$。</p>
+  <div class="highlight-box">
+    <span class="hl-label">貫穿全章的主方程</span>
+    $$\vec r_B=\vec r_A+\vec r_{B/A}\;\xrightarrow{\;d/dt\;}\;\vec v_B=\vec v_A+\vec\omega\times\vec r_{B/A}\;\xrightarrow{\;d/dt\;}\;\vec a_B=\vec a_A+\vec\alpha\times\vec r_{B/A}-\omega^2\vec r_{B/A}$$
+  </div>
+</section>
+
+<main>
+
+<!-- ===================== PART A ===================== -->
+<section class="unit" id="types">
+  <span class="chip chip-blue">Kinematics · A1</span>
+  <h2>剛體平面運動的三種型態</h2>
+  <div class="fcard acc-blue">
+    <h3>平移 Translation</h3>
+    <p class="fnote">每一條線段恆<strong>平行於原方向</strong>。可分為沿直線路徑的<strong>直線平移</strong>，與沿平行曲線路徑的<strong>曲線平移</strong>。</p>
+  </div>
+  <div class="fcard acc-blue">
+    <h3>繞固定軸轉動 Rotation about a fixed axis</h3>
+    <p class="fnote">所有質點沿<strong>圓形路徑</strong>運動；不同質點半徑（到軸的最短距離）可不同。</p>
+  </div>
+  <div class="fcard acc-blue">
+    <h3>一般平面運動 General plane motion</h3>
+    <p class="fnote">平移與轉動的<strong>組合</strong>。</p>
+  </div>
+  <div class="callout cal-amber">
+    <h4>⚠ 觀念提醒</h4>
+    <p>Ch 12 對「質點」成立的結論，不必然適用於 Ch 16 的「剛體」——剛體上每一點都有各自的運動。</p>
+  </div>
+</section>
+
+<section class="unit" id="translation">
+  <span class="chip chip-blue">Kinematics · A2</span>
+  <h2>平移</h2>
+  <div class="fcard acc-teal">
+    <h3>位置 → 速度 → 加速度</h3>
+    <div class="fdisplay">$$\vec r_B=\vec r_A+\vec r_{B/A}$$</div>
+    <p class="fnote">純平移時 $\vec r_{B/A}$ 的<strong>大小與方向皆為常數</strong>，故對時間微分後相對項消失：</p>
+    <div class="fdisplay">$$\vec v_B=\vec v_A,\qquad \vec a_B=\vec a_A$$</div>
+    <p class="fnote">結論：平移剛體上<strong>每一點的速度與加速度都相同</strong>。</p>
+  </div>
+</section>
+
+<section class="unit" id="fixed-axis">
+  <span class="chip chip-blue">Kinematics · A3</span>
+  <h2>繞固定軸轉動</h2>
+
+  <div class="fcard acc-teal">
+    <h3>角運動量定義</h3>
+    <div class="fdisplay">$$\omega=\frac{d\theta}{dt},\qquad \alpha=\frac{d\omega}{dt}=\frac{d^2\theta}{dt^2},\qquad \omega\,d\omega=\alpha\,d\theta$$</div>
+    <p class="fnote">$\theta$ 角位置、$d\theta$ 角位移。最後一式為消去時間 $t$ 的關係（對照質點 $v\,dv=a\,ds$）。</p>
+  </div>
+
+  <div class="fcard acc-teal">
+    <h3>等角加速度（$\alpha=\alpha_c$ 常數）</h3>
+    <div class="fdisplay">$$\omega=\omega_0+\alpha_c t$$</div>
+    <div class="fdisplay">$$\theta=\theta_0+\omega_0 t+\tfrac12\alpha_c t^2$$</div>
+    <div class="fdisplay">$$\omega^2=\omega_0^2+2\alpha_c(\theta-\theta_0)$$</div>
+    <p class="fnote">與質點等加速度公式一一對應（$s\!\to\!\theta,\;v\!\to\!\omega,\;a\!\to\!\alpha$）。</p>
+  </div>
+
+  <div class="fcard acc-teal">
+    <h3>點 P 的運動（半徑 $r_P$，圓心在軸上）</h3>
+    <div class="fdisplay">$$\vec v=\vec\omega\times\vec r_P,\qquad |\vec v|=\omega\,r_P$$</div>
+    <div class="fdisplay">$$\vec a=\underbrace{\vec\alpha\times\vec r_P}_{\vec a_t}+\underbrace{(-\omega^2\vec r_P)}_{\vec a_N},\qquad |\vec a|=\sqrt{a_t^{\,2}+a_N^{\,2}}$$</div>
+    <p class="fnote">切向 $|\vec a_t|=\alpha r_P$；法向 $|\vec a_N|=\omega^2 r_P$。</p>
+  </div>
+
+  <div class="callout cal-green">
+    <h4>◆ 方向與符號慣例</h4>
+    <ul>
+      <li>逆時針取 $+\hat k$；$\vec\omega,\vec\alpha$ 同號表加速、異號表減速。</li>
+      <li>$\vec v\perp\vec r_P$，恆沿切線；$\vec a_N$ <strong>恆指向圓心</strong>，與行進方向（順/逆）無關。</li>
+      <li>修正方向時：只有切向分量與速度反向，<strong>法向（向心）方向由幾何決定，不隨行進方向翻轉</strong>。</li>
+    </ul>
+  </div>
+
+  <div class="example">
+    <div class="example-head"><span class="chip chip-purple" style="margin:0">Example 16.1</span><span class="ex-no">繩纏輪盤 · $a=4t$、$r=0.2\,$m、由靜止</span></div>
+    <p class="example-prompt">求輪的角速度與直線 OP 的角位置（皆為時間函數）。</p>
+    <ol class="ex-steps">
+      <li class="ex-step"><div class="ex-tag">① 建立</div><div class="ex-content">切向：$a_t=4t$，$\;(a_P)_t=\alpha r\Rightarrow\alpha=\dfrac{4t}{0.2}=20t$ rad/s²。</div></li>
+      <li class="ex-step"><div class="ex-tag">② 積分</div><div class="ex-content">$\alpha=\dfrac{d\omega}{dt}$，由靜止 $\displaystyle\int_0^\omega d\omega=\int_0^t 20t\,dt$。</div></li>
+      <li class="ex-step"><div class="ex-tag">③ 解</div><div class="ex-content"><span class="ex-answer">$\omega=10t^2$ rad/s</span>；再積 $\omega=\dot\theta\Rightarrow$ <span class="ex-answer">$\theta=\tfrac{10}{3}t^3$ rad</span>。</div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="unit" id="absolute">
+  <span class="chip chip-blue">Kinematics · A4</span>
+  <h2>絕對運動分析</h2>
+  <div class="fcard acc-teal">
+    <h3>核心步驟</h3>
+    <ol class="derivation">
+      <li class="fstep"><span class="step-num">1</span><div class="step-body">用<strong>幾何</strong>把直線座標 $s$ 與角座標 $\theta$ 連起來。</div></li>
+      <li class="fstep"><span class="step-num">2</span><div class="step-body">對時間微分（連鎖律）：平移 $v=\dot s,\;a=\dot v$；轉動 $\omega=\dot\theta,\;\alpha=\dot\omega$。</div></li>
+    </ol>
+    <p class="fnote">關鍵：含 $\theta(t)$ 的三角項微分必帶 $\omega$，例如 $\dfrac{d}{dt}\cos\theta=-\sin\theta\,\omega$。</p>
+  </div>
+
+  <div class="example">
+    <div class="example-head"><span class="chip chip-purple" style="margin:0">Example 16.3</span><span class="ex-no">凸輪推桿 · $x=2r\cos\theta$</span></div>
+    <p class="example-prompt">凸輪以 $\omega,\alpha$ 繞 O 轉動，求任意 $\theta$ 時推桿的速度與加速度。</p>
+    <ol class="ex-steps">
+      <li class="ex-step"><div class="ex-tag">① 建立</div><div class="ex-content">幾何關係 $x=\overline{OC}+\overline{CB}=2r\cos\theta$。</div></li>
+      <li class="ex-step"><div class="ex-tag">② 微分</div><div class="ex-content">$v=\dot x=-2r\sin\theta\,\omega$。</div></li>
+      <li class="ex-step"><div class="ex-tag">③ 解</div><div class="ex-content"><span class="ex-answer">$a=\dot v=-2r\big(\omega^2\cos\theta+\alpha\sin\theta\big)$</span>。</div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="unit" id="rel-vel">
+  <span class="chip chip-blue">Kinematics · A5</span>
+  <h2>相對運動分析：速度</h2>
+  <div class="fcard acc-teal">
+    <h3>主方程</h3>
+    <div class="fdisplay">$$\vec v_B=\underbrace{\vec v_A}_{\text{平移}}+\underbrace{\vec\omega\times\vec r_{B/A}}_{\text{轉動}\;(\vec v_{B/A})}$$</div>
+    <p class="fnote">以 A 為轉動中心：$\vec v_{B/A}$ 大小 $=\omega r_{B/A}$，方向沿切線（$\perp\vec r_{B/A}$，旋向依 $\vec\omega$）。</p>
+  </div>
+  <div class="callout cal-green">
+    <h4>◆ 解法骨架</h4>
+    <ul>
+      <li>展開叉積後，分別令 $x$ 分量 $=x$ 分量、$y$ 分量 $=y$ 分量。</li>
+      <li>兩條純量方程解兩個未知數（常為 $\omega$ 與某點速度）。</li>
+    </ul>
+  </div>
+
+  <div class="example">
+    <div class="example-head"><span class="chip chip-purple" style="margin:0">Example 16.8</span><span class="ex-no">雙滑塊導桿 · $\theta=45^\circ$</span></div>
+    <p class="example-prompt">$C$ 以 $2\,$m/s 向下，求 $B$ 的速度。</p>
+    <ol class="ex-steps">
+      <li class="ex-step"><div class="ex-tag">① 建立</div><div class="ex-content">$v_B\hat i=\vec v_C+\vec\omega\times\vec r_{B/C}=-2\hat j+(\omega\hat k)\times(0.2\hat i-0.2\hat j)$。</div></li>
+      <li class="ex-step"><div class="ex-tag">② 分量</div><div class="ex-content">$=0.2\omega\,\hat i+(0.2\omega-2)\hat j$。$\;x:\;v_B=0.2\omega$；$\;y:\;0=0.2\omega-2$。</div></li>
+      <li class="ex-step"><div class="ex-tag">③ 解</div><div class="ex-content"><span class="ex-answer">$\omega=10$ rad/s，$v_B=2$ m/s</span>。</div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="unit" id="ic">
+  <span class="chip chip-blue">Kinematics · A6</span>
+  <h2>瞬時零速度中心（IC）</h2>
+  <div class="fcard acc-teal">
+    <h3>原理</h3>
+    <p class="fnote">取速度為零的點當參考（$\vec v_{IC}=0$），主方程退化為<strong>純轉動</strong>：</p>
+    <div class="fdisplay">$$\vec v_B=\vec\omega\times\vec r_{B/IC},\qquad |\vec r_{B/IC}|=\frac{|\vec v_B|}{\omega}$$</div>
+    <p class="fnote">因 $\vec v_B\perp\vec r_{B/IC}$。</p>
+  </div>
+  <div class="callout cal-green">
+    <h4>◆ IC 定位法</h4>
+    <ul>
+      <li>由兩點速度方向各作<strong>垂線</strong>，交點即 IC。</li>
+      <li>若兩速度平行 ⇒ 垂線無交點、$r_{B/IC}\to\infty$ ⇒ 該瞬間 $\omega\to 0$，退化為平移。</li>
+    </ul>
+  </div>
+
+  <div class="example">
+    <div class="example-head"><span class="chip chip-purple" style="margin:0">Example 16.12</span><span class="ex-no">雙動板夾滾動圓柱（$r=0.125\,$m）</span></div>
+    <p class="example-prompt">上板 $v_E=0.25$、下板 $v_D=0.4\,$m/s（反向），求 $\omega$ 與圓心 $C$ 速度。</p>
+    <ol class="ex-steps">
+      <li class="ex-step"><div class="ex-tag">① 找 IC</div><div class="ex-content">設下緣到 IC 距離 $x$：$\dfrac{0.25}{0.25-x}=\dfrac{0.4}{x}\Rightarrow x=0.154$ m。</div></li>
+      <li class="ex-step"><div class="ex-tag">② $\omega$</div><div class="ex-content">$\omega=\dfrac{v_B}{r_{B/IC}}=\dfrac{0.4}{0.154}=$ <span class="ex-answer">$2.60$ rad/s</span>。</div></li>
+      <li class="ex-step"><div class="ex-tag">③ $v_C$</div><div class="ex-content">$v_C=\omega\,r_{C/IC}=2.60\,(0.154-0.125)=$ <span class="ex-answer">$0.075$ m/s</span>。</div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="unit" id="rel-acc">
+  <span class="chip chip-blue">Kinematics · A7</span>
+  <h2>相對運動分析：加速度</h2>
+  <div class="fcard acc-teal">
+    <h3>主方程</h3>
+    <div class="fdisplay">$$\vec a_B=\vec a_A+\underbrace{\vec\alpha\times\vec r_{B/A}}_{(\vec a_{B/A})_t}+\underbrace{(-\omega^2\vec r_{B/A})}_{(\vec a_{B/A})_N}$$</div>
+    <p class="fnote">切向沿 $\hat u_t$（同 $\vec r_{B/A}$ 走向）；法向沿 $-\vec r_{B/A}$（<strong>由 B 指向 A</strong>）。</p>
+  </div>
+  <div class="callout cal-green">
+    <h4>◆ 解法骨架</h4>
+    <ul>
+      <li>先用 A5 / A6 求 $\omega$。</li>
+      <li>代入加速度式 → 取分量 → 解 $\alpha$ 與所求加速度。</li>
+    </ul>
+  </div>
+
+  <div class="example">
+    <div class="example-head"><span class="chip chip-purple" style="margin:0">Example 16.16</span><span class="ex-no">線軸鬆開 · $\omega=3$、$\alpha=4$、$A$ 為 IC</span></div>
+    <p class="example-prompt">求 $B$ 點加速度。重點：$A$ 速度為零，但<strong>加速度不為零</strong>。</p>
+    <ol class="ex-steps">
+      <li class="ex-step"><div class="ex-tag">① $a_G$</div><div class="ex-content">由繩約束 $\vec a_G=\vec\alpha\times\vec r_{G/A}=-4(0.15)\hat j=-0.6\,\hat j$。</div></li>
+      <li class="ex-step"><div class="ex-tag">② 串接</div><div class="ex-content">$\vec a_B=\vec a_G+\vec\alpha\times\vec r_{B/G}-\omega^2\vec r_{B/G}=-0.6\hat j+0.9\hat i-2.025\hat j$。</div></li>
+      <li class="ex-step"><div class="ex-tag">③ 解</div><div class="ex-content"><span class="ex-answer">$\vec a_B=0.9\hat i-2.625\hat j$，$|\vec a_B|=2.78$ m/s²，$\theta=-71.1^\circ$</span>。</div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="unit" id="rotating">
+  <span class="chip chip-blue">Kinematics · A8</span>
+  <h2>旋轉座標系分析（Coriolis）</h2>
+  <p class="fnote">適用「動點 + 動框」：$X,Y$ 為固定全域座標；$x,y$ 為隨體旋轉的局部座標（角速度 $\vec\Omega$、角加速度 $\dot{\vec\Omega}$）。</p>
+  <div class="fcard acc-teal">
+    <h3>速度</h3>
+    <div class="fdisplay">$$\vec v_B=\vec v_A+\underbrace{\vec\Omega\times\vec r_{B/A}}_{\text{框架轉動}}+\underbrace{(\vec v_{B/A})_{xyz}}_{\text{相對框架}}$$</div>
+  </div>
+  <div class="fcard acc-teal">
+    <h3>加速度</h3>
+    <div class="fdisplay">$$\vec a_B=\vec a_A+\dot{\vec\Omega}\times\vec r_{B/A}+\vec\Omega\times(\vec\Omega\times\vec r_{B/A})+\underbrace{2\,\vec\Omega\times(\vec v_{B/A})_{xyz}}_{\text{Coriolis }\;\vec a_{cor}}+(\vec a_{B/A})_{xyz}$$</div>
+  </div>
+  <div class="callout cal-amber">
+    <h4>⚠ 易錯陷阱</h4>
+    <p>相對框架的量<strong>不可</strong>互換正負號：</p>
+    <div class="fdisplay" style="background:transparent;padding:0">$$(\vec v_{B/A})_{xyz}\neq-(\vec v_{A/B})_{xyz},\qquad(\vec a_{B/A})_{xyz}\neq-(\vec a_{A/B})_{xyz}$$</div>
+  </div>
+
+  <div class="example">
+    <div class="example-head"><span class="chip chip-purple" style="margin:0">Example 16.19</span><span class="ex-no">套環沿轉桿滑動 · $\theta=60^\circ$</span></div>
+    <p class="example-prompt">$\Omega=3$、$\dot\Omega=2$、$x=0.2$、相對速度 $2$、相對加速度 $3$（皆沿桿）。求 Coriolis 加速度與 $\vec v_C,\vec a_C$。</p>
+    <ol class="ex-steps">
+      <li class="ex-step"><div class="ex-tag">① $\vec v_C$</div><div class="ex-content">$=(-3\hat k)\times(0.2\hat i)+2\hat i=2\hat i-0.6\hat j$ m/s。</div></li>
+      <li class="ex-step"><div class="ex-tag">② 各項</div><div class="ex-content">$\dot\Omega\!\times\!r=-0.4\hat j$；$\Omega\!\times\!(\Omega\!\times\!r)=-1.8\hat i$；Coriolis $2\Omega\!\times\!v_{rel}=-12\hat j$；$a_{rel}=3\hat i$。</div></li>
+      <li class="ex-step"><div class="ex-tag">③ 解</div><div class="ex-content"><span class="ex-answer">$\vec a_{cor}=-12\hat j$ m/s²，$\vec a_C=1.2\hat i-12.4\hat j$ m/s²</span>。</div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================== PART B ===================== -->
+<section class="unit" id="inertia">
+  <span class="chip chip-orange">Kinetics · B1</span>
+  <h2>質量慣性矩</h2>
+  <div class="fcard acc-orange">
+    <h3>定義與計算</h3>
+    <div class="fdisplay">$$I=\int_m r^2\,dm=\int_V r^2\rho\,dV\quad(\rho\text{ 均勻時 }=\rho\!\int_V r^2\,dV)$$</div>
+    <p class="fnote">體積元素：殼元素 $dV=(2\pi y)\,z\,dy$；盤元素 $dV=(\pi y^2)\,dz$。</p>
+  </div>
+  <div class="fcard acc-orange">
+    <h3>平行軸定理 ＆ 迴轉半徑</h3>
+    <div class="fdisplay">$$I=I_G+md^2,\qquad I=mk^2\;\Rightarrow\;k=\sqrt{\tfrac{I}{m}}$$</div>
+    <p class="fnote">通過質心之軸給出<strong>最小</strong>慣性矩 $I_G$。</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>形狀（軸）</th><th>類別</th><th>$I$</th></tr></thead>
+      <tbody>
+        <tr class="row-teal"><td>薄圓環（中心軸）</td><td><span class="mini-chip chip-teal">環</span></td><td>$mR^2$</td></tr>
+        <tr class="row-blue"><td>空心圓柱（中心軸）</td><td><span class="mini-chip chip-blue">柱</span></td><td>$\tfrac12 m(R_i^2+R_o^2)$</td></tr>
+        <tr class="row-blue"><td>實心圓柱（中心縱軸）</td><td><span class="mini-chip chip-blue">柱</span></td><td>$\tfrac12 mR^2$</td></tr>
+        <tr class="row-blue"><td>實心圓柱（中心徑向軸）</td><td><span class="mini-chip chip-blue">柱</span></td><td>$\tfrac14 mR^2+\tfrac1{12}mL^2$</td></tr>
+        <tr class="row-orange"><td>細桿（中心 ⟂ 軸）</td><td><span class="mini-chip chip-orange">桿</span></td><td>$\tfrac1{12}mL^2$</td></tr>
+        <tr class="row-orange"><td>細桿（端點 ⟂ 軸）</td><td><span class="mini-chip chip-orange">桿</span></td><td>$\tfrac13 mL^2$</td></tr>
+        <tr class="row-purple"><td>實心球（直徑軸）</td><td><span class="mini-chip chip-purple">球</span></td><td>$\tfrac25 mR^2$</td></tr>
+        <tr class="row-purple"><td>薄球殼（直徑軸）</td><td><span class="mini-chip chip-purple">球</span></td><td>$\tfrac23 mR^2$</td></tr>
+        <tr class="row-green"><td>薄板（中心 ⟂ 軸）</td><td><span class="mini-chip chip-green">板</span></td><td>$\tfrac1{12}m(a^2+b^2)$</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="unit" id="eom">
+  <span class="chip chip-orange">Kinetics · B2</span>
+  <h2>運動方程式</h2>
+  <p class="fnote">通則對照：$M=I\alpha\;\leftrightarrow\;F=ma$（轉動慣量對應慣性質量）。</p>
+
+  <div class="fcard acc-orange">
+    <h3>(a) 平移</h3>
+    <p class="fnote"><strong>直線：</strong></p>
+    <div class="fdisplay">$$\sum F_x=m(a_G)_x,\quad\sum F_y=m(a_G)_y,\quad\sum M_G=0,\quad\sum M_A=(ma_G)\,d$$</div>
+    <p class="fnote"><strong>曲線：</strong></p>
+    <div class="fdisplay">$$\sum F_n=m(a_G)_n,\;\;\sum F_t=m(a_G)_t,\;\;\sum M_B=e\,[m(a_G)_t]-h\,[m(a_G)_n]$$</div>
+  </div>
+
+  <div class="fcard acc-orange">
+    <h3>(b) 繞固定軸轉動（純轉動）</h3>
+    <div class="fdisplay">$$\sum F_n=m\omega^2 r_G,\quad\sum F_t=m\alpha r_G,\quad\sum M_G=I_G\alpha,\quad\sum M_O=I_O\alpha$$</div>
+    <p class="fnote">$\sum M_O$ 經平行軸化簡：$I_O=I_G+mr_G^2$。</p>
+  </div>
+
+  <div class="fcard acc-orange">
+    <h3>(c) 一般平面運動</h3>
+    <div class="fdisplay">$$\sum F_x=m(a_G)_x,\quad\sum F_y=m(a_G)_y,\quad\sum M_G=I_G\alpha$$</div>
+    <p class="fnote">滾動約束：無滑動時 $a_G=\alpha r$。</p>
+  </div>
+
+  <div class="callout cal-amber">
+    <h4>⚠ 摩擦判別（額外條件）</h4>
+    <ul>
+      <li><strong>先假設不滑動</strong> ⇒ 用 $a_G=\alpha r$ 解，再驗證 $F_A\le F_{s,\max}=\mu_s N$。</li>
+      <li>若 $F_A>F_{s,\max}$ ⇒ 假設失效，改為<strong>滑動</strong>：$F_A=\mu_k N$ 重解。</li>
+    </ul>
+  </div>
+
+  <div class="example">
+    <div class="example-head"><span class="chip chip-purple" style="margin:0">Example 17.11</span><span class="ex-no">鼓輪 + 砝碼 · $m=60$、$k_O=0.25$、$R=0.4$、$m_A=20$</span></div>
+    <p class="example-prompt">砝碼釋放，求鼓輪角加速度。重點：兩自由體以 $a=\alpha R$ 串接。</p>
+    <ol class="ex-steps">
+      <li class="ex-step"><div class="ex-tag">① 鼓輪</div><div class="ex-content">$I_O=mk_O^2=3.75$；$\sum M_O=I_O\alpha\Rightarrow T(0.4)=3.75\alpha$。</div></li>
+      <li class="ex-step"><div class="ex-tag">② 砝碼</div><div class="ex-content">$T-W_A=-m_A(\alpha R)\Rightarrow T=196.2-8\alpha$。</div></li>
+      <li class="ex-step"><div class="ex-tag">③ 解</div><div class="ex-content"><span class="ex-answer">$\alpha=11.3$ rad/s²，$a=\alpha R=4.52$ m/s²</span>。</div></li>
+    </ol>
+  </div>
+
+  <div class="example">
+    <div class="example-head"><span class="chip chip-purple" style="margin:0">Example 17.15</span><span class="ex-no">均質細桿 · $m=100$、$I_G=75$、$\mu_s=0.3$、$\mu_k=0.25$、$F=400\,$N</span></div>
+    <p class="example-prompt">由靜止施 $400\,$N 水平力（高 $0.5\,$m），$G$ 在 $1.5\,$m 處，求角加速度。摩擦判別的招牌題。</p>
+    <ol class="ex-steps">
+      <li class="ex-step"><div class="ex-tag">① 通式</div><div class="ex-content">$\sum F_x:\,400-F_A=100a_G$；$\sum F_y:\,N_A=981$；$\sum M_G:\,1.5F_A-400=75\alpha$。</div></li>
+      <li class="ex-step"><div class="ex-tag">② 假設不滑</div><div class="ex-content">$a_G=1.5\alpha\Rightarrow\alpha=0.667$、$F_A=300$。驗證 $F_{s,\max}=0.3(981)=294<300$ ⇒ <strong>無效</strong>。</div></li>
+      <li class="ex-step"><div class="ex-tag">③ 改滑動</div><div class="ex-content">$F_A=\mu_k N_A=245$ ⇒ $a_G=1.55$、<span class="ex-answer">$\alpha\approx-0.43$ rad/s²</span>（負號表方向與假設相反）。</div></li>
+    </ol>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>剛體平面運動學與動力學參考手冊 · 涵蓋 Hibbeler《Dynamics》Ch 16–17 · 整理自 CLASS 7–11 課堂筆記。</p>
+  <p>公式為主、例題精選；右上角可在 <strong>light / dark / pink</strong> 三種主題間切換。</p>
+</footer>
+
+<script>
+/* ---------- Theme cycle: light -> dark -> pink ---------- */
+(function(){
+  const btn=document.querySelector('[data-theme-toggle]');
+  const root=document.documentElement;
+  const order=['light','dark','pink'];
+  const icons={
+    light:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M3.5 12H1M23 12h-2.5M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/></svg>',
+    dark:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>',
+    pink:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10-9.4C.3 8.2 1.7 4.8 5 4.4 7 4.1 8.8 5.1 12 8c3.2-2.9 5-3.9 7-3.6 3.3.4 4.7 3.8 3 7.2C19.5 16.3 12 21 12 21z"/></svg>'
+  };
+  let i = matchMedia('(prefers-color-scheme: dark)').matches ? 1 : 0;
+  function apply(){ root.setAttribute('data-theme',order[i]); btn.innerHTML=icons[order[i]]; }
+  apply();
+  btn.addEventListener('click',()=>{ i=(i+1)%order.length; apply(); });
+})();
+
+/* ---------- Scroll-spy nav ---------- */
+(function(){
+  const links=[...document.querySelectorAll('.section-nav a')];
+  const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.remove('active'));
+        const a=map.get(e.target.id); if(a){a.classList.add('active'); a.scrollIntoView({block:'nearest',inline:'center'});}
+      }
+    });
+  },{rootMargin:'-120px 0px -65% 0px',threshold:0});
+  document.querySelectorAll('section.unit').forEach(s=>obs.observe(s));
+})();
+</script>
+</body>
+</html>
