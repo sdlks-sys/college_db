@@ -16,7 +16,6 @@
 
 <style>
 :root{
-  /* Fluid type scale */
   --text-xs: clamp(0.72rem,0.68rem+0.2vw,0.8rem);
   --text-sm: clamp(0.84rem,0.8rem+0.25vw,0.95rem);
   --text-base: clamp(1rem,0.96rem+0.2vw,1.1rem);
@@ -24,12 +23,10 @@
   --text-xl: clamp(1.5rem,1.2rem+1.1vw,2.1rem);
   --text-2xl: clamp(2rem,1.3rem+2.4vw,3.2rem);
 
-  /* Spacing */
   --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem;
   --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem; --space-10:2.5rem;
   --space-12:3rem; --space-16:4rem;
 
-  /* Radius / shadow / motion */
   --radius-sm:.375rem; --radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --radius-full:9999px;
   --shadow-sm:0 1px 2px rgba(40,30,15,.06);
   --shadow-md:0 6px 22px rgba(40,30,15,.09);
@@ -38,7 +35,6 @@
   --font-display:'Source Serif 4',Georgia,serif;
   --font-body:'DM Sans','Helvetica Neue',sans-serif;
 
-  /* ---------- LIGHT (default) ---------- */
   --color-bg:#f7f6f2;
   --color-surface:#fbfaf7;
   --color-surface-offset:#efece6;
@@ -53,9 +49,10 @@
   --color-purple:#6b3fb0;         --color-purple-hl:#e8def6;
   --color-green:#2c7d4e;          --color-green-hl:#d8eee0;
   --color-amber:#946400;          --color-amber-hl:#f5ecc7;
+
+  --compare-bar-h: 44px;
 }
 
-/* ---------- DARK ---------- */
 [data-theme="dark"]{
   --color-bg:#171613;
   --color-surface:#201e1a;
@@ -75,7 +72,6 @@
   --shadow-md:0 6px 22px rgba(0,0,0,.5);
 }
 
-/* ---------- PINK ---------- */
 [data-theme="pink"]{
   --color-bg:#fdeef4;
   --color-surface:#fef5f9;
@@ -123,12 +119,29 @@ header{
 .brand-title{font-family:var(--font-display); font-weight:600; font-size:var(--text-base); line-height:1.1}
 .brand-sub{font-size:var(--text-xs); color:var(--color-text-muted); letter-spacing:.04em}
 .theme-toggle{
-  margin-left:auto; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
   width:38px; height:38px; border-radius:var(--radius-full);
   background:var(--color-surface); border:1px solid var(--color-border);
   color:var(--color-text); cursor:pointer; transition:var(--transition);
 }
 .theme-toggle:hover{background:var(--color-surface-offset); transform:translateY(-1px)}
+
+/* ---------- Compare toggle button ---------- */
+.compare-toggle{
+  margin-left:auto; flex-shrink:0;
+  display:flex; align-items:center; gap:var(--space-2);
+  height:38px; padding:0 var(--space-4);
+  border-radius:var(--radius-full);
+  background:var(--color-surface); border:1px solid var(--color-border);
+  color:var(--color-text); cursor:pointer;
+  font-family:var(--font-body); font-size:var(--text-xs); font-weight:700;
+  letter-spacing:.04em; white-space:nowrap;
+  transition:var(--transition);
+}
+.compare-toggle:hover{background:var(--color-surface-offset); transform:translateY(-1px)}
+.compare-toggle[aria-pressed="true"]{
+  background:var(--color-primary); color:var(--color-bg); border-color:var(--color-primary);
+}
 
 /* ---------- Section nav (scroll-spy) ---------- */
 .section-nav{
@@ -147,6 +160,92 @@ header{
 }
 .section-nav a:hover{color:var(--color-text); background:var(--color-surface-offset)}
 .section-nav a.active{color:var(--color-bg); background:var(--color-primary)}
+
+/* ---------- Compare bar ---------- */
+.compare-bar{
+  display:none;
+  position:fixed; top:60px; left:0; right:0; z-index:95;
+  background:color-mix(in srgb,var(--color-bg) 94%,transparent);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--color-divider);
+}
+body.compare-active .compare-bar{display:block}
+.compare-bar-inner{
+  display:flex; align-items:center;
+  padding:var(--space-2) var(--space-6); gap:var(--space-3);
+}
+.pane-ctrl{
+  flex:1; min-width:0;
+  display:flex; align-items:center; gap:var(--space-2); flex-wrap:wrap;
+}
+.pane-label{
+  flex-shrink:0; font-size:var(--text-xs); font-weight:700; letter-spacing:.06em;
+  color:var(--color-text-muted); white-space:nowrap; text-transform:uppercase;
+}
+.pane-select{
+  flex-shrink:0;
+  font-family:var(--font-body); font-size:var(--text-xs); font-weight:600;
+  background:var(--color-surface); color:var(--color-text);
+  border:1px solid var(--color-border); border-radius:var(--radius-full);
+  padding:4px var(--space-3); cursor:pointer;
+  transition:border-color var(--transition);
+}
+.pane-select:focus{outline:2px solid var(--color-primary); outline-offset:1px}
+.pane-divider-bar{
+  width:1px; align-self:stretch; background:var(--color-divider); flex-shrink:0;
+  margin:var(--space-1) 0;
+}
+.tag-filter-row{display:flex; gap:4px; flex-wrap:wrap; align-items:center}
+.tag-btn{
+  flex-shrink:0;
+  font-family:var(--font-body); font-size:var(--text-xs); font-weight:700;
+  letter-spacing:.04em; text-transform:uppercase;
+  padding:2px 8px; border-radius:var(--radius-full);
+  border:1px solid var(--color-border);
+  background:var(--color-surface); color:var(--color-text-muted);
+  cursor:pointer; transition:var(--transition); white-space:nowrap;
+}
+.tag-btn:hover{background:var(--color-surface-offset); color:var(--color-text)}
+.tag-btn.active{background:var(--color-primary); color:var(--color-bg); border-color:var(--color-primary)}
+
+/* ---------- Compare root (two-pane container) ---------- */
+#compare-root{
+  display:flex;
+  position:fixed;
+  inset:0;
+  top:calc(60px + var(--compare-bar-h));
+  z-index:10;
+  background:var(--color-bg);
+}
+#compare-root[hidden]{display:none}
+
+.compare-pane{
+  flex:1 1 50%; min-width:280px;
+  overflow-y:auto; overflow-x:hidden;
+  border-right:1px solid var(--color-divider);
+}
+.compare-pane:last-child{border-right:none}
+
+.pane-scroll-area{
+  max-width:680px; margin:0 auto;
+  padding:var(--space-6) var(--space-6) var(--space-12);
+}
+
+.pane-resizer{
+  position:relative; flex-shrink:0; width:6px;
+  background:var(--color-divider); cursor:col-resize;
+  transition:background var(--transition);
+}
+.pane-resizer:hover,.pane-resizer.dragging{background:var(--color-primary)}
+.pane-resizer::after{content:''; position:absolute; inset:0 -8px}
+
+/* ---------- Compare active global state ---------- */
+body.compare-active{overflow:hidden}
+body.compare-active #content-root{display:none}
+body.compare-active .section-nav{display:none}
+
+/* Sections in panes: fix first-child border */
+.pane-scroll-area section.unit:first-child{border-top:none; padding-top:var(--space-8)}
 
 /* ---------- Layout ---------- */
 .hero,main{max-width:860px; margin:0 auto; padding:0 var(--space-8)}
@@ -259,12 +358,23 @@ tbody tr:last-child td{border-bottom:none}
 /* ---------- Footer ---------- */
 footer{max-width:860px; margin:var(--space-12) auto 0; padding:var(--space-8); border-top:1px solid var(--color-divider); color:var(--color-text-muted); font-size:var(--text-sm)}
 
+/* ---------- Responsive ---------- */
+@media (max-width:860px){
+  #compare-root{flex-direction:column}
+  .compare-pane{flex:1 1 50%; min-width:100%; min-height:200px}
+  .pane-resizer{width:100%; height:6px; cursor:row-resize}
+  .pane-resizer::after{inset:-8px 0}
+  .compare-bar-inner{flex-wrap:wrap; gap:var(--space-2)}
+  .pane-divider-bar{width:100%; height:1px; align-self:auto; margin:0}
+}
 @media (max-width:640px){
   .header-inner{padding:var(--space-3) var(--space-4)}
   .hero,main{padding:0 var(--space-4)}
   .brand-sub{display:none}
   .ex-step{flex-direction:column; gap:var(--space-1)}
   .ex-tag{width:auto}
+  .pane-scroll-area{padding:var(--space-4) var(--space-4) var(--space-8)}
+  .compare-toggle span{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important; transition-duration:.01ms!important}
@@ -288,6 +398,10 @@ footer{max-width:860px; margin:var(--space-12) auto 0; padding:var(--space-8); b
         <div class="brand-sub">Hibbeler Dynamics · Ch 16–17 參考手冊</div>
       </div>
     </div>
+    <button class="compare-toggle" data-compare-toggle aria-label="對照模式" aria-pressed="false">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="18" rx="1.5"/></svg>
+      <span>對照</span>
+    </button>
     <button class="theme-toggle" data-theme-toggle aria-label="切換主題"></button>
   </div>
 </header>
@@ -306,6 +420,37 @@ footer{max-width:860px; margin:var(--space-12) auto 0; padding:var(--space-8); b
     <a href="#eom">運動方程式</a>
   </div>
 </nav>
+
+<!-- Compare bar: section pickers + tag filters (shown only in compare mode) -->
+<div class="compare-bar" id="compare-bar">
+  <div class="compare-bar-inner">
+    <div class="pane-ctrl">
+      <span class="pane-label">左側</span>
+      <select class="pane-select" data-pane-select="left" aria-label="左側章節"></select>
+      <div class="tag-filter-row" data-pane-tags="left"></div>
+    </div>
+    <div class="pane-divider-bar"></div>
+    <div class="pane-ctrl">
+      <span class="pane-label">右側</span>
+      <select class="pane-select" data-pane-select="right" aria-label="右側章節"></select>
+      <div class="tag-filter-row" data-pane-tags="right"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Compare panes container (hidden by default) -->
+<div id="compare-root" hidden>
+  <div class="compare-pane" id="pane-left">
+    <div class="pane-scroll-area" id="pane-left-content"></div>
+  </div>
+  <div class="pane-resizer" id="pane-resizer" role="separator" aria-orientation="vertical" tabindex="0" aria-label="拖曳調整窗格比例"></div>
+  <div class="compare-pane" id="pane-right">
+    <div class="pane-scroll-area" id="pane-right-content"></div>
+  </div>
+</div>
+
+<!-- Normal reading content (hidden in compare mode) -->
+<div id="content-root">
 
 <section class="hero">
   <span class="eyebrow">Planar Rigid-Body Dynamics</span>
@@ -621,12 +766,42 @@ footer{max-width:860px; margin:var(--space-12) auto 0; padding:var(--space-8); b
 
 </main>
 
+</div><!-- #content-root -->
+
 <footer>
   <p>剛體平面運動學與動力學參考手冊 · 涵蓋 Hibbeler《Dynamics》Ch 16–17 · 整理自 CLASS 7–11 課堂筆記。</p>
-  <p>公式為主、例題精選；右上角可在 <strong>light / dark / pink</strong> 三種主題間切換。</p>
+  <p>公式為主、例題精選；右上角可在 <strong>light / dark / pink</strong> 三種主題間切換，或點擊「對照」並排比較任意兩章節。</p>
 </footer>
 
 <script>
+/* ---------- Section data & state ---------- */
+const SECTIONS = [
+  { id:'types',       label:'A1 · 運動型態',          tags:['overview'] },
+  { id:'translation', label:'A2 · 平移',              tags:['translation','velocity','acceleration'] },
+  { id:'fixed-axis',  label:'A3 · 定軸轉動',          tags:['rotation','velocity','acceleration'] },
+  { id:'absolute',    label:'A4 · 絕對運動',          tags:['velocity','position'] },
+  { id:'rel-vel',     label:'A5 · 相對速度',          tags:['relative-motion','velocity'] },
+  { id:'ic',          label:'A6 · 瞬時中心',          tags:['instantaneous-center','velocity'] },
+  { id:'rel-acc',     label:'A7 · 相對加速度',        tags:['relative-motion','acceleration'] },
+  { id:'rotating',    label:'A8 · 旋轉座標 Coriolis', tags:['rotating-frame','coriolis','acceleration'] },
+  { id:'inertia',     label:'B1 · 慣性矩',            tags:['moment-of-inertia'] },
+  { id:'eom',         label:'B2 · 運動方程式',        tags:['equations-of-motion'] },
+];
+const TAG_LABELS = {
+  'velocity':'速度','acceleration':'加速度','rotation':'轉動',
+  'relative-motion':'相對運動','instantaneous-center':'瞬時中心',
+  'coriolis':'Coriolis','moment-of-inertia':'慣性矩',
+  'equations-of-motion':'運動方程式','translation':'平移',
+  'rotating-frame':'旋轉座標','overview':'概覽','position':'位置',
+};
+const state = {
+  compareActive: false,
+  panes: {
+    left:  { sectionId:'rel-vel', activeTag:null },
+    right: { sectionId:'rel-acc', activeTag:null },
+  }
+};
+
 /* ---------- Theme cycle: light -> dark -> pink ---------- */
 (function(){
   const btn=document.querySelector('[data-theme-toggle]');
@@ -648,6 +823,7 @@ footer{max-width:860px; margin:var(--space-12) auto 0; padding:var(--space-8); b
   const links=[...document.querySelectorAll('.section-nav a')];
   const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
   const obs=new IntersectionObserver((entries)=>{
+    if(state.compareActive) return;
     entries.forEach(e=>{
       if(e.isIntersecting){
         links.forEach(l=>l.classList.remove('active'));
@@ -656,6 +832,174 @@ footer{max-width:860px; margin:var(--space-12) auto 0; padding:var(--space-8); b
     });
   },{rootMargin:'-120px 0px -65% 0px',threshold:0});
   document.querySelectorAll('section.unit').forEach(s=>obs.observe(s));
+})();
+
+/* ---------- Compare mode ---------- */
+(function(){
+  const toggleBtn   = document.querySelector('[data-compare-toggle]');
+  const compareRoot = document.getElementById('compare-root');
+  const compareBar  = document.getElementById('compare-bar');
+  const mainEl      = document.querySelector('main');
+
+  function buildSelectOptions(side) {
+    const sel = document.querySelector(`[data-pane-select="${side}"]`);
+    sel.innerHTML = '';
+    SECTIONS.forEach(sec => {
+      const opt = document.createElement('option');
+      opt.value = sec.id;
+      opt.textContent = sec.label;
+      if (sec.id === state.panes[side].sectionId) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+
+  function renderTagButtons(side) {
+    const container = document.querySelector(`[data-pane-tags="${side}"]`);
+    container.innerHTML = '';
+    const seen = new Set();
+    const tags = [];
+    SECTIONS.forEach(s => s.tags.forEach(t => { if (!seen.has(t)) { seen.add(t); tags.push(t); } }));
+    tags.forEach(tag => {
+      const btn = document.createElement('button');
+      btn.className = 'tag-btn' + (state.panes[side].activeTag === tag ? ' active' : '');
+      btn.textContent = TAG_LABELS[tag] || tag;
+      btn.dataset.tag = tag;
+      btn.type = 'button';
+      btn.addEventListener('click', () => {
+        const isActive = state.panes[side].activeTag === tag;
+        state.panes[side].activeTag = isActive ? null : tag;
+        filterSelectOptions(side);
+        renderTagButtons(side);
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function filterSelectOptions(side) {
+    const sel = document.querySelector(`[data-pane-select="${side}"]`);
+    const activeTag = state.panes[side].activeTag;
+    let firstVisible = null;
+    Array.from(sel.options).forEach(opt => {
+      const sec = SECTIONS.find(s => s.id === opt.value);
+      const hidden = activeTag ? !sec.tags.includes(activeTag) : false;
+      opt.hidden = hidden;
+      if (!hidden && !firstVisible) firstVisible = opt.value;
+    });
+    if (activeTag && firstVisible) {
+      const curSec = SECTIONS.find(s => s.id === state.panes[side].sectionId);
+      if (!curSec.tags.includes(activeTag)) {
+        state.panes[side].sectionId = firstVisible;
+        renderPane(side);
+      }
+    }
+  }
+
+  function returnSectionToMain(side) {
+    const scrollArea = document.getElementById(`pane-${side}-content`);
+    const child = scrollArea.querySelector('section.unit');
+    if (!child) return;
+    const idx = SECTIONS.findIndex(s => s.id === child.id);
+    const existing = Array.from(mainEl.querySelectorAll('section.unit'));
+    let inserted = false;
+    for (let i = 0; i < existing.length; i++) {
+      const ei = SECTIONS.findIndex(s => s.id === existing[i].id);
+      if (ei > idx) { mainEl.insertBefore(child, existing[i]); inserted = true; break; }
+    }
+    if (!inserted) mainEl.appendChild(child);
+  }
+
+  function renderPane(side) {
+    returnSectionToMain(side);
+    const sectionId = state.panes[side].sectionId;
+    const node = document.getElementById(sectionId);
+    const scrollArea = document.getElementById(`pane-${side}-content`);
+    scrollArea.appendChild(node);
+    scrollArea.parentElement.scrollTop = 0;
+    document.querySelector(`[data-pane-select="${side}"]`).value = sectionId;
+    renderTagButtons(side);
+    // Conflict: both panes same section → shift the other
+    const other = side === 'left' ? 'right' : 'left';
+    if (state.panes[other].sectionId === sectionId) {
+      const idx = SECTIONS.findIndex(s => s.id === sectionId);
+      state.panes[other].sectionId = SECTIONS[(idx + 1) % SECTIONS.length].id;
+      renderPane(other);
+    }
+  }
+
+  function activateCompareMode() {
+    state.compareActive = true;
+    document.body.classList.add('compare-active');
+    compareRoot.hidden = false;
+    toggleBtn.setAttribute('aria-pressed', 'true');
+    buildSelectOptions('left');
+    buildSelectOptions('right');
+    renderTagButtons('left');
+    renderTagButtons('right');
+    // Measure bar height after it becomes visible, then position the pane root
+    requestAnimationFrame(() => {
+      const barH = compareBar.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--compare-bar-h', Math.round(barH) + 'px');
+      renderPane('left');
+      renderPane('right');
+    });
+  }
+
+  function deactivateCompareMode() {
+    returnSectionToMain('left');
+    returnSectionToMain('right');
+    state.compareActive = false;
+    document.body.classList.remove('compare-active');
+    compareRoot.hidden = true;
+    toggleBtn.setAttribute('aria-pressed', 'false');
+    document.documentElement.style.removeProperty('--compare-bar-h');
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    state.compareActive ? deactivateCompareMode() : activateCompareMode();
+  });
+
+  document.querySelectorAll('[data-pane-select]').forEach(sel => {
+    sel.addEventListener('change', e => {
+      const side = e.target.dataset.paneSelect;
+      state.panes[side].sectionId = e.target.value;
+      renderPane(side);
+    });
+  });
+
+  /* Resizer: mouse drag */
+  const resizer = document.getElementById('pane-resizer');
+  let dragging = false, startX = 0, startLeftW = 0;
+  resizer.addEventListener('mousedown', e => {
+    dragging = true; startX = e.clientX;
+    startLeftW = document.getElementById('pane-left').getBoundingClientRect().width;
+    resizer.classList.add('dragging');
+    document.body.style.cssText += ';cursor:col-resize!important;user-select:none!important';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const total = compareRoot.getBoundingClientRect().width;
+    const newW = Math.max(280, Math.min(total - 286, startLeftW + e.clientX - startX));
+    document.getElementById('pane-left').style.flex = `0 0 ${newW}px`;
+  });
+  document.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    resizer.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+
+  /* Resizer: keyboard */
+  resizer.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const pL = document.getElementById('pane-left');
+    const cur = pL.getBoundingClientRect().width;
+    const step = e.shiftKey ? 50 : 10;
+    const total = compareRoot.getBoundingClientRect().width;
+    pL.style.flex = `0 0 ${Math.max(280, Math.min(total - 286, cur + (e.key === 'ArrowRight' ? step : -step)))}px`;
+    e.preventDefault();
+  });
 })();
 </script>
 </body>

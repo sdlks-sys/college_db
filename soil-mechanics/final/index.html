@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>土壤力學期末複習</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
+
+<style>
+/* ── TOKENS ── */
+:root{
+  --text-xs:clamp(.72rem,.68rem+.2vw,.8rem);--text-sm:clamp(.84rem,.8rem+.25vw,.95rem);
+  --text-base:clamp(1rem,.96rem+.2vw,1.1rem);--text-lg:clamp(1.15rem,1rem+.6vw,1.45rem);
+  --text-xl:clamp(1.5rem,1.2rem+1.1vw,2.1rem);--text-2xl:clamp(2rem,1.3rem+2.4vw,3.2rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;
+  --space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(120,30,70,.08);--shadow-md:0 6px 22px rgba(120,30,70,.12);
+  --transition:180ms cubic-bezier(.16,1,.3,1);
+  --font-display:'Source Serif 4',Georgia,serif;
+  --font-body:'DM Sans','Helvetica Neue',sans-serif;
+  /* PINK (default) */
+  --color-bg:#fdeef4;--color-surface:#fef5f9;--color-surface-offset:#fbe0ec;
+  --color-divider:#f6cedd;--color-border:#f0bdd2;--color-text:#4a1d33;--color-text-muted:#9d6480;
+  --color-primary:#d6336c;--color-primary-hl:#fbd6e4;
+  --color-blue:#5a63c9;--color-blue-hl:#e7e4f8;
+  --color-orange:#c75c3a;--color-orange-hl:#f9ddd0;
+  --color-purple:#9b3fb5;--color-purple-hl:#f1daf6;
+  --color-green:#2e8a6b;--color-green-hl:#d4efe7;
+  --color-amber:#b07d1a;--color-amber-hl:#f7e8c6;
+}
+[data-theme="light"]{
+  --color-bg:#f7f6f2;--color-surface:#fbfaf7;--color-surface-offset:#efece6;
+  --color-divider:#e3dfd8;--color-border:#d8d3cb;--color-text:#26231c;--color-text-muted:#76736b;
+  --color-primary:#0f6e74;--color-primary-hl:#d6e9ea;
+  --color-blue:#2860a8;--color-blue-hl:#dde8f6;
+  --color-orange:#bd5e10;--color-orange-hl:#f6e4d2;
+  --color-purple:#6b3fb0;--color-purple-hl:#e8def6;
+  --color-green:#2c7d4e;--color-green-hl:#d8eee0;
+  --color-amber:#946400;--color-amber-hl:#f5ecc7;
+  --shadow-sm:0 1px 2px rgba(40,30,15,.06);--shadow-md:0 6px 22px rgba(40,30,15,.09);
+}
+[data-theme="dark"]{
+  --color-bg:#171613;--color-surface:#201e1a;--color-surface-offset:#2a2823;
+  --color-divider:#34322c;--color-border:#403d35;--color-text:#e9e6de;--color-text-muted:#a4a197;
+  --color-primary:#52b6be;--color-primary-hl:#11343a;
+  --color-blue:#6ea8ea;--color-blue-hl:#16273d;
+  --color-orange:#e89a5d;--color-orange-hl:#3a2613;
+  --color-purple:#b48bea;--color-purple-hl:#271a3c;
+  --color-green:#71c48f;--color-green-hl:#13311f;
+  --color-amber:#dcb45e;--color-amber-hl:#322710;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);--shadow-md:0 6px 22px rgba(0,0,0,.5);
+}
+
+/* ── BASE ── */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);
+  font-size:var(--text-base);line-height:1.65;-webkit-font-smoothing:antialiased;
+  transition:background var(--transition),color var(--transition)}
+h1,h2,h3,h4{font-family:var(--font-display);line-height:1.2;font-weight:600;letter-spacing:-.01em}
+a{color:var(--color-primary);text-decoration:none}
+p{margin:0 0 var(--space-3)}
+ul,ol{margin:0 0 var(--space-3);padding-left:var(--space-6)}
+li{margin-bottom:var(--space-1)}
+
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:100;
+  background:color-mix(in srgb,var(--color-bg) 86%,transparent);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--color-divider)}
+.header-inner{max-width:980px;margin:0 auto;padding:var(--space-3) var(--space-8);
+  display:flex;align-items:center;gap:var(--space-3)}
+.brand{display:flex;align-items:center;gap:var(--space-3);min-width:0}
+.brand-title{font-family:var(--font-display);font-weight:600;font-size:var(--text-base);line-height:1.1}
+.brand-sub{font-size:var(--text-xs);color:var(--color-text-muted);letter-spacing:.04em}
+.theme-toggle{margin-left:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:var(--radius-full);background:var(--color-surface);
+  border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;transition:var(--transition)}
+.theme-toggle:hover{background:var(--color-surface-offset);transform:translateY(-1px)}
+
+/* ── SECTION NAV ── */
+.section-nav{position:sticky;top:58px;z-index:90;
+  background:color-mix(in srgb,var(--color-bg) 90%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--color-divider)}
+.section-nav-inner{max-width:980px;margin:0 auto;padding:var(--space-2) var(--space-6);
+  display:flex;gap:var(--space-1);overflow-x:auto;scrollbar-width:none}
+.section-nav-inner::-webkit-scrollbar{display:none}
+.section-nav a{white-space:nowrap;font-size:var(--text-xs);font-weight:600;
+  color:var(--color-text-muted);padding:var(--space-1) var(--space-3);
+  border-radius:var(--radius-full);transition:var(--transition)}
+.section-nav a:hover{color:var(--color-text);background:var(--color-surface-offset)}
+.section-nav a.active{color:var(--color-bg);background:var(--color-primary)}
+section[id]{scroll-margin-top:118px}
+
+/* ── HERO ── */
+.hero{max-width:860px;margin:0 auto;padding:var(--space-12) var(--space-8) var(--space-6)}
+.eyebrow{display:inline-block;font-size:var(--text-xs);font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--color-primary);margin-bottom:var(--space-3)}
+.hero h1{font-size:var(--text-2xl);margin:0 0 var(--space-4)}
+.hero-lead{font-size:var(--text-lg);color:var(--color-text-muted);margin:0 0 var(--space-6);max-width:46ch}
+.highlight-box{background:var(--color-primary-hl);
+  border:1px solid color-mix(in srgb,var(--color-primary) 30%,transparent);
+  border-radius:var(--radius-lg);padding:var(--space-5) var(--space-6)}
+.flow-box{background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);margin-top:var(--space-5);overflow-x:auto}
+.flow-box pre{margin:0;font-size:var(--text-sm);line-height:1.6;
+  font-family:'Courier New',monospace;color:var(--color-text-muted)}
+
+/* ── MAIN ── */
+main{max-width:860px;margin:0 auto;padding:0 var(--space-8) var(--space-16)}
+
+/* ── SECTION HEADINGS ── */
+.sec-head{margin:var(--space-12) 0 var(--space-5);display:flex;align-items:center;gap:var(--space-3)}
+.sec-num{display:inline-flex;align-items:center;justify-content:center;
+  width:2.2rem;height:2.2rem;border-radius:var(--radius-md);
+  background:var(--color-primary);color:var(--color-bg);
+  font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);flex-shrink:0}
+.sec-num.blue{background:var(--color-blue)}
+.sec-num.orange{background:var(--color-orange)}
+.sec-num.purple{background:var(--color-purple)}
+.sec-num.green{background:var(--color-green)}
+.sec-head h2{margin:0;font-size:var(--text-xl)}
+h3.sub{font-size:var(--text-lg);margin:var(--space-8) 0 var(--space-3);
+  border-bottom:2px solid var(--color-divider);padding-bottom:var(--space-2)}
+h4.sub{font-size:var(--text-base);margin:var(--space-5) 0 var(--space-2)}
+hr.sec-divider{border:none;border-top:1px solid var(--color-divider);margin:var(--space-12) 0}
+
+/* ── CHIPS ── */
+.chip{display:inline-block;font-size:var(--text-xs);font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;padding:3px 10px;border-radius:var(--radius-full);margin-bottom:var(--space-3)}
+.chip-pink{background:var(--color-primary-hl);color:var(--color-primary)}
+.chip-blue{background:var(--color-blue-hl);color:var(--color-blue)}
+.chip-orange{background:var(--color-orange-hl);color:var(--color-orange)}
+.chip-green{background:var(--color-green-hl);color:var(--color-green)}
+.chip-amber{background:var(--color-amber-hl);color:var(--color-amber)}
+.chip-purple{background:var(--color-purple-hl);color:var(--color-purple)}
+
+/* ── CARDS ── */
+.card{background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);padding:var(--space-5);box-shadow:var(--shadow-sm);
+  margin:var(--space-4) 0;border-left:4px solid var(--color-border)}
+.card.acc-pink{border-left-color:var(--color-primary)}
+.card.acc-blue{border-left-color:var(--color-blue)}
+.card.acc-orange{border-left-color:var(--color-orange)}
+.card.acc-purple{border-left-color:var(--color-purple)}
+.card.acc-green{border-left-color:var(--color-green)}
+.card.acc-amber{border-left-color:var(--color-amber)}
+.card h3{font-size:var(--text-base);margin:0 0 var(--space-2)}
+.card p{margin:var(--space-2) 0;font-size:var(--text-sm)}
+.card ul,.card ol{font-size:var(--text-sm);margin:var(--space-2) 0}
+
+/* ── CALLOUTS ── */
+.callout{border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);
+  margin:var(--space-4) 0;border:1px solid}
+.callout h4{margin:0 0 var(--space-2);font-size:var(--text-sm);font-family:var(--font-body);
+  font-weight:700;letter-spacing:.04em}
+.callout p,.callout ul{margin:var(--space-2) 0;font-size:var(--text-sm)}
+.cal-green{background:var(--color-green-hl);border-color:color-mix(in srgb,var(--color-green) 35%,transparent)}
+.cal-green h4{color:var(--color-green)}
+.cal-amber{background:var(--color-amber-hl);border-color:color-mix(in srgb,var(--color-amber) 38%,transparent)}
+.cal-amber h4{color:var(--color-amber)}
+.cal-pink{background:var(--color-primary-hl);border-color:color-mix(in srgb,var(--color-primary) 35%,transparent)}
+.cal-pink h4{color:var(--color-primary)}
+.cal-blue{background:var(--color-blue-hl);border-color:color-mix(in srgb,var(--color-blue) 35%,transparent)}
+.cal-blue h4{color:var(--color-blue)}
+
+/* ── TABLES ── */
+.table-wrap{border:1px solid var(--color-border);border-radius:var(--radius-xl);
+  overflow:hidden;box-shadow:var(--shadow-sm);margin:var(--space-4) 0;overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:480px}
+thead tr{background:var(--color-text)}
+thead th{color:var(--color-bg);padding:var(--space-3) var(--space-4);font-size:var(--text-sm);
+  font-weight:600;text-align:left}
+tbody td{padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-divider);
+  font-size:var(--text-sm);vertical-align:middle;line-height:1.5}
+tbody tr{transition:background var(--transition)}
+tbody tr:hover{background:var(--color-surface-offset)}
+tbody tr:last-child td{border-bottom:none}
+.row-pink td:first-child{border-left:3px solid var(--color-primary)}
+.row-blue td:first-child{border-left:3px solid var(--color-blue)}
+.row-orange td:first-child{border-left:3px solid var(--color-orange)}
+.row-green td:first-child{border-left:3px solid var(--color-green)}
+.row-purple td:first-child{border-left:3px solid var(--color-purple)}
+.row-amber td:first-child{border-left:3px solid var(--color-amber)}
+
+/* ── FORMULA BOX ── */
+.fbox{background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);padding:var(--space-4) var(--space-6);
+  margin:var(--space-4) 0;text-align:center;overflow-x:auto}
+
+/* ── STARRED / PROFESSOR EMPHASIS ── */
+.starred{border-left:4px solid var(--color-amber);padding-left:var(--space-5);margin:var(--space-6) 0}
+.star-badge{display:inline-flex;align-items:center;gap:var(--space-1);
+  background:var(--color-amber-hl);color:var(--color-amber);
+  font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;
+  padding:2px 10px;border-radius:var(--radius-full);margin-bottom:var(--space-3)}
+
+/* ── ACCORDION ── */
+details.step{background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);margin-bottom:var(--space-3);overflow:hidden}
+summary.step-hd{display:flex;align-items:center;gap:var(--space-3);
+  padding:var(--space-4) var(--space-5);cursor:pointer;list-style:none;
+  font-weight:600;font-size:var(--text-sm);transition:background var(--transition)}
+summary.step-hd::-webkit-details-marker{display:none}
+summary.step-hd:hover{background:var(--color-surface-offset)}
+.step-n{display:inline-flex;align-items:center;justify-content:center;
+  width:1.6rem;height:1.6rem;border-radius:var(--radius-full);
+  background:var(--color-primary);color:var(--color-bg);
+  font-size:var(--text-xs);font-weight:700;flex-shrink:0}
+.step-chev{margin-left:auto;color:var(--color-text-muted);transition:transform var(--transition);font-style:normal}
+details[open] .step-chev{transform:rotate(90deg)}
+.step-body{padding:var(--space-4) var(--space-5) var(--space-5);
+  border-top:1px solid var(--color-divider);font-size:var(--text-sm)}
+.step-body p{margin:var(--space-2) 0}
+
+/* ── TWO-COL GRID ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin:var(--space-4) 0}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+
+/* ── SVG FIGURE ── */
+.mohr-fig{margin:var(--space-6) 0;text-align:center}
+.mohr-fig figcaption{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-2)}
+/* Theme-aware SVG fills */
+.mohr-bg{fill:#E6F1FB}
+.mohr-stroke{stroke:#185FA5}
+.mohr-envelope{stroke:#BA7517}
+.mohr-axis{stroke:#888780}
+.mohr-dotted{stroke:#888780}
+.mohr-radius{stroke:#185FA5}
+.mohr-label{fill:#3d3d3a}
+.mohr-muted{fill:#73726c}
+[data-theme="dark"] .mohr-bg{fill:#0C447C}
+[data-theme="dark"] .mohr-label{fill:#c2c0b6}
+[data-theme="dark"] .mohr-muted{fill:#9c9a92}
+[data-theme="dark"] .mohr-envelope{stroke:#dcb45e}
+[data-theme="dark"] .mohr-axis{stroke:#a4a197}
+[data-theme="dark"] .mohr-dotted{stroke:#a4a197}
+
+/* ── FOOTER ── */
+footer{max-width:860px;margin:0 auto;padding:var(--space-8);
+  border-top:1px solid var(--color-divider);color:var(--color-text-muted);font-size:var(--text-sm)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .header-inner{padding:var(--space-3) var(--space-4)}
+  .hero,main{padding-left:var(--space-4);padding-right:var(--space-4)}
+  .brand-sub{display:none}
+  thead th,tbody td{padding:var(--space-2) var(--space-3)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+        <rect width="36" height="36" rx="9" fill="var(--color-primary)"/>
+        <rect x="8" y="11" width="20" height="3" rx="1.5" fill="white" opacity=".9"/>
+        <rect x="8" y="17" width="20" height="3" rx="1.5" fill="white" opacity=".7"/>
+        <rect x="8" y="23" width="14" height="3" rx="1.5" fill="white" opacity=".5"/>
+      </svg>
+      <div>
+        <div class="brand-title">土壤力學</div>
+        <div class="brand-sub">期末複習</div>
+      </div>
+    </div>
+    <button class="theme-toggle" data-theme-toggle aria-label="Switch theme"></button>
+  </div>
+</header>
+
+<!-- ── SECTION NAV ── -->
+<nav class="section-nav" aria-label="各節快速跳轉">
+  <div class="section-nav-inner">
+    <a href="#s1">第一站：三軸試驗</a>
+    <a href="#s2">第二站：側向土壓力</a>
+    <a href="#s3">第三站：擋土牆 ⭐</a>
+    <a href="#s4">工程實務</a>
+    <a href="#s5">速查表</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <span class="eyebrow">期末複習指引</span>
+  <h1>土壤力學三站一貫串</h1>
+  <p class="hero-lead">三軸試驗量到的 $c$、$\phi$ 原封不動流入側向土壓力公式，再驅動擋土牆的五大穩定性檢核。</p>
+  <div class="highlight-box">
+    <strong>核心橋樑</strong>：三站用的是<strong>同一個</strong> Mohr 圓相切幾何。<br>
+    三軸試驗 $(c,\phi)$ → 算 $K_a,K_p$ → 求 $P_a$ → 傾倒 / 滑動 / 承載力檢核。
+  </div>
+  <div class="flow-box">
+    <pre>三軸試驗               側向土壓力                  穩定性檢核
+(求 c, φ, Su)   →   (Rankine / Coulomb)   →   (擋土牆 5 檢核 / 開挖檢核)
+   第一站                 第二站                       第三站
+     │                      │                            │
+  Mohr 圓相切            同一套 Mohr 幾何             用 Pa 算力矩、滑動、
+  → c, φ               固定 σv 解 σh → Ka, Kp        承載力</pre>
+  </div>
+</section>
+
+<main>
+
+<!-- ══════════════════════════════════════════
+     第一站：三軸試驗
+     ══════════════════════════════════════════ -->
+<section id="s1">
+  <div class="sec-head">
+    <span class="sec-num blue">1</span>
+    <h2>第一站：三軸試驗 → 強度參數</h2>
+  </div>
+
+  <h3 class="sub">1.1 Mohr-Coulomb 破壞準則</h3>
+  <p>土靠<strong>摩擦</strong>與<strong>凝聚力</strong>抵抗剪切，抵抗力隨壓力增大而增大：</p>
+  <div class="fbox">$$\tau_f = c + \sigma_n \tan\phi$$</div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>符號</th><th>意義</th><th>備註</th></tr></thead>
+    <tbody>
+      <tr class="row-pink"><td>$\tau_f$</td><td>破壞面可承受的最大剪應力（剪力強度）</td><td></td></tr>
+      <tr class="row-blue"><td>$c$</td><td>凝聚力（包絡線截距）</td><td>黏土才有；砂土 $c\approx 0$</td></tr>
+      <tr class="row-orange"><td>$\phi$</td><td>內摩擦角（包絡線斜率）</td><td>壓越緊越強</td></tr>
+      <tr class="row-green"><td>$\sigma_n$</td><td>破壞面上的正向應力</td><td>有效應力時加 $'$（$c'$、$\phi'$）</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout cal-green">
+    <h4>直覺</h4>
+    <p>砂土靠顆粒互相卡（純摩擦，$c=0$）；黏土多了顆粒間吸附力（截距 $c>0$）。</p>
+  </div>
+
+  <h3 class="sub">1.2 三軸試驗在做什麼</h3>
+  <p>把圓柱土樣放進壓力室：</p>
+  <ul>
+    <li><strong>圍壓 $\sigma_3$</strong>（cell pressure）：四周均勻施加，模擬地下側向壓力。</li>
+    <li><strong>偏差應力</strong> $\Delta\sigma = \sigma_1 - \sigma_3$：從上方逐漸加壓，加到土樣破壞。</li>
+    <li>記下破壞時的 $\sigma_1$、$\sigma_3$，畫出一個 Mohr 圓。</li>
+  </ul>
+
+  <h3 class="sub">1.3 從 Mohr 圓求出 $c$ 和 $\phi$（本站核心）</h3>
+  <div class="card acc-blue">
+    <h3>步驟</h3>
+    <p>圓心 $=\dfrac{\sigma_1+\sigma_3}{2}$，半徑 $R=\dfrac{\sigma_1-\sigma_3}{2}$。</p>
+    <p>做<strong>至少 3 個</strong>不同 $\sigma_3$ 的試驗 → 畫多個圓 → 共同切線即<strong>破壞包絡線</strong> → 斜率得 $\phi$、截距得 $c$。</p>
+  </div>
+  <div class="fbox">
+    $$\sigma_1 = \sigma_3\,\tan^2\!\left(45^\circ+\tfrac{\phi}{2}\right) + 2c\,\tan\!\left(45^\circ+\tfrac{\phi}{2}\right)$$
+  </div>
+  <p>破壞圓半徑（連到切點）必定<strong>垂直</strong>於包絡線，這是「相切」的幾何條件，也是上式的來源。</p>
+
+  <!-- Mohr circle SVG (Appendix A from guide) -->
+  <figure class="mohr-fig">
+    <svg width="100%" viewBox="0 0 680 510" role="img" style="max-width:680px;">
+      <title>Mohr 圓與 Mohr-Coulomb 破壞包絡線</title>
+      <desc>破壞時的 Mohr 應力圓與破壞包絡線相切，標示 σ1、σ3、c 與 φ。</desc>
+      <defs>
+        <marker id="mc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <circle cx="330" cy="320" r="150" class="mohr-bg mohr-stroke" stroke-width="0.5"/>
+      <line x1="80" y1="320" x2="630" y2="320" class="mohr-axis" stroke-width="1" marker-end="url(#mc-arrow)"/>
+      <line x1="80" y1="320" x2="80" y2="75" class="mohr-axis" stroke-width="1" marker-end="url(#mc-arrow)"/>
+      <line x1="80" y1="291" x2="450" y2="78" class="mohr-envelope" stroke-width="2" fill="none"/>
+      <line x1="330" y1="320" x2="255" y2="190" class="mohr-radius" stroke-width="0.5" stroke-dasharray="4 3" fill="none"/>
+      <line x1="80" y1="291" x2="185" y2="291" class="mohr-dotted" stroke-width="0.5" stroke-dasharray="3 3" fill="none"/>
+      <path d="M120 291 A 40 40 0 0 0 114.6 271" fill="none" class="mohr-axis" stroke-width="1"/>
+      <circle cx="330" cy="320" r="2.5" class="mohr-axis" fill="#888780"/>
+      <circle cx="80" cy="291" r="2.5" class="mohr-envelope" fill="#BA7517"/>
+      <circle cx="255" cy="190" r="3" class="mohr-stroke" fill="#185FA5"/>
+      <line x1="180" y1="316" x2="180" y2="324" class="mohr-axis" stroke-width="1"/>
+      <line x1="480" y1="316" x2="480" y2="324" class="mohr-axis" stroke-width="1"/>
+      <text x="92" y="88" font-size="14" font-weight="500" class="mohr-label">τ</text>
+      <text x="108" y="88" font-size="12" class="mohr-muted">剪應力</text>
+      <text x="612" y="345" font-size="14" font-weight="500" class="mohr-label">σ′</text>
+      <text x="572" y="345" font-size="12" class="mohr-muted">正向應力</text>
+      <text x="180" y="343" font-size="14" font-weight="500" class="mohr-label" text-anchor="middle">σ₃</text>
+      <text x="480" y="343" font-size="14" font-weight="500" class="mohr-label" text-anchor="middle">σ₁</text>
+      <text x="68" y="312" font-size="14" font-weight="500" class="mohr-label" text-anchor="end">c</text>
+      <text x="150" y="282" font-size="14" font-weight="500" class="mohr-label">φ</text>
+      <text x="300" y="252" font-size="14" font-weight="500" class="mohr-label">R</text>
+      <text x="380" y="96" font-size="12" class="mohr-muted" text-anchor="middle">破壞包絡線</text>
+      <text x="245" y="395" font-size="12" class="mohr-muted" text-anchor="middle">Mohr 圓（破壞時）</text>
+    </svg>
+    <figcaption>Mohr 圓與破壞包絡線相切；半徑連到切點，垂直於包絡線。</figcaption>
+  </figure>
+
+  <h3 class="sub">1.4 三種試驗 — 何時用哪個</h3>
+  <div class="table-wrap"><table>
+    <thead>
+      <tr><th>試驗</th><th>階段一（壓密）</th><th>階段二（剪切）</th><th>模擬情境</th><th>給的參數</th><th>用在哪裡</th></tr>
+    </thead>
+    <tbody>
+      <tr class="row-pink">
+        <td><strong>UU</strong>（Q-test）</td><td>不壓密</td><td>不排水</td>
+        <td>黏土<strong>短期</strong></td><td>$S_u$（$\phi=0$ 分析）</td><td>短期穩定、隆起檢核</td>
+      </tr>
+      <tr class="row-blue">
+        <td><strong>CU</strong>（R-test）</td><td>完全壓密</td><td>不排水（可量孔壓）</td>
+        <td>中期；量孔壓得有效參數</td><td>$\phi$（總）/ $c',\phi'$</td><td>擋土壁、承載力</td>
+      </tr>
+      <tr class="row-orange">
+        <td><strong>CD</strong>（S-test）</td><td>完全壓密</td><td>慢速、孔壓消散</td>
+        <td>長期緩慢加載</td><td>$c_d,\phi_d$（排水）</td><td>長期穩定分析</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="callout cal-amber">
+    <h4>⚠ 記法</h4>
+    <p>砂土滲透快 → 任何時候都當「排水」用 $\phi'$；黏土滲透慢 → 短期用 $S_u$，長期才用 $c',\phi'$。</p>
+  </div>
+
+  <h3 class="sub">1.5 通往第二站的橋樑</h3>
+  <p>令 $N_\phi = \tan^2\!\left(45^\circ+\dfrac{\phi}{2}\right)$：</p>
+  <div class="fbox">$$\sigma_1 = N_\phi\,\sigma_3 + 2c\sqrt{N_\phi}$$</div>
+  <div class="callout cal-pink">
+    <h4>核心連結</h4>
+    <p>$N_\phi$ 正是<strong>被動土壓力係數 $K_p$</strong>；其倒數 $\dfrac{1}{N_\phi}=\tan^2\!\left(45^\circ-\dfrac{\phi}{2}\right)$ 就是<strong>主動土壓力係數 $K_a$</strong>。</p>
+    <p>擋土牆後的土達到主動破壞——用的是同一套 Mohr 圓幾何，只是固定 $\sigma_v$、去解 $\sigma_h$。三軸量到的 $c$、$\phi$ 直接帶入。</p>
+  </div>
+</section>
+
+<hr class="sec-divider">
+
+<!-- ══════════════════════════════════════════
+     第二站：側向土壓力
+     ══════════════════════════════════════════ -->
+<section id="s2">
+  <div class="sec-head">
+    <span class="sec-num orange">2</span>
+    <h2>第二站：Rankine / Coulomb 側向土壓力</h2>
+  </div>
+
+  <h3 class="sub">2.1 三種土壓力狀態（取決於牆有沒有動）</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>狀態</th><th>牆體行為</th><th>水平有效應力</th><th>係數</th></tr></thead>
+    <tbody>
+      <tr class="row-blue">
+        <td>靜止 (at-rest)</td><td>牆固定不動</td>
+        <td>$\sigma_h' = K_0\sigma_v'$</td><td>$K_0$</td>
+      </tr>
+      <tr class="row-orange">
+        <td><strong>主動 (active)</strong></td><td>牆<strong>離開</strong>回填土</td>
+        <td>$\sigma_h' = K_a\sigma_v' - 2c'\sqrt{K_a}$</td><td>$K_a$（最小）</td>
+      </tr>
+      <tr class="row-green">
+        <td>被動 (passive)</td><td>牆<strong>推向</strong>回填土</td>
+        <td>$\sigma_h' = K_p\sigma_v' + 2c'\sqrt{K_p}$</td><td>$K_p$（最大）</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <p>大小關係：$K_a < K_0 < K_p$</p>
+  <div class="fbox">
+    $$K_0 = 1-\sin\phi' \quad\text{（Jaky，最常用）}$$
+    $$K_0 = (1-\sin\phi')\,\text{OCR}^{\sin\phi'} \quad\text{（超壓密，Mayne \& Kulhawy）}$$
+  </div>
+
+  <div class="starred">
+    <div class="star-badge">⭐ 教授指定重點</div>
+    <h3 class="sub" style="margin-top:var(--space-3)">2.2 Rankine 理論（水平回填、垂直光滑牆背）</h3>
+    <div class="fbox">
+      $$K_a = \tan^2\!\left(45^\circ-\tfrac{\phi}{2}\right)=\frac{1-\sin\phi}{1+\sin\phi}, \qquad K_p = \tan^2\!\left(45^\circ+\tfrac{\phi}{2}\right)=\frac{1+\sin\phi}{1-\sin\phi}$$
+    </div>
+    <div class="card acc-orange">
+      <h3>主動合力（乾砂、水平回填、$c=0$）</h3>
+      <p>$$P_a = \tfrac{1}{2}\gamma H^2 K_a \quad\text{，作用點在牆底上方 } H/3$$</p>
+    </div>
+    <div class="card acc-blue">
+      <h3>含凝聚力時的主動應力</h3>
+      <p>$\sigma_a' = K_a\sigma_v' - 2c'\sqrt{K_a}$</p>
+      <p>上部出現張力裂縫，深度 $z_c=\dfrac{2c'}{\gamma\sqrt{K_a}}$。</p>
+    </div>
+    <div class="card acc-green">
+      <h3>傾斜回填（坡角 $i$，垂直牆）</h3>
+      <p>$$K_a = \cos i\;\frac{\cos i - \sqrt{\cos^2 i - \cos^2\phi}}{\cos i + \sqrt{\cos^2 i - \cos^2\phi}}$$</p>
+      <p>$P_a=\tfrac{1}{2}\gamma H^2 K_a$，方向與水平夾角 $i$（沿坡面方向）。</p>
+    </div>
+  </div>
+
+  <h3 class="sub">2.3 Coulomb 理論（可考慮牆摩擦角 $\delta$、牆背傾斜）</h3>
+  <p>$\theta$＝牆背與鉛直夾角，$\delta$＝牆與土的摩擦角，$\alpha$＝回填坡角：</p>
+  <div class="fbox">
+    $$K_a = \frac{\cos^2(\phi-\theta)}{\cos^2\theta\,\cos(\delta+\theta)\left[1+\sqrt{\dfrac{\sin(\phi+\delta)\sin(\phi-\alpha)}{\cos(\delta+\theta)\cos(\alpha-\theta)}}\right]^2}$$
+  </div>
+  <div class="callout cal-green">
+    <h4>本課程慣例</h4>
+    <p>擋土牆題目用 <strong>Rankine</strong>，在通過<strong>牆踵的鉛直面</strong>上計算 $P_a$；牆摩擦一般不另計（除非題目指定 Coulomb 或給 $\delta$）。當 $\theta=0,\delta=0,\alpha=0$ 時，Coulomb 退化回 Rankine。</p>
+  </div>
+
+  <h3 class="sub">2.4 畫土壓力圖的標準步驟</h3>
+  <ol>
+    <li>定牆高 $H$ 與牆底高程。</li>
+    <li>判斷回填是填方/挖方，取得各層 $\gamma$、$c$、$\phi$。</li>
+    <li>判斷牆處於 at-rest / active / passive 狀態。</li>
+    <li>算對應的土壓力係數。</li>
+    <li>由<strong>有效應力</strong>沿深度畫壓力分布（分層、地下水位處轉折；<strong>水壓 $u$ 另外單獨計算</strong>並疊加）。</li>
+    <li>由分布圖形求合力與作用位置。</li>
+  </ol>
+  <div class="callout cal-amber">
+    <h4>⚠ 地下水位在地表時</h4>
+    <p>水平有效應力用浮重 $\gamma'$，再疊加靜水壓 $u=\gamma_w z$。</p>
+  </div>
+
+  <div class="callout cal-blue">
+    <h4>通往第三站的橋樑</h4>
+    <p>第二站算出的 $P_a$（大小、方向、作用點 $H/3$）就是第三站擋土牆的<strong>主要驅動力</strong>。被動 $P_p$ 是抵抗力，設計上常保守不計。</p>
+  </div>
+</section>
+
+<hr class="sec-divider">
+
+<!-- ══════════════════════════════════════════
+     第三站：擋土牆 ⭐
+     ══════════════════════════════════════════ -->
+<section id="s3">
+  <div class="sec-head">
+    <span class="sec-num">3</span>
+    <h2>第三站：擋土牆 / 開挖穩定性檢核</h2>
+  </div>
+  <div class="star-badge" style="margin-bottom:var(--space-5)">⭐ 教授指定重點</div>
+
+  <h3 class="sub">3.1 擋土牆五大穩定性檢核</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>檢核</th><th>安全係數要求</th><th>核心公式 / 重點</th></tr></thead>
+    <tbody>
+      <tr class="row-blue">
+        <td>A. 承載力 (bearing)</td>
+        <td><strong>FS &gt; 3.0</strong></td>
+        <td>算偏心 $e$、$q_{max}/q_{min}$，再比 $q_u$</td>
+      </tr>
+      <tr class="row-pink">
+        <td><strong>B. 傾倒 (overturning)</strong></td>
+        <td><strong>FS &gt; 2.0</strong></td>
+        <td>對<strong>牆趾</strong>取力矩：$FS=\dfrac{\sum M_R}{\sum M_o}$</td>
+      </tr>
+      <tr class="row-orange">
+        <td><strong>C. 滑動 (sliding)</strong></td>
+        <td><strong>FS &gt; 1.5</strong></td>
+        <td>$FS=\dfrac{(\sum V)\tan(k_1\phi_2)+Bk_2c_2+P_p}{P_a\cos\alpha}$</td>
+      </tr>
+      <tr class="row-green">
+        <td>D. 整體穩定 (overall)</td>
+        <td><strong>FS &gt; 1.3</strong></td>
+        <td>圓弧滑動面（邊坡穩定程式）</td>
+      </tr>
+      <tr class="row-amber">
+        <td>E. 沉陷 (settlement)</td>
+        <td>—</td>
+        <td>壓密沉陷量檢核</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="callout cal-green">
+    <h4>本課程慣例（Das 法）</h4>
+    <p>傾倒與滑動<strong>獨立檢核</strong>，取較保守者決定設計尺寸；被動土壓力 $P_p$ 通常<strong>保守不計</strong>，除非題目暗示。</p>
+  </div>
+
+  <h4 class="sub">A. 傾倒 (overturning)</h4>
+  <div class="card acc-pink">
+    <p>$\sum M_o$：$P_a$ 的<strong>水平分量</strong> $\times$ 力臂（對牆趾）$= P_a \cdot H/3$</p>
+    <p>$\sum M_R$：各塊體自重、回填土重、$P_a$ <strong>垂直分量</strong>對牆趾的力矩和</p>
+    <div class="fbox">$$FS_{ot}=\frac{\sum M_R}{\sum M_o}>2.0$$</div>
+  </div>
+
+  <h4 class="sub">B. 滑動 (sliding)</h4>
+  <div class="card acc-orange">
+    <ul>
+      <li>抵抗力：底面摩擦 $(\sum V)\tan(k_1\phi_2)$ + 底面凝聚 $Bk_2c_2$ +（被動 $P_p$，常略）</li>
+      <li>驅動力：$P_a\cos\alpha$（水平分量）</li>
+      <li>$k_1,k_2$ 取 $\tfrac{1}{2}\sim\tfrac{2}{3}$（基底摩擦/附著折減）</li>
+    </ul>
+    <div class="fbox">$$FS_{sl}=\frac{(\sum V)\tan(k_1\phi_2)+Bk_2c_2+P_p}{P_a\cos\alpha}>1.5$$</div>
+  </div>
+
+  <h4 class="sub">C. 承載力 (bearing)</h4>
+  <div class="card acc-blue">
+    <ol>
+      <li>偏心 $e=\dfrac{B}{2}-\dfrac{\sum M_R-\sum M_o}{\sum V}$</li>
+      <li>基底壓力：
+        <ul>
+          <li>$e\le B/6$：$q_{max,min}=\dfrac{\sum V}{B}\!\left(1\pm\dfrac{6e}{B}\right)$</li>
+          <li>$e>B/6$：$q_{max}=\dfrac{2\sum V}{3(B/2-e)}$</li>
+        </ul>
+      </li>
+      <li>極限承載力 $q_u$（Meyerhof），$FS=q_u/q_{max}>3$</li>
+    </ol>
+  </div>
+
+  <h3 class="sub">3.2 ⭐ 例題：重力式擋土牆（傾倒與滑動 FS）</h3>
+  <div class="card acc-pink">
+    <h3>題目給定參數</h3>
+    <div class="table-wrap" style="margin:var(--space-3) 0 0">
+      <table>
+        <thead><tr><th>材料</th><th>參數</th></tr></thead>
+        <tbody>
+          <tr class="row-blue"><td>回填砂土</td><td>$\gamma=17\text{ kN/m}^3$，$c'=0$，$\phi'=30^\circ$</td></tr>
+          <tr class="row-orange"><td>基底黏土</td><td>$c=30\text{ kPa}$，$\phi=0^\circ$（滑動阻抗）</td></tr>
+          <tr class="row-green"><td>混凝土</td><td>$\gamma=23.5\text{ kN/m}^3$</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:var(--space-3)">牆高 6 m、基礎寬約 7 m。正式解題前請比對 PDF 原圖確認每個尺寸。</p>
+  </div>
+
+  <div style="margin:var(--space-4) 0">
+    <details class="step">
+      <summary class="step-hd">
+        <span class="step-n">1</span>
+        <span>算主動土壓力係數 $K_a$</span>
+        <i class="step-chev">▶</i>
+      </summary>
+      <div class="step-body">
+        <p>回填砂土 $\phi'=30^\circ$，水平回填，Rankine：</p>
+        <div class="fbox">$$K_a = \tan^2\!\left(45^\circ - \tfrac{30^\circ}{2}\right) = \tan^2 30^\circ = \tfrac{1}{3} \approx 0.333$$</div>
+      </div>
+    </details>
+    <details class="step">
+      <summary class="step-hd">
+        <span class="step-n">2</span>
+        <span>算主動合力 $P_a$ 及作用位置</span>
+        <i class="step-chev">▶</i>
+      </summary>
+      <div class="step-body">
+        <p>牆高 $H=6\text{ m}$，$c=0$，乾砂：</p>
+        <div class="fbox">$$P_a = \tfrac{1}{2}(17)(6)^2\!\left(\tfrac{1}{3}\right) = 102\text{ kN/m}$$</div>
+        <p>方向水平，作用點在牆底上方 $H/3=2\text{ m}$。</p>
+      </div>
+    </details>
+    <details class="step">
+      <summary class="step-hd">
+        <span class="step-n">3</span>
+        <span>切塊 → 算 $\sum V$ 與 $\sum M_R$</span>
+        <i class="step-chev">▶</i>
+      </summary>
+      <div class="step-body">
+        <p>將牆體＋上方回填土切成數個矩形/三角形塊，逐塊算：</p>
+        <ul>
+          <li>各塊自重 $W_i = \gamma_i \times A_i$</li>
+          <li>各塊重心對牆趾 C 的水平距離 $x_i$</li>
+          <li>$\sum M_R = \sum W_i x_i$（水平回填時 $P_a$ 為水平，無垂直分量）</li>
+          <li>$\sum V = \sum W_i$</li>
+        </ul>
+        <p style="color:var(--color-text-muted)">（數值需依 PDF 原圖確認尺寸後代入。）</p>
+      </div>
+    </details>
+    <details class="step">
+      <summary class="step-hd">
+        <span class="step-n">4</span>
+        <span>傾倒檢核</span>
+        <i class="step-chev">▶</i>
+      </summary>
+      <div class="step-body">
+        <p>$\sum M_o = P_a \times \dfrac{H}{3} = 102 \times 2 = 204\text{ kN·m/m}$</p>
+        <div class="fbox">$$FS_{ot} = \frac{\sum M_R}{204} > 2.0 \quad \checkmark$$</div>
+      </div>
+    </details>
+    <details class="step">
+      <summary class="step-hd">
+        <span class="step-n">5</span>
+        <span>滑動檢核（基底黏土，$\phi=0$）</span>
+        <i class="step-chev">▶</i>
+      </summary>
+      <div class="step-body">
+        <p>基底純黏土 $\phi=0$ → 摩擦項消失，阻抗力只靠底面附著：</p>
+        <div class="fbox">$$FS_{sl} = \frac{B \cdot k_2 \cdot c}{P_a} = \frac{B \cdot k_2 \cdot 30}{102} > 1.5 \quad \checkmark$$</div>
+        <p style="color:var(--color-text-muted)">$k_2$ 常取 $2/3$；$B$ 為基礎寬度（約 7 m）。</p>
+      </div>
+    </details>
+    <details class="step">
+      <summary class="step-hd">
+        <span class="step-n">6</span>
+        <span>兩者獨立比較，取較保守者</span>
+        <i class="step-chev">▶</i>
+      </summary>
+      <div class="step-body">
+        <p>傾倒與滑動 FS 均須通過各自門檻。若任一不足，可加大基礎寬度 $B$ 或加設剪力鍵（shear key）以增加底部阻抗。</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<hr class="sec-divider">
+
+<!-- ══════════════════════════════════════════
+     工程實務
+     ══════════════════════════════════════════ -->
+<section id="s4">
+  <div class="sec-head">
+    <span class="sec-num purple">4</span>
+    <h2>工程實務考量</h2>
+  </div>
+  <p style="color:var(--color-text-muted);font-size:var(--text-sm)">以國泰曦案為例（參考）——主要考的是<strong>觀念</strong>，不是案例細節。</p>
+
+  <h3 class="sub">4.1 試驗 → 工程應用對照</h3>
+  <div class="grid2">
+    <div class="card acc-blue">
+      <h3>物理性質</h3>
+      <p>含水量、比重、單位重、粒徑、阿太堡限度（LL/PL/PI）→ USCS 分類、估沉陷。</p>
+    </div>
+    <div class="card acc-orange">
+      <h3>力學性質</h3>
+      <p>無圍壓縮（$q_u,S_u$）、直剪（$\phi$）、三軸（UU/CU/CD）、單向壓密（$C_c,C_v$）。</p>
+    </div>
+  </div>
+  <div class="callout cal-amber">
+    <h4>SPT-N 值</h4>
+    <p>每 1.5 m 取樣，研判砂土緊密程度 / 黏土軟硬。黏土 $S_u \approx 0.6N$ 或 $0.2\sim0.3\,\sigma_v'$（正常壓密正規化）。</p>
+  </div>
+
+  <h3 class="sub">4.2 深開挖四大穩定性檢核（113 年規範）</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>檢核</th><th>概念</th><th>要求 FS</th><th>強度參數</th></tr></thead>
+    <tbody>
+      <tr class="row-blue">
+        <td>1. 內擠</td><td>末層支撐為支點，主/被動土壓力矩平衡</td><td>&gt; 1.0</td><td>$\phi$（貫入深度）</td>
+      </tr>
+      <tr class="row-pink">
+        <td>2. 隆起</td><td>開挖底抗隆起，$FS=M_r/M_d$</td><td>≥ 1.2</td><td>$S_u$（短期不排水）</td>
+      </tr>
+      <tr class="row-amber">
+        <td>3. 砂湧</td><td>透水層壓力 vs 滲流壓力</td><td>≥ 1.5 且 ≥ 2.0</td><td>水頭差、$\gamma'$</td>
+      </tr>
+      <tr class="row-orange">
+        <td>4. 上舉</td><td>$FS=\dfrac{\sum\gamma_{ti}h_i}{U_w}$（上覆土壓 vs 下方水壓）</td><td>≥ 1.2</td><td>單位重、水壓</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sub">4.3 壓密沉陷與承載力</h3>
+  <div class="grid2">
+    <div class="card acc-purple">
+      <h3>壓密沉陷</h3>
+      <p>$$S=\int\frac{C_c}{1+e_0}\,H\,\log\frac{\sigma_f'}{\sigma_0'}$$</p>
+    </div>
+    <div class="card acc-green">
+      <h3>極限承載力（Meyerhof）</h3>
+      <p style="font-size:var(--text-xs);line-height:1.7">$q_u = cN_cF_{cs}F_{cd}F_{ci}+\gamma_2 D_f N_q F_{qs}F_{qd}F_{qi}+0.5\gamma_1 B N_\gamma F_{\gamma s}F_{\gamma d}F_{\gamma i}$</p>
+      <p>容許承載力 $q_a = q_u/3$</p>
+    </div>
+  </div>
+
+  <h3 class="sub">4.4 容易出現的實務限制觀念</h3>
+  <ul>
+    <li><strong>地下水位影響有效應力</strong>：水位升降直接改變 $\sigma_v'$、土壓力與各項 FS；設計採保守的「設計水位」。</li>
+    <li><strong>短期 vs 長期</strong>：黏土短期用 $S_u$（UU），長期用 $c',\phi'$（CD/CU）——對應不同檢核。</li>
+    <li><strong>被動土壓力的可靠度</strong>：需要相當大的變位才能發揮，設計上常折減或不計。</li>
+    <li><strong>施工期監測</strong>：水壓計、傾度管、沉陷/隆起觀測點，控制施工過程 FS 不低於規範值。</li>
+  </ul>
+</section>
+
+<hr class="sec-divider">
+
+<!-- ══════════════════════════════════════════
+     速查表
+     ══════════════════════════════════════════ -->
+<section id="s5">
+  <div class="sec-head">
+    <span class="sec-num green">5</span>
+    <h2>速查表（考前最後看）</h2>
+  </div>
+
+  <h3 class="sub">土壓力係數</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>量</th><th>公式</th></tr></thead>
+    <tbody>
+      <tr class="row-blue"><td>靜止 $K_0$</td><td>$1-\sin\phi'$</td></tr>
+      <tr class="row-orange"><td>主動 $K_a$</td><td>$\tan^2(45^\circ-\phi/2)=\dfrac{1-\sin\phi}{1+\sin\phi}$</td></tr>
+      <tr class="row-green"><td>被動 $K_p$</td><td>$\tan^2(45^\circ+\phi/2)=\dfrac{1+\sin\phi}{1-\sin\phi}$</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sub">應力與合力</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>量</th><th>公式</th></tr></thead>
+    <tbody>
+      <tr class="row-pink"><td>強度準則</td><td>$\tau_f=c+\sigma_n\tan\phi$</td></tr>
+      <tr class="row-blue"><td>破壞時 $\sigma_1$–$\sigma_3$</td><td>$\sigma_1=N_\phi\sigma_3+2c\sqrt{N_\phi}$，$N_\phi=\tan^2(45^\circ+\phi/2)$</td></tr>
+      <tr class="row-orange"><td>主動應力</td><td>$\sigma_a'=K_a\sigma_v'-2c'\sqrt{K_a}$</td></tr>
+      <tr class="row-green"><td>被動應力</td><td>$\sigma_p'=K_p\sigma_v'+2c'\sqrt{K_p}$</td></tr>
+      <tr class="row-purple"><td>主動合力</td><td>$P_a=\tfrac{1}{2}\gamma H^2K_a$，作用於 $H/3$</td></tr>
+      <tr class="row-amber"><td>張力裂縫深度</td><td>$z_c=\dfrac{2c'}{\gamma\sqrt{K_a}}$</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sub">安全係數門檻</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>檢核</th><th>FS 門檻</th></tr></thead>
+    <tbody>
+      <tr class="row-pink"><td>傾倒 overturning</td><td><strong>&gt; 2.0</strong></td></tr>
+      <tr class="row-orange"><td>滑動 sliding</td><td><strong>&gt; 1.5</strong></td></tr>
+      <tr class="row-blue"><td>承載力 bearing</td><td><strong>&gt; 3.0</strong></td></tr>
+      <tr class="row-green"><td>整體穩定 overall</td><td><strong>&gt; 1.3</strong></td></tr>
+      <tr class="row-purple"><td>開挖隆起 / 上舉</td><td><strong>≥ 1.2</strong></td></tr>
+      <tr class="row-amber"><td>開挖砂湧</td><td><strong>≥ 1.5</strong> 且 <strong>≥ 2.0</strong></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</main>
+
+<footer>
+  <p>整理自：<em>PPTTriaxial_Shear_Tests.pdf</em>、<em>PPTLatPressWalls.pdf</em>、<em>Example_on_retaining_wall.pdf</em>、<em>地質鑽探報告簡報以國泰曦案為例.pdf</em>。</p>
+</footer>
+
+<script>
+(function(){
+  const btn=document.querySelector('[data-theme-toggle]');
+  const root=document.documentElement;
+  const order=['pink','light','dark'];
+  const icons={
+    pink:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10-9.4C.3 8.2 1.7 4.8 5 4.4 7 4.1 8.8 5.1 12 8c3.2-2.9 5-3.9 7-3.6 3.3.4 4.7 3.8 3 7.2C19.5 16.3 12 21 12 21z"/></svg>',
+    light:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M3.5 12H1M23 12h-2.5M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/></svg>',
+    dark:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>'
+  };
+  let i=0;
+  function apply(){root.setAttribute('data-theme',order[i]);btn.innerHTML=icons[order[i]];}
+  apply();
+  btn.addEventListener('click',()=>{i=(i+1)%order.length;apply();});
+})();
+(function(){
+  const links=[...document.querySelectorAll('.section-nav a')];
+  const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      const a=map.get(e.target.id);
+      if(a){a.classList.add('active');a.scrollIntoView({block:'nearest',inline:'center'});}
+    }
+  }),{rootMargin:'-120px 0px -65% 0px'});
+  document.querySelectorAll('section[id]').forEach(s=>obs.observe(s));
+})();
+</script>
+</body>
+</html>
